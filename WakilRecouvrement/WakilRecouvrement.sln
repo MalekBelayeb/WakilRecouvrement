@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakilRecouvrement.Console", "WakilRecouvrement.Console\WakilRecouvrement.Console.csproj", "{94FCB5B6-40E5-4771-85B1-23A41B1764B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakilRecouvrement.Data", "WakilRecouvrement.Data\WakilRecouvrement.Data.csproj", "{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakilRecouvrement.Domain", "WakilRecouvrement.Domain\WakilRecouvrement.Domain.csproj", "{CBE91027-D0D7-4373-A9EA-5CE6754F00BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakilRecouvrement.Service", "WakilRecouvrement.Service\WakilRecouvrement.Service.csproj", "{3929A423-351B-4043-A8C5-DFA07398328E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Pattern", "Service.Pattern\Service.Pattern.csproj", "{611136D9-49D5-4C76-B7A9-912F0C819566}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakilRecouvrement.Web", "WakilRecouvrement.Web\WakilRecouvrement.Web.csproj", "{058E4D45-1E91-41F2-B955-85602FBF7948}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94FCB5B6-40E5-4771-85B1-23A41B1764B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FCB5B6-40E5-4771-85B1-23A41B1764B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FCB5B6-40E5-4771-85B1-23A41B1764B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FCB5B6-40E5-4771-85B1-23A41B1764B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE91027-D0D7-4373-A9EA-5CE6754F00BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE91027-D0D7-4373-A9EA-5CE6754F00BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE91027-D0D7-4373-A9EA-5CE6754F00BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE91027-D0D7-4373-A9EA-5CE6754F00BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3929A423-351B-4043-A8C5-DFA07398328E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3929A423-351B-4043-A8C5-DFA07398328E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3929A423-351B-4043-A8C5-DFA07398328E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3929A423-351B-4043-A8C5-DFA07398328E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{611136D9-49D5-4C76-B7A9-912F0C819566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{611136D9-49D5-4C76-B7A9-912F0C819566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{611136D9-49D5-4C76-B7A9-912F0C819566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{611136D9-49D5-4C76-B7A9-912F0C819566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{058E4D45-1E91-41F2-B955-85602FBF7948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{058E4D45-1E91-41F2-B955-85602FBF7948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{058E4D45-1E91-41F2-B955-85602FBF7948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{058E4D45-1E91-41F2-B955-85602FBF7948}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7EB57CE0-64EC-4CF4-8A02-47D895B24A0E}
+	EndGlobalSection
+EndGlobal

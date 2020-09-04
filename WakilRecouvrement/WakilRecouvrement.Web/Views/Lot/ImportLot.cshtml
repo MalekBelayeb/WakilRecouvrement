@@ -1,0 +1,18 @@
+﻿@model WakilRecouv.Web.Models.LotViewModel
+
+@{
+    ViewBag.Title = "";
+}
+
+<h2>Importer un lot</h2>
+
+@using (Html.BeginForm("UploadExcel", "Lot", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+
+    <input type="file" name="postedFile" />
+    <input type="submit" value="Import" />
+
+}
+
