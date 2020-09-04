@@ -30,9 +30,9 @@ namespace WakilRecouvrement.Console
                 RoleId = 1
             };
 
-            wrc.Roles.Add(r1);
+           // wrc.Roles.Add(r1);
             // wrc.Employes.Add(emp);
-            wrc.SaveChanges();
+         //   wrc.SaveChanges();
 
             // IEmployeService IEmpService = new EmployeService();
             //IRoleService IRoleService = new RoleService();
