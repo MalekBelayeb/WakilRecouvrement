@@ -19,7 +19,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult Login()
         {
-            Response.Write("<script>alert('ffff')</script>");
             return View("Login");
         }
 
@@ -89,7 +88,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                 EmpService.Add(emp);
                 EmpService.Commit();
-                return View("Login");
+                return RedirectToAction("Login");
 
             }
 
@@ -97,6 +96,36 @@ namespace WakilRecouvrement.Web.Controllers
             return View();
         }
 
+
+
+        public ActionResult ChangePassword()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(CompteConfigViewModel CompteCVM)
+        {
+
+            Employe e = EmpService.GetEmployeByUername(Session["username"].ToString());
+
+            if(e.Password == CompteCVM.Password)
+            {
+                e.Password = CompteCVM.NewPassword;
+                e.ConfirmPassword = CompteCVM.NewPassword;
+
+                EmpService.Update(e);
+                EmpService.Commit();
+            }
+            else
+            {
+                ModelState.AddModelError("Password", "Votre mot de passe actuel est incorrect");
+            }
+
+            return View();
+
+        }
 
 
         public ActionResult Deconnect()

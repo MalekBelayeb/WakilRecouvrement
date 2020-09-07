@@ -11,6 +11,8 @@ namespace WakilRecouvrement.Web.Models
         [FileExtensions(Extensions = ".xls,.xlsx", ErrorMessage = "Only excel file")]
         public HttpPostedFileBase LotFile { get; set; }
 
-
     }
+
+
+
 }

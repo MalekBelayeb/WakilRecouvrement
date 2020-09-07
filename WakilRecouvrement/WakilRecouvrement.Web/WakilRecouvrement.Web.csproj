@@ -136,7 +136,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Compte.cs" />
+    <Compile Include="Models\CompteConfigViewModel.cs" />
     <Compile Include="Models\LotViewModel.cs" />
+    <Compile Include="Models\ValidationModelsAttribute\NotEqualAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -277,6 +279,8 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -382,6 +386,7 @@
     <Content Include="Views\Home\AccountList.cshtml" />
     <Content Include="Views\Home\UpdateAccount.cshtml" />
     <Content Include="Views\Lot\ImportLot.cshtml" />
+    <Content Include="Views\Authentification\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

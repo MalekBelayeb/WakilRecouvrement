@@ -27,7 +27,7 @@ namespace WakilRecouvrement.Domain.Entities
         [ScaffoldColumn(false)]
         [Required(ErrorMessage = "Champ obligatoire")]
         [NotMapped]
-        [Compare("Password")]
+        [Compare("Password",ErrorMessage = "Votre mot de passe de confirmation ne correspond pas au nouveau mot de passe")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
@@ -44,6 +44,7 @@ namespace WakilRecouvrement.Domain.Entities
         [DefaultValue(false)]   
         public bool IsVerified { get; set; }
         
+
         public virtual ICollection<Lot> Lots { get; set; }
 
         

@@ -18,5 +18,11 @@ namespace WakilRecouvrement.Service
 
         }
 
+        public Lot GetClientByIDClient(string ID)
+        {
+            return Get(l => l.IDClient.Equals(ID));
+        }
+
+
     }
 }

@@ -193,7 +193,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-   
+
                         @if (Session["role"] != null)
 
                         {
@@ -202,7 +202,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item has-treeview menu-open">
                                     <a href="#" class="nav-link active">
-                                        <i class="fas fa-file mr-2"></i>
+                                        <i class="fa fa-address-book mr-2"></i>
                                         <p>
                                             Gestion des lots
                                             <i class="right fas fa-angle-left"></i>
@@ -211,13 +211,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
                                             <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
-                                                <i class="far fa-circle nav-icon"></i>
+                                                <i class="fas fa-upload mr-2"></i>
                                                 <p>Importer un lot</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
                                             <a href="@Url.Action("Contact", "Home")" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
+                                                <i class="fas fa-gavel mr-2"></i>
                                                 <p>Affecter aux agents</p>
                                             </a>
                                         </li>
@@ -237,9 +237,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     <a href="@Url.Action("AccountList","Home")" class="nav-link">
                                         <i class="fas fa-users mr-2"></i>
-                                        <p>
-                                            Gestion des comptes
-                                        </p>
+                                        <p>Gestion des comptes</p>
                                     </a>
                                 </li>
 
@@ -248,11 +246,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                             <li class="nav-item">
 
+                                <a href="@Url.Action("ChangePassword","Authentification")" class="nav-link">
+                                    <i class="fas fa-cog fa-fw mr-2"></i>
+                                    <p>Parametre du compte</p>
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
                                 <a href="@Url.Action("Deconnect","Authentification")" class="nav-link">
-                                    <i class="fas fa-users mr-2"></i>
-                                    <p>
-                                        Se deconnecter
-                                    </p>
+                                    <i class="fa fa-sign-out mr-2"></i>
+                                    <p>Se deconnecter</p>
                                 </a>
 
                             </li>

@@ -10,6 +10,7 @@ namespace WakilRecouvrement.Service
 {
     public interface ILotService : IService<Lot>
     {
-    
+         Lot GetClientByIDClient(string ID);
+
     }
 }
