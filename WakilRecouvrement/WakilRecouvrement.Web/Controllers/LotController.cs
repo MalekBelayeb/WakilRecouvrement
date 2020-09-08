@@ -375,12 +375,18 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult LoadData(string numLot)
         {
 
-            Debug.WriteLine(numLot);
             List<Lot> Lots = new List<Lot>();
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
-            Lots = LotService.GetAll().ToList();
+            if(numLot == "0")
+            {
+                Lots = LotService.GetAll().ToList();
+            }
+            else
+            {
+                Lots = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
+            }
 
             JsonResult result = new JsonResult();
 
