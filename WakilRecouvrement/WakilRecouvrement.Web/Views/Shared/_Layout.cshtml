@@ -10,7 +10,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <title>Wakil Recouvrement</title>
-    
+
+
     <!-- Font Awesome Icons -->
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -200,7 +201,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             if (Session["role"].Equals("admin"))
                             {
 
-                                <li class="nav-item has-treeview menu-open">
+                                <li class="nav-item has-treeview">
                                     <a href="#" class="nav-link active">
                                         <i class="fa fa-address-book mr-2"></i>
                                         <p>
@@ -211,13 +212,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
                                             <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
-                                                <i class="fas fa-upload mr-2"></i>
+                                                <i class="fas fa-upload mr-4"></i>
                                                 <p>Importer un lot</p>
                                             </a>
                                         </li>
+
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
+                                                <i class="fas fa-book mr-4"></i>
+                                                <p>Consulter les clients</p>
+                                            </a>
+                                        </li>
+
                                         <li class="nav-item">
                                             <a href="@Url.Action("Contact", "Home")" class="nav-link">
-                                                <i class="fas fa-gavel mr-2"></i>
+                                                <i class="fas fa-gavel mr-4"></i>
                                                 <p>Affecter aux agents</p>
                                             </a>
                                         </li>

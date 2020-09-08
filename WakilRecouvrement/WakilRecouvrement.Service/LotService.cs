@@ -23,6 +23,10 @@ namespace WakilRecouvrement.Service
             return Get(l => l.IDClient.Equals(ID));
         }
 
+        public IEnumerable<Lot> GetClientsByLot(string numLot)
+        {
+            return GetMany(l => l.NumLot.Equals(numLot));
+        }
 
     }
 }

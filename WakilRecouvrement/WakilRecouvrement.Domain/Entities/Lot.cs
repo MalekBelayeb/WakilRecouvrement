@@ -43,5 +43,21 @@ namespace WakilRecouvrement.Domain.Entities
         public int EmployeId { get; set; }
         public virtual Employe Employe { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Lot lot &&
+                   NomClient == lot.NomClient &&
+                   TelPortable == lot.TelPortable &&
+                   TelFixe == lot.TelFixe &&
+                   Fax == lot.Fax &&
+                   SoldeDebiteur == lot.SoldeDebiteur &&
+                   DescIndustry == lot.DescIndustry &&
+                   Adresse == lot.Adresse &&
+                   Type == lot.Type &&
+                   Numero == lot.Numero &&
+                   PostCode == lot.PostCode &&
+                   NumLot == lot.NumLot &&
+                   EmployeId == lot.EmployeId;
+        }
     }
 }

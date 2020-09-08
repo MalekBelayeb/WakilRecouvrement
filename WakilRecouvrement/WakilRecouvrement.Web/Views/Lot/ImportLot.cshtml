@@ -49,6 +49,8 @@
 
         if (ViewData["noDup"] == "1")
         {
+            <br />
+
             <div class="alert alert-success alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <strong>@ViewData["nb"] / @ViewData["nbTotal"] Clients</strong> ajoutés avec succès.
@@ -63,8 +65,19 @@
 
             <div class="alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>@ViewData["nbDup"] Clients </strong> trouvés dans le lot, existe deja dans la base de données.
+                <strong>@ViewData["nbDup"] Clients </strong> trouvés dans le lot sont identiques.
             </div>
+            <br />
+        }
+
+        if (ViewData["up"] == "1")
+        {
+
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>@ViewData["nbUp"] Clients</strong> ont été mis à jour.
+            </div>
+            <br />
 
         }
 
