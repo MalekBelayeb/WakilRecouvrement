@@ -40,13 +40,11 @@ namespace WakilRecouvrement.Domain.Entities
 
 
         [Display(Name = "Verifié")]
-        //      [ScaffoldColumn(false)]
+        //[ScaffoldColumn(false)]
         [DefaultValue(false)]   
         public bool IsVerified { get; set; }
         
-
         public virtual ICollection<Lot> Lots { get; set; }
-
         
     }
 }

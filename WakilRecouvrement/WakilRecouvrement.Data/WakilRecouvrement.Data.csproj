@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conventions\DateTime2Convention.cs" />
     <Compile Include="Infrastructure\DatabaseFactory.cs" />
     <Compile Include="Infrastructure\Disposable.cs" />
     <Compile Include="Infrastructure\IDatabaseFactory .cs" />
@@ -58,13 +59,17 @@
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Infrastructure\RepositoryBase.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
-    <Compile Include="Migrations\202009061126335_init.cs" />
-    <Compile Include="Migrations\202009061126335_init.designer.cs">
-      <DependentUpon>202009061126335_init.cs</DependentUpon>
+    <Compile Include="Migrations\202009091714577_mg98.cs" />
+    <Compile Include="Migrations\202009091714577_mg98.designer.cs">
+      <DependentUpon>202009091714577_mg98.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009061139260_init2.cs" />
-    <Compile Include="Migrations\202009061139260_init2.designer.cs">
-      <DependentUpon>202009061139260_init2.cs</DependentUpon>
+    <Compile Include="Migrations\202009091717089_mg9.cs" />
+    <Compile Include="Migrations\202009091717089_mg9.designer.cs">
+      <DependentUpon>202009091717089_mg9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009101928355_mig88.cs" />
+    <Compile Include="Migrations\202009101928355_mig88.designer.cs">
+      <DependentUpon>202009101928355_mig88.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,11 +87,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202009061126335_init.resx">
-      <DependentUpon>202009061126335_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202009091714577_mg98.resx">
+      <DependentUpon>202009091714577_mg98.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009061139260_init2.resx">
-      <DependentUpon>202009061139260_init2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202009091717089_mg9.resx">
+      <DependentUpon>202009091717089_mg9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009101928355_mig88.resx">
+      <DependentUpon>202009101928355_mig88.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

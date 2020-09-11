@@ -51,8 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AffectationService.cs" />
     <Compile Include="EmployeService.cs" />
+    <Compile Include="FormulaireService.cs" />
+    <Compile Include="IAffectationService.cs" />
     <Compile Include="IEmployeService.cs" />
+    <Compile Include="IFormulaireService.cs" />
     <Compile Include="ILotService.cs" />
     <Compile Include="IRoleService.cs" />
     <Compile Include="LotService.cs" />

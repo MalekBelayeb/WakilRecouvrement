@@ -24,23 +24,21 @@ namespace WakilRecouvrement.Web.Controllers
     {
 
         EmployeService EmpService;
-        RoleService RoleService;
         LotService LotService;
         public int x = 0;
         public int dup = 0;
         public int up = 0;
+
+
         public LotController()
         {
             EmpService = new EmployeService();
-            RoleService = new RoleService();
             LotService = new LotService();
         }
 
-
-
         public ActionResult ImportLot()
         {
-
+   
             return View();
 
         }
@@ -123,7 +121,6 @@ namespace WakilRecouvrement.Web.Controllers
                                 string argType = "Type";
                                 string argNumero = "Numero";
 
-                                Employe emp = EmpService.GetEmployeByUername(Session["username"].ToString());
                                 
                                 foreach (DataRow row in dt.Rows)
                                 {
@@ -259,7 +256,6 @@ namespace WakilRecouvrement.Web.Controllers
                                         Adresse = Adresse,
                                         Type = Type,
                                         Numero = Numero,
-                                        EmployeId = emp.EmployeId
 
                                     };
 
@@ -301,7 +297,6 @@ namespace WakilRecouvrement.Web.Controllers
                                             lot.Type = Lot.Type;
                                             lot.Numero = Lot.Numero;
                                             lot.PostCode = Lot.PostCode;
-                                            lot.EmployeId = Lot.EmployeId;
 
                                             LotService.Update(lot);
                                         }
@@ -386,7 +381,7 @@ namespace WakilRecouvrement.Web.Controllers
             else
             {
                 Lots = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
-            }
+            } 
 
             JsonResult result = new JsonResult();
 

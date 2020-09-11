@@ -7,13 +7,13 @@ namespace WakilRecouvrement.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class init : IMigrationMetadata
+    public sealed partial class mig88 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(init));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(mig88));
         
         string IMigrationMetadata.Id
         {
-            get { return "202009061126335_init"; }
+            get { return "202009101928355_mig88"; }
         }
         
         string IMigrationMetadata.Source

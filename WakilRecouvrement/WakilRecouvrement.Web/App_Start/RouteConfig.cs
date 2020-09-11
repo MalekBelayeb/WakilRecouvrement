@@ -14,6 +14,12 @@ namespace WakilRecouvrement.Web
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Authentification", action = "Login", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+               name: "AffecterAgents",
+               url: "{controller}/{action}/{id}",
+               defaults: new { controller = "Affectation", action = "AffecterAgents", id = UrlParameter.Optional }
+           );
         }
     }
 }

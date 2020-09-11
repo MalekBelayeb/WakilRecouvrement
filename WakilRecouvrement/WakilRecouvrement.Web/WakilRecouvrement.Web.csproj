@@ -254,7 +254,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AffectationController.cs" />
     <Compile Include="Controllers\AuthentificationController.cs" />
+    <Compile Include="Controllers\FormulaireController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LotController.cs" />
     <Compile Include="Global.asax.cs">
@@ -343,6 +345,9 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\btnStyle.css" />
+    <Content Include="Content\buttonload.css" />
+    <Content Include="Content\CollapsideStyle.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap4.css" />
@@ -355,7 +360,10 @@
     <Content Include="Content\dataTables.semanticui.min.css" />
     <Content Include="Content\jquery.dataTables.css" />
     <Content Include="Content\jquery.dataTables.min.css" />
+    <Content Include="Content\RangeSlider.css" />
+    <Content Include="Content\RoundSlider.css" />
     <Content Include="Content\simple-sidebar.css" />
+    <Content Include="Content\SkillsStyle.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -363,6 +371,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\CollapsideScript.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\dataTables.bootstrap.min.js" />
     <Content Include="Scripts\dataTables.bootstrap4.js" />
@@ -537,6 +546,9 @@
     <Content Include="Views\Lot\ImportLot.cshtml" />
     <Content Include="Views\Authentification\ChangePassword.cshtml" />
     <Content Include="Views\Lot\ConsulterClients.cshtml" />
+    <Content Include="Views\Affectation\AffecterAgent.cshtml" />
+    <Content Include="Views\Affectation\ChoisirLot.cshtml" />
+    <Content Include="Views\Formulaire\SuiviClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

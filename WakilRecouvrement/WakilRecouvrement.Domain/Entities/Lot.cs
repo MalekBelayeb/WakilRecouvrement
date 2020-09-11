@@ -39,9 +39,7 @@ namespace WakilRecouvrement.Domain.Entities
 
         public string PostCode { get; set; }
 
-
-        public int EmployeId { get; set; }
-        public virtual Employe Employe { get; set; }
+      
 
         public override bool Equals(object obj)
         {
@@ -56,8 +54,8 @@ namespace WakilRecouvrement.Domain.Entities
                    Type == lot.Type &&
                    Numero == lot.Numero &&
                    PostCode == lot.PostCode &&
-                   NumLot == lot.NumLot &&
-                   EmployeId == lot.EmployeId;
-        }
+                   NumLot == lot.NumLot;
+                   
+                   }
     }
 }

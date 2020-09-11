@@ -51,8 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Affectation.cs" />
     <Compile Include="Entities\Employe.cs" />
+    <Compile Include="Entities\Formulaire.cs" />
     <Compile Include="Entities\Lot.cs" />
+    <Compile Include="Entities\Note.cs" />
     <Compile Include="Entities\Role.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
