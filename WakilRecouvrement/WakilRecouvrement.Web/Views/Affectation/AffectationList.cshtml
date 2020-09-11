@@ -4,10 +4,12 @@
     ViewBag.Title = "";
 }
 
-<h2>Suivi des clients affectés</h2>
+<h2>Traiter les affectations</h2>
+
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<link href="~/Content/datableHover.css" rel="stylesheet" />
 
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
@@ -16,8 +18,10 @@
 
 <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js">
 </script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.15/dataRender/datetime.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
-
+<h5><strong> @ViewBag.affectationRestant </strong> / <strong>@ViewBag.totalAffectation</strong> Affectations </h5>
 
 <br />
 
@@ -27,17 +31,8 @@
         @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
 
     </div>
-    <div class="col-xs-3 col-md-5">
-        
 
-        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
 
-    </div>
-    <div class="col-xs-3">
-
-        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
-
-    </div>
 </div>
 
 <br />
@@ -46,7 +41,7 @@
     <thead>
         <tr>
 
-            <th>Affecté Pour</th>
+            <th>Affecté Le</th>
             <th>NumClient</th>
             <th>NumLot</th>
             <th>Compte</th>
@@ -70,8 +65,19 @@
 
     DemoDatatable();
 
+
+
+
     $(document).ready(function () {
         $.noConflict();
+        var table = $('#demodata').DataTable();
+
+        $('#demodata tbody').on('click', 'td', function () {
+            var data = table.row(this).data();
+            redirectToRoute(data["LotId"])
+        });
+
+
 
         $("#numLot").change(function () {
 
@@ -79,22 +85,27 @@
 
         })
 
-        $("#traite").change(function () {
-
-            DemoDatatable();
-
-        })
-
-        $("#agent").change(function () {
-
-            DemoDatatable();
-
-        })
 
     });
 
+    function redirectToRoute(id)
+    {
+         $.ajax({
+         type: 'POST',
+         url: '/Formulaire/CreerFormulaireIntermediate/',
+         dataType: 'json',
+             data: { id: id },
+             success: function (data) {
 
+                 window.location.replace(data.redirectUrl);
+
+
+             }
+         });
+    }
     function DemoDatatable() {
+
+
         $("#demodata").DataTable({
             "processing": true,
             "serverSide": true,
@@ -103,13 +114,13 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Formulaire/LoadData',
+                "url": '/Affectation/LoadData',
                 "type": "POST",
                 "datatype": "json",
-                "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
+                "data": { numLot: $("#numLot").val(), traite: $("#traite").val() }
             },
             "columns": [
-                { "data": "Username", "name": "Username", "autoWidth": true }
+                { "data": "DateAffectation", "name": "DateAffectation", "autoWidth": true }
                 , { "data": "LotId", "name": "LotId", "autoWidth": true }
                 , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , { "data": "Compte", "Name": "Compte", "autoWidth": true }

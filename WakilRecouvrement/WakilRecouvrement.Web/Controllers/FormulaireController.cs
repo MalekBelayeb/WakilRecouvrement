@@ -1,11 +1,13 @@
 ﻿using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WakilRecouvrement.Domain.Entities;
 using WakilRecouvrement.Service;
+using WakilRecouvrement.Web.Models;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -15,6 +17,7 @@ namespace WakilRecouvrement.Web.Controllers
         AffectationService AffectationService;
         LotService LotService;
         EmployeService EmpService;
+        FormulaireService FormulaireService;
 
 
         public FormulaireController()
@@ -22,14 +25,29 @@ namespace WakilRecouvrement.Web.Controllers
             AffectationService = new AffectationService();
             LotService = new LotService();
             EmpService = new EmployeService();
+            FormulaireService = new FormulaireService();
 
         }
 
+        public ActionResult CreerFormulaire(string id)
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreerFormulaireIntermediate(string id)
+        {
+
+            return Json(new { redirectUrl = Url.Action("CreerFormulaire", "Formulaire", new { id = id }) });
+
+        }
 
         public ActionResult SuiviClient()
         {
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
 
             return View();
         }
@@ -63,24 +81,87 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+        public IEnumerable<SelectListItem> TraiteListForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
 
+            foreach (var n in Enum.GetValues(typeof(Note)))
+            {
+               
+                    listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString()  });
+              
+            }
+  
+
+            return listItems;
+        }
 
         [HttpPost]
         public ActionResult LoadData(string numLot,string agent, string traite )
         {
+            List<Lot> listLot = new List<Lot>();
+            List<Affectation> listAffectation = new List<Affectation>();
+            List<Formulaire> listFormulaire =new List<Formulaire>();
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-            List<Lot> Lots = new List<Lot>();
-
+            
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+
+
+            Debug.WriteLine(traite);
+
 
             if (numLot == "0")
             {
-                Lots = LotService.GetAll().ToList();
+                listLot = LotService.GetAll().ToList();
             }
             else
             {
-                Lots = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
+                listLot = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
             }
+
+            if(int.Parse(agent)==0)
+            {
+               
+                listAffectation = AffectationService.GetAll().ToList();
+
+            }
+            else
+            {
+
+                listAffectation = AffectationService.GetAll().ToList().Where(a=>a.EmployeId == int.Parse(agent)).ToList();
+
+            }
+
+          
+
+            if (traite == "ALL")
+            {
+                 JoinedList = (from a in listAffectation
+                                join l in listLot on a.LotId equals l.LotId
+                                select new ClientAffecteViewModel
+                                {
+                                Affectation = a,
+                                Lot = l,
+                                }).ToList();
+
+            }
+            else
+            {
+
+                 JoinedList = (from f in listFormulaire
+                                       join a in listAffectation on f.AffectationId equals a.AffectationId
+                                       join l in listLot on a.LotId equals l.LotId 
+                                       where f.EtatClient.ToString() == traite
+                                       select new ClientAffecteViewModel
+                                       {
+                                            Affectation = a,
+                                            Lot = l,
+                                            Formulaire = f
+                                       }).ToList();
+            }
+           
 
             JsonResult result = new JsonResult();
 
@@ -95,48 +176,48 @@ namespace WakilRecouvrement.Web.Controllers
                 int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
 
 
-
-                int totalRecords = Lots.Count;
+                int totalRecords = JoinedList.Count();
 
                 if (!string.IsNullOrEmpty(search) &&
                     !string.IsNullOrWhiteSpace(search))
                 {
-                    Lots = Lots.Where(l =>
+                    JoinedList = JoinedList.Where(j =>
 
-                        l.Numero.ToString().Contains(search)
-                    || l.Adresse.ToString().ToLower().Contains(search.ToLower())
-                    || l.TelFixe.ToString().Contains(search)
-                    || l.TelPortable.ToString().Contains(search)
-                    || l.IDClient.ToString().Contains(search)
-                    || l.Compte.ToString().Contains(search)
-                    || l.LotId.ToString().Contains(search)
-                    || l.NomClient.ToString().ToLower().Contains(search.ToLower())
-                    || l.DescIndustry.ToString().ToLower().Contains(search.ToLower())
+                        j.Lot.Numero.ToString().Contains(search)
+                    || j.Lot.Adresse.ToString().ToLower().Contains(search.ToLower())
+                    || j.Lot.TelFixe.ToString().Contains(search)
+                    || j.Lot.TelPortable.ToString().Contains(search)
+                    || j.Lot.IDClient.ToString().Contains(search)
+                    || j.Lot.Compte.ToString().Contains(search)
+                    || j.Lot.LotId.ToString().Contains(search)
+                    || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
+                    || j.Lot.DescIndustry.ToString().ToLower().Contains(search.ToLower())
 
                         ).ToList();
                 }
 
 
-                Lots = SortTableData(order, orderDir, Lots);
+                JoinedList = SortTableData(order, orderDir, JoinedList);
 
-                int recFilter = Lots.Count;
+                int recFilter = JoinedList.Count();
 
-                Lots = Lots.Skip(startRec).Take(pageSize).ToList();
-                var modifiedData = Lots.Select(l =>
+                JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
+                var modifiedData = JoinedList.Select(j =>
                    new
                    {
-                       l.LotId,
-                       l.NumLot,
-                       l.Compte,
-                       l.IDClient,
-                       l.NomClient,
-                       l.TelPortable,
-                       l.TelFixe,
-                       l.SoldeDebiteur,
-                       l.DescIndustry,
-                       l.Adresse,
-                       l.Type,
-                       l.Numero
+                       j.Lot.LotId,
+                       j.Lot.NumLot,
+                       j.Lot.Compte,
+                       j.Lot.IDClient,
+                       j.Lot.NomClient,
+                       j.Lot.TelPortable,
+                       j.Lot.TelFixe,
+                       j.Lot.SoldeDebiteur,
+                       j.Lot.DescIndustry,
+                       j.Lot.Adresse,
+                       j.Lot.Type,
+                       j.Lot.Numero,
+                       j.Affectation.Employe.Username
                    }
                    );
                 result = this.Json(new
@@ -157,69 +238,72 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        private List<Lot> SortTableData(string order, string orderDir, List<Lot> data)
+   
+
+
+        private List<ClientAffecteViewModel> SortTableData(string order, string orderDir, List<ClientAffecteViewModel> data)
         {
-            List<Lot> lst = new List<Lot>();
+            List<ClientAffecteViewModel> lst = new List<ClientAffecteViewModel>();
             try
             {
                 switch (order)
                 {
                     case "0":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.LotId).ToList()
-                                                                                                 : data.OrderBy(l => l.LotId).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.LotId).ToList()
+                                                                                                 : data.OrderBy(l => l.Lot.LotId).ToList();
                         break;
 
                     case "1":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => long.Parse(l.NumLot)).ToList()
-                                                                                                 : data.OrderBy(l => long.Parse(l.NumLot)).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => long.Parse(j.Lot.NumLot)).ToList()
+                                                                                                 : data.OrderBy(j => long.Parse(j.Lot.NumLot)).ToList();
                         break;
                     case "2":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Compte).ToList()
-                                                                                                 : data.OrderBy(l => l.Compte).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j=> j.Lot.Compte).ToList()
+                                                                                                 : data.OrderBy(j => j.Lot.Compte).ToList();
                         break;
                     case "3":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => long.Parse(l.IDClient)).ToList()
-                                                                                                 : data.OrderBy(l => long.Parse(l.IDClient)).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => long.Parse(j.Lot.IDClient)).ToList()
+                                                                                                 : data.OrderBy(j => long.Parse(j.Lot.IDClient)).ToList();
                         break;
                     case "4":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.NomClient).ToList()
-                                                                                                 : data.OrderBy(l => l.NomClient).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.NomClient).ToList()
+                                                                                                 : data.OrderBy(j => j.Lot.NomClient).ToList();
                         break;
                     case "5":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.TelPortable).ToList()
-                                                                                                   : data.OrderBy(l => l.TelPortable).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.TelPortable).ToList()
+                                                                                                   : data.OrderBy(j => j.Lot.TelPortable).ToList();
                         break;
                     case "6":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.TelFixe).ToList()
-                                                                                                   : data.OrderBy(l => l.TelFixe).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.TelFixe).ToList()
+                                                                                                   : data.OrderBy(j => j.Lot.TelFixe).ToList();
                         break;
                     case "7":
 
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => Double.Parse(l.SoldeDebiteur)).ToList()
-                                                                                              : data.OrderBy(l => Double.Parse(l.SoldeDebiteur)).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList()
+                                                                                              : data.OrderBy(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList();
 
                         break;
                     case "8":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.DescIndustry).ToList()
-                                                                                                   : data.OrderBy(l => l.DescIndustry).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.DescIndustry).ToList()
+                                                                                                   : data.OrderBy(j => j.Lot.DescIndustry).ToList();
                         break;
                     case "9":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Adresse).ToList()
-                                                                                                   : data.OrderBy(l => l.Adresse).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.Adresse).ToList()
+                                                                                                   : data.OrderBy(j => j.Lot.Adresse).ToList();
                         break;
                     case "10":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Type).ToList()
-                                                                                                   : data.OrderBy(l => l.Type).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.Type).ToList()
+                                                                                                   : data.OrderBy(j=> j.Lot.Type).ToList();
                         break;
 
                     case "11":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Numero).ToList()
-                                                                                                   : data.OrderBy(l => l.Numero).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.Numero).ToList()
+                                                                                                   : data.OrderBy(j => j.Lot.Numero).ToList();
                         break;
 
                     default:
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.LotId).ToList()
-                                                                                                 : data.OrderBy(l => l.LotId).ToList();
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.LotId).ToList()
+                                                                                                 : data.OrderBy(j => j.Lot.LotId).ToList();
                         break;
                 }
             }
@@ -231,6 +315,11 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
+        
+
+
+
+       
 
     }  
 }

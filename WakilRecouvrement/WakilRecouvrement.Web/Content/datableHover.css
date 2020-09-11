@@ -1,0 +1,9 @@
+
+table#demodata.dataTable tbody tr:hover {
+    background-color: #ffa;
+  }
+  
+  table#demodata.dataTable tbody tr:hover > .sorting_1 {
+    background-color: #ffa;
+  }
+  

@@ -9,7 +9,7 @@ using WakilRecouvrement.Domain.Entities;
 
 namespace WakilRecouvrement.Service
 {
-    class FormulaireService : Service<Formulaire>, IFormulaireService
+    public class FormulaireService : Service<Formulaire>, IFormulaireService
     {
         static IDatabaseFactory Factory = new DatabaseFactory();
         static IUnitOfWork UOW = new UnitOfWork(Factory);

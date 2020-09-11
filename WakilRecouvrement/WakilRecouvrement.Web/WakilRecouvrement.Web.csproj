@@ -262,6 +262,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClientAffecteViewModel.cs" />
     <Compile Include="Models\Compte.cs" />
     <Compile Include="Models\CompteConfigViewModel.cs" />
     <Compile Include="Models\LotViewModel.cs" />
@@ -348,6 +349,7 @@
     <Content Include="Content\btnStyle.css" />
     <Content Include="Content\buttonload.css" />
     <Content Include="Content\CollapsideStyle.css" />
+    <Content Include="Content\datableHover.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap4.css" />
@@ -549,6 +551,8 @@
     <Content Include="Views\Affectation\AffecterAgent.cshtml" />
     <Content Include="Views\Affectation\ChoisirLot.cshtml" />
     <Content Include="Views\Formulaire\SuiviClient.cshtml" />
+    <Content Include="Views\Affectation\AffectationList.cshtml" />
+    <Content Include="Views\Formulaire\CreerFormulaire.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
