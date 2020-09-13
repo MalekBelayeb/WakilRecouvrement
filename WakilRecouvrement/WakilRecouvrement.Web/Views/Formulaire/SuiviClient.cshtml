@@ -12,6 +12,7 @@
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
 
+
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 
 <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js">
@@ -28,7 +29,7 @@
 
     </div>
     <div class="col-xs-3 col-md-5">
-        
+
 
         @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
 
@@ -41,12 +42,33 @@
 </div>
 
 <br />
+<table class="table table-bordered">
+<thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+    </tr>
+</thead>
+<tbody>
 
+    <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>mdo</td>
+    </tr>
+
+</tbody>
+</table>
 <table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
     <thead>
         <tr>
-
+            <th>Etat Client</th>
+            <th>Affecté Le</th>
             <th>Affecté Pour</th>
+
             <th>NumClient</th>
             <th>NumLot</th>
             <th>Compte</th>
@@ -59,35 +81,112 @@
             <th>Adresse</th>
             <th>Type</th>
             <th>Numero</th>
+            <th>AffId</th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
 
-
+<tr data-child-name="test1" data-child-value="10">
+    <td>ParentRow</td>
+    <td>No. 1</td>
+</tr>
 
 <script>
 
-    DemoDatatable();
+
 
     $(document).ready(function () {
         $.noConflict();
 
+        var Table = DemoDatatable();
+
+        function format(d) {
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Tranche solde </th><th>Description autre </th></tr></thead><tbody>  ' +
+
+                d
+
+                + '</tbody></table>';
+        }
+
+
+        $('#demodata tbody').on('click', 'td', function () {
+            var tr = $(this).closest('tr');
+            var row = Table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Formulaire/GetFormulaires/',
+                    dataType: 'json',
+                    data: { id: row.data()["AffectationId"] },
+                    success: function (data) {
+                        var x = '';
+                        for (var i = 0; i < data["list"].length; i++) {
+
+                            var desc = data["list"][i]["desc"]
+                            var d1 = data["list"][i]["d1"]
+                            var d2 = data["list"][i]["d2"]
+                            if (d1 == "01/01/0001 00:00:00") {
+                                d1 = ""
+                            }
+                            if (d2 == "01/01/0001 00:00:00") {
+                                d2 = ""
+                            }
+                            if (desc == null) {
+                                desc = ""
+                            }
+
+                            x += '<tr>' +
+
+                                '<td>' + data["list"][i]["etat"] + '</td>' +
+                                '<td>' + d1 + '</td>' +
+                                '<td>' + d2 + '</td>' +
+                                '<td>' + data["list"][i]["tranche"] + '</td>' +
+                                '<td>' + desc + '</td>' +
+
+                                '</tr>';
+
+                        }
+
+                        // console.log(x)
+                        row.child(format(x)).show();
+
+                        tr.addClass('shown');
+
+                    }
+                });
+
+
+
+            }
+        });
+
+
+
+
         $("#numLot").change(function () {
 
-            DemoDatatable();
+            Table = DemoDatatable();
 
         })
 
         $("#traite").change(function () {
 
-            DemoDatatable();
+            Table = DemoDatatable();
 
         })
 
         $("#agent").change(function () {
 
-            DemoDatatable();
+            Table = DemoDatatable();
 
         })
 
@@ -95,7 +194,7 @@
 
 
     function DemoDatatable() {
-        $("#demodata").DataTable({
+        var table = $("#demodata").DataTable({
             "processing": true,
             "serverSide": true,
             "filter": true,
@@ -109,7 +208,9 @@
                 "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
             },
             "columns": [
-                { "data": "Username", "name": "Username", "autoWidth": true }
+                { "data": "Etat", "name": "Etat", "autoWidth": true }
+                , { "data": "DateAff", "name": "DateAff", "autoWidth": true }
+                , { "data": "Username", "name": "Username", "autoWidth": true }
                 , { "data": "LotId", "name": "LotId", "autoWidth": true }
                 , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , { "data": "Compte", "Name": "Compte", "autoWidth": true }
@@ -122,8 +223,14 @@
                 , { "data": "Adresse", "name": "Adresse", "autoWidth": true }
                 , { "data": "Type", "name": "Type", "autoWidth": true }
                 , { "data": "Numero", "name": "Numero", "autoWidth": true }
+                , { "data": "AffectationId", "name": "AffectationId", "autoWidth": true }
+
+
             ]
         });
+        table.columns([13]).visible(false)
+
+        return table;
     }
 
 </script>

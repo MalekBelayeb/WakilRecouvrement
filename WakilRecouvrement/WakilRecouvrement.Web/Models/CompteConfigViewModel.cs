@@ -12,7 +12,7 @@ namespace WakilRecouvrement.Web.Models
 
         [Required(ErrorMessage = "Champ obligatoire")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } 
 
         [Required(ErrorMessage = "Champ obligatoire")]
         [DataType(DataType.Password)]

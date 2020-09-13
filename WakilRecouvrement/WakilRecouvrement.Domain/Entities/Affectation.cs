@@ -24,6 +24,9 @@ namespace WakilRecouvrement.Domain.Entities
         public int EmployeId { get; set; }
         public virtual Employe Employe {get;set;}
 
+        public virtual ICollection<Formulaire> Formulaires { get; set; }    
+
+
 
     }
 }

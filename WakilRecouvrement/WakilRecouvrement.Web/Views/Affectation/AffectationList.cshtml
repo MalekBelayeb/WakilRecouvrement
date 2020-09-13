@@ -32,7 +32,12 @@
 
     </div>
 
+    <div class="col-xs-3 col-md-5">
 
+
+        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+
+    </div>
 </div>
 
 <br />
@@ -54,6 +59,7 @@
             <th>Adresse</th>
             <th>Type</th>
             <th>Numero</th>
+            <th>AffId</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -63,27 +69,32 @@
 
 <script>
 
-    DemoDatatable();
-
-
-
 
     $(document).ready(function () {
         $.noConflict();
-        var table = $('#demodata').DataTable();
-
-        $('#demodata tbody').on('click', 'td', function () {
-            var data = table.row(this).data();
-            redirectToRoute(data["LotId"])
-        });
-
+        var Table = DemoDatatable();
 
 
         $("#numLot").change(function () {
 
-            DemoDatatable();
+              Table = DemoDatatable();
 
         })
+
+        $("#traite").change(function () {
+       
+            Table = DemoDatatable();
+           
+        })
+
+        
+        $('#demodata tbody').on('click', 'td', function () {
+
+             redirectToRoute(Table.row(this).data()["AffectationId"])
+
+        });
+
+
 
 
     });
@@ -99,14 +110,13 @@
 
                  window.location.replace(data.redirectUrl);
 
-
              }
          });
     }
     function DemoDatatable() {
 
 
-        $("#demodata").DataTable({
+        var table =  $("#demodata").DataTable({
             "processing": true,
             "serverSide": true,
             "filter": true,
@@ -120,7 +130,7 @@
                 "data": { numLot: $("#numLot").val(), traite: $("#traite").val() }
             },
             "columns": [
-                { "data": "DateAffectation", "name": "DateAffectation", "autoWidth": true }
+                { "data": "V", "name": "V", "autoWidth": true}
                 , { "data": "LotId", "name": "LotId", "autoWidth": true }
                 , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , { "data": "Compte", "Name": "Compte", "autoWidth": true }
@@ -133,8 +143,13 @@
                 , { "data": "Adresse", "name": "Adresse", "autoWidth": true }
                 , { "data": "Type", "name": "Type", "autoWidth": true }
                 , { "data": "Numero", "name": "Numero", "autoWidth": true }
+                , { "data": "AffectationId", "name": "AffectationId", "autoWidth": true }
             ]
         });
+
+        table.columns([13]).visible(false)
+
+        return table;
     }
 
 </script>

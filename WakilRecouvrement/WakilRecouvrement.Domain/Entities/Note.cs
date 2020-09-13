@@ -21,6 +21,8 @@ namespace WakilRecouvrement.Domain.Entities
         RDV_REPORTE,
         [Display(Name = "Soldé")]
         SOLDE,
+        [Display(Name = "Soldé partiellement")]
+        SOLDE_TRANCHE,
         [Display(Name = "Refus De Paiement")]
         REFUS_PAIEMENT,
         [Display(Name = "A Verifié")]

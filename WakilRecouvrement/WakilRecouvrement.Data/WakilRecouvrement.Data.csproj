@@ -71,6 +71,10 @@
     <Compile Include="Migrations\202009101928355_mig88.designer.cs">
       <DependentUpon>202009101928355_mig88.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009131445362_mp.cs" />
+    <Compile Include="Migrations\202009131445362_mp.designer.cs">
+      <DependentUpon>202009131445362_mp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -95,6 +99,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009101928355_mig88.resx">
       <DependentUpon>202009101928355_mig88.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009131445362_mp.resx">
+      <DependentUpon>202009131445362_mp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

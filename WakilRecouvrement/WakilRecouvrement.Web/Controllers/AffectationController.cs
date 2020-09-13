@@ -137,11 +137,29 @@ namespace WakilRecouvrement.Web.Controllers
         {
             if(Session["username"]==null || Session["username"].ToString().Length<1)
                 return RedirectToAction("Login","Authentification");
-            Debug.WriteLine(Session["username"]);
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
-       
+            ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
+
+
             return View();
+        }
+
+        public IEnumerable<SelectListItem> TraiteListForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Touts sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+
+            foreach (var n in Enum.GetValues(typeof(Note)))
+            {
+
+                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
+
+            }
+
+
+            return listItems;
         }
 
 
@@ -162,7 +180,7 @@ namespace WakilRecouvrement.Web.Controllers
 
            var JoinedList = (from a in listAffectation
                           join l in Lots on a.LotId equals l.LotId
-                          where !(from f in FormulaireService.GetAll() select f.Affectation.AffectationId).Contains(a.AffectationId)
+                          
                           select new ClientAffecteViewModel
                           {
                               Affectation = a,
@@ -190,21 +208,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
-        public IEnumerable<SelectListItem> TraiteListForDropDown()
-        {
-            List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
 
-            foreach (var n in Enum.GetValues(typeof(Note)))
-            {
-
-                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
-
-            }
-
-
-            return listItems;
-        }
 
         [HttpPost]
         public ActionResult LoadData(string numLot, string traite)
@@ -216,6 +220,7 @@ namespace WakilRecouvrement.Web.Controllers
 
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
 
 
             if (numLot == "0")
@@ -227,11 +232,30 @@ namespace WakilRecouvrement.Web.Controllers
                 listLot = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
             }
 
+
             listAffectation = AffectationService.GetAll().ToList().Where(a => a.Employe.Username.Equals(Session["username"])).ToList();
+
+
+            if (traite == "ALL")
+            {
+
+            }
+            else if (traite == "SAUF")
+            {
+
+                listAffectation = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient != (Note)Enum.Parse(typeof(Note), "SOLDE") && a.Formulaires.Last().EtatClient != (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList();
+
+            }
+            else
+            {
+                listAffectation = AffectationService.GetAll().ToList().Where(a => a.Employe.Username.Equals(Session["username"]) ).ToList();
+
+                listAffectation = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+            }
+
 
             JoinedList = (from a in listAffectation
                           join l in listLot on a.LotId equals l.LotId
-                          where !(from f in FormulaireService.GetAll() select f.Affectation.AffectationId).Contains(a.AffectationId)
                           select new ClientAffecteViewModel
                           {
                               Affectation = a,
@@ -293,8 +317,10 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Lot.Adresse,
                        j.Lot.Type,
                        j.Lot.Numero,
-                       j.Affectation.DateAffectation
-                   }
+                       j.Affectation.AffectationId,
+
+                       V = j.Affectation.DateAffectation.ToString(),
+                    }
                    );
                 result = this.Json(new
                 {
@@ -313,11 +339,6 @@ namespace WakilRecouvrement.Web.Controllers
             return result;
 
         }
-
-
-
-
-
 
 
         private List<ClientAffecteViewModel> SortTableData(string order, string orderDir, List<ClientAffecteViewModel> data)
