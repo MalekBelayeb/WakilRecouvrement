@@ -18,3 +18,4 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.mg9.resources
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.mig88.resources
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.mp.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.mp1.resources

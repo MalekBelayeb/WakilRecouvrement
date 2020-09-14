@@ -30,7 +30,11 @@ namespace WakilRecouvrement.Domain.Entities
 
         [DataType(DataType.DateTime)]
         public DateTime DateRDVReporte { get; set; }
-              
+
+        [DataType(DataType.DateTime)]
+        public DateTime TraiteLe { get; set; }
+
+
         [DataType(DataType.Currency)]
         public double TrancheSolde { get; set; }
 

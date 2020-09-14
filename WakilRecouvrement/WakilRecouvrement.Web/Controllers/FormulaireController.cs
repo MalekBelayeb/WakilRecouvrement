@@ -365,21 +365,29 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 case Note.INJOIGNABLE:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.INJOIGNABLE;
                     
                     break;
                 case Note.NRP:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.NRP;
 
                     break;
                 case Note.RACCROCHE:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.RACCROCHE;
 
                     break;
                 case Note.RDV:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.RDV;
                     Formulaire.DateRDV = DateTime.Parse(RDVDateTime);
 
@@ -387,45 +395,60 @@ namespace WakilRecouvrement.Web.Controllers
                 case Note.RDV_REPORTE:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.EtatClient = Note.RDV_REPORTE;
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.DateRDVReporte = DateTime.Parse(RDVReporteDateTime);
 
 
                     break; 
                 case Note.REFUS_PAIEMENT:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.REFUS_PAIEMENT;
 
                     break;
                 case Note.SOLDE:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.SOLDE;
 
                     break;
                 case Note.FAUX_NUM:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.FAUX_NUM;
 
                     break;
                 case Note.A_VERIFIE:
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.A_VERIFIE;
 
                     break;
                 case Note.AUTRE:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.EtatClient = Note.AUTRE;
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.DescriptionAutre = DescriptionAutre;
 
                     break;                
                 case Note.RAPPEL:
 
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
+
                     Formulaire.EtatClient = Note.RAPPEL;
 
                     break;
                 case Note.SOLDE_TRANCHE:
 
                     Formulaire.AffectationId = int.Parse(id);
+                    Formulaire.TraiteLe = DateTime.Now;
                     Formulaire.EtatClient = Note.SOLDE_TRANCHE;
                     Formulaire.TrancheSolde = double.Parse(soldetranche.Replace('.', ','));
 
@@ -444,12 +467,13 @@ namespace WakilRecouvrement.Web.Controllers
             Affectation aff = AffectationService.GetById(id);
             var list = aff.Formulaires.Select(f => new
             {
-                etat=f.EtatClient.ToString(),
-                d1=f.DateRDV.ToString(),
-                d2=f.DateRDVReporte.ToString(),
-                tranche=f.TrancheSolde.ToString(),
-                desc=f.DescriptionAutre
-            });
+                etat = f.EtatClient.ToString(),
+                d1 = f.DateRDV.ToString(),
+                d2 = f.DateRDVReporte.ToString(),
+                tranche = f.TrancheSolde.ToString(),
+                desc = f.DescriptionAutre,
+                traitele = f.TraiteLe.ToString()
+            }); 
 
             return Json(new { list=list });
         }

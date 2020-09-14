@@ -100,7 +100,7 @@
         var Table = DemoDatatable();
 
         function format(d) {
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Tranche solde </th><th>Description autre </th></tr></thead><tbody>  ' +
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Tranche solde </th><th>Description autre </th><th>Traite le </th></tr></thead><tbody>  ' +
 
                 d
 
@@ -132,14 +132,23 @@
                             var desc = data["list"][i]["desc"]
                             var d1 = data["list"][i]["d1"]
                             var d2 = data["list"][i]["d2"]
+                            var tranche = data["list"][i]["tranche"]
+                            var traitele = data["list"][i]["traitele"]
+
                             if (d1 == "01/01/0001 00:00:00") {
                                 d1 = ""
                             }
                             if (d2 == "01/01/0001 00:00:00") {
                                 d2 = ""
                             }
+                            if (traitele == "01/01/0001 00:00:00") {
+                                traitele = ""
+                            }
                             if (desc == null) {
                                 desc = ""
+                            }
+                            if (tranche == 0) {
+                                tranche =""
                             }
 
                             x += '<tr>' +
@@ -147,8 +156,9 @@
                                 '<td>' + data["list"][i]["etat"] + '</td>' +
                                 '<td>' + d1 + '</td>' +
                                 '<td>' + d2 + '</td>' +
-                                '<td>' + data["list"][i]["tranche"] + '</td>' +
+                                '<td>' + tranche + '</td>' +
                                 '<td>' + desc + '</td>' +
+                                '<td>' + traitele + '</td>' +
 
                                 '</tr>';
 
