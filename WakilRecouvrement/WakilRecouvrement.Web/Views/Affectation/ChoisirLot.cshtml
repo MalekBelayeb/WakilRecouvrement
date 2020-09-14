@@ -22,7 +22,8 @@
             </td>
 
             <td>
-                @Html.ActionLink("Affecter", "AffecterAgent", new { numLot = item.NumLot })
+                @Html.ActionLink("Affecter", "AffecterAgent", new { numLot = item.NumLot }) |
+                @Html.ActionLink("Modifier", "ModifierAffectation", new { numLot = item.NumLot })
             </td>
         </tr>
     }

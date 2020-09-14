@@ -553,6 +553,7 @@
     <Content Include="Views\Formulaire\SuiviClient.cshtml" />
     <Content Include="Views\Affectation\AffectationList.cshtml" />
     <Content Include="Views\Formulaire\CreerFormulaire.cshtml" />
+    <Content Include="Views\Affectation\ModifierAffectation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

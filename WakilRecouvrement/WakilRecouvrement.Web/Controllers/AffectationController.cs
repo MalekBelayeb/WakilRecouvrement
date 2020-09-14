@@ -42,7 +42,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult AffecterAgent(int numLot)
         {
-            
+
             List<Lot> listClients = LotService.GetClientsByLot(numLot + "").ToList();
 
             var listAffectations = AffectationService.GetAffectationByLot(numLot+"");
@@ -69,6 +69,7 @@ namespace WakilRecouvrement.Web.Controllers
             ViewData["totalAffectationParLots"] = totalAffectationParLot;
             ViewData["totalClientsRestantParLots"] = nbClientsNonAffecteParLots;
             ViewData["pourcentageAffectationParLot"] = (int)pourcentageAffectationParLot;
+         
             return View();
         }
     
@@ -218,10 +219,8 @@ namespace WakilRecouvrement.Web.Controllers
             List<Formulaire> listFormulaire = new List<Formulaire>();
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
-
 
             if (numLot == "0")
             {
@@ -416,6 +415,28 @@ namespace WakilRecouvrement.Web.Controllers
                 Console.Write(ex);
             }
             return lst;
+        }
+
+
+        public ActionResult ModifierAffectation(int numLot)
+        {
+            var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
+            ViewBag.AgentList = new SelectList(agents, "EmployeId", "Username");
+            ViewData["numLot"] = numLot;
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GetInfoAgent(string agentDe,string numLot)
+        {
+
+            int nbTotalAffectation = AffectationService.GetAll().Where(a=>a.Lot.NumLot.Equals(numLot) && a.EmployeId== int.Parse(agentDe)).Count();
+            int totalAff = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot)).Count();
+            float pourcentageAff = ((float) totalAff / (float) nbTotalAffectation) * 100;
+            int pourcentageAgentDe = (int)pourcentageAff;
+
+            return Json(new { nbTotalAffectation = nbTotalAffectation, totalAff= totalAff, pourcentageAgentDe= pourcentageAgentDe });
         }
 
     }

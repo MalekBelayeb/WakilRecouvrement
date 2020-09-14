@@ -45,21 +45,19 @@
 <table class="table table-bordered">
 <thead>
     <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
+        <th scope="col">Total</th>
+        <th scope="col">Soldé</th>
+        <th scope="col">Tranche</th>
+        <th scope="col">Faux Num</th>
     </tr>
 </thead>
 <tbody>
-
     <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>mdo</td>
+        <td><strong id="nbTotal"></strong> </td>
+        <td><strong class="text-success" id="nbSolde"></strong> </td>
+        <td > <strong id="nbTrancheSoldeTotal" class="text-success"></strong> </td>
+        <td> <strong  id="nbFNTotal" class="text-danger"></strong> </td>
     </tr>
-
 </tbody>
 </table>
 <table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
@@ -206,6 +204,7 @@
                 "type": "POST",
                 "datatype": "json",
                 "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
+                
             },
             "columns": [
                 { "data": "Etat", "name": "Etat", "autoWidth": true }
@@ -230,6 +229,14 @@
         });
         table.columns([13]).visible(false)
 
+        table.on('xhr.dt',
+            function (e, settings, data, xhr) {
+                console.log(data["info"])
+                document.getElementById("nbSolde").innerHTML = data["info"]["nbSoldeTotal"]
+                document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
+                document.getElementById("nbTrancheSoldeTotal").innerHTML = data["info"]["nbTrancheSoldeTotal"]
+                document.getElementById("nbFNTotal").innerHTML = data["info"]["nbFNTotal"]
+            });
         return table;
     }
 

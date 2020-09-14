@@ -89,7 +89,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Touts clients traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {
@@ -126,11 +126,10 @@ namespace WakilRecouvrement.Web.Controllers
             List<Formulaire> listFormulaire =new List<Formulaire>();
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-            
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
-
+            
             if (numLot == "0")
             {
                 listLot = LotService.GetAll().ToList();
@@ -144,7 +143,7 @@ namespace WakilRecouvrement.Web.Controllers
             {
                
                 listAffectation = AffectationService.GetAll().ToList();
-
+            
             }
             else
             {
@@ -174,20 +173,27 @@ namespace WakilRecouvrement.Web.Controllers
 
           JoinedList = (from a in listAffectation
                  join l in listLot on a.LotId equals l.LotId
-                select new ClientAffecteViewModel
+                 select new ClientAffecteViewModel
                  {
                  Affectation = a,
                  Lot = l,
                  }).ToList();
 
+            int nbTotal = JoinedList.Count();
 
-            ViewData["nbTotal"] = JoinedList.Count(); 
-            ViewData["nbSoldeTotal"] = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE")).ToList(); ; 
-            ViewData["nbTrancheSoldeTotal"] = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE")).ToList(); ; 
-            ViewData["nbFNTotal"] = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList(); ; 
+            int nbSoldeTotal = 0;
+            int nbTrancheSoldeTotal = 0;
+            int nbFNTotal = 0;
 
-
-           JsonResult result = new JsonResult();
+          /*  if (listAffectation.Select(a=>a.Formulaires).Count()>0)
+            {
+                 nbSoldeTotal = listAffectation.Select(a => a.Formulaires).Where(a => a.LastOrDefault().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE")).ToList().Count();
+                 nbTrancheSoldeTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE")).ToList().Count();
+                 nbFNTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList().Count();
+            }
+            */
+            
+            JsonResult result = new JsonResult();
 
             try
             {
@@ -226,6 +232,8 @@ namespace WakilRecouvrement.Web.Controllers
                 int recFilter = JoinedList.Count();
 
                 JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
+              
+                
                 var modifiedData = JoinedList.Select(j =>
                    new
                    {
@@ -244,15 +252,22 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Affectation.Employe.Username,
                        j.Affectation.AffectationId,
                        DateAff = j.Affectation.DateAffectation.ToString(),
-                       Etat = GetEtat(j.Affectation.Formulaires).ToString()
+                        
+                       Etat = GetEtat(j.Affectation).ToString()
+                   
                    }
-                   ); 
+                   );
+
+                var info = new { nbTotal = nbTotal, nbSoldeTotal = nbSoldeTotal, nbTrancheSoldeTotal = nbTrancheSoldeTotal, nbFNTotal = nbFNTotal };
+
                 result = this.Json(new
                 {
+
                     draw = Convert.ToInt32(draw),
                     recordsTotal = totalRecords,
                     recordsFiltered = recFilter,
-                    data = modifiedData
+                    data = modifiedData,
+                    info = info
                 }, JsonRequestBehavior.AllowGet);
 
             }
@@ -343,7 +358,6 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult CreerFormulaireNote(string id,string DescriptionAutre,string EtatClient,string RDVDateTime, string RDVReporteDateTime,string soldetranche)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
-            //Debug.WriteLine(id);
 
             Formulaire Formulaire = new Formulaire();
 
@@ -424,8 +438,6 @@ namespace WakilRecouvrement.Web.Controllers
             return RedirectToAction("AffectationList", "Affectation");
         }
 
-        
-
         [HttpPost]
         public ActionResult GetFormulaires(int id)
         {
@@ -442,16 +454,21 @@ namespace WakilRecouvrement.Web.Controllers
             return Json(new { list=list });
         }
 
-
-        public string GetEtat(ICollection<Formulaire> Formulaires)
+        public string GetEtat(Affectation affectation)
         {
-            if(Formulaires.Count()==0)
+            if(affectation.Formulaires.Count()==0)
             {
                 return "";
             }
             else
             {
-                return Formulaires.LastOrDefault().IfNotNull(i => i.EtatClient).ToString();
+                if(affectation.Formulaires == null)
+                {
+
+                   // Debug.WriteLine("qqqqqqq");
+
+                }
+                return affectation.Formulaires.LastOrDefault().IfNotNull(i => i.EtatClient).ToString();
             }
 
         }
