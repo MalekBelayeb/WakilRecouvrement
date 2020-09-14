@@ -162,7 +162,19 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+        public IEnumerable<SelectListItem> TraiteListModifierAffForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "NON_TRAITES", Value = "NON_TRAITES" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "RDV (d'aujourd'hui)", Value = "RDV" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "RDV_REPORTE (d'aujourd'hui)", Value = "RDV_REPORTE" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "RAPPEL", Value = "RAPPEL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "RACCROCHE", Value = "RACCROCHE" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "NRP", Value = "NRP" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "INJOIGNABLE", Value = "INJOIGNABLE" });
 
+            return listItems;
+        }
 
         public IEnumerable<SelectListItem> NumLotListForDropDown()
         {
@@ -423,21 +435,109 @@ namespace WakilRecouvrement.Web.Controllers
             var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
             ViewBag.AgentList = new SelectList(agents, "EmployeId", "Username");
             ViewData["numLot"] = numLot;
+            ViewBag.TraiteList = new SelectList(TraiteListModifierAffForDropDown(), "Value", "Text");
 
             return View();
         }
 
         [HttpPost]
-        public ActionResult GetInfoAgent(string agentDe,string numLot)
+        public ActionResult GetInfoAgent(string agentDe,string numLot,string traite)
         {
+            int nbTotalAffectation = 0;
+            int nbTotLots = 0;
+            float pourcentageAff = 0;
+            int pourcentageAgentDe = 0;
 
-            int nbTotalAffectation = AffectationService.GetAll().Where(a=>a.Lot.NumLot.Equals(numLot) && a.EmployeId== int.Parse(agentDe)).Count();
-            int totalAff = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot)).Count();
-            float pourcentageAff = ((float) totalAff / (float) nbTotalAffectation) * 100;
-            int pourcentageAgentDe = (int)pourcentageAff;
 
-            return Json(new { nbTotalAffectation = nbTotalAffectation, totalAff= totalAff, pourcentageAgentDe= pourcentageAgentDe });
+
+            if(traite.Equals("NON_TRAITES"))
+            {
+                nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Count() == 0).Count();
+                nbTotLots = LotService.GetAll().Where(l => l.NumLot.Equals(numLot)).Count();
+                pourcentageAff = ((float)nbTotalAffectation / (float)nbTotLots) * 100;
+                pourcentageAgentDe = (int)pourcentageAff;
+
+                return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
+
+            }
+            else if(traite.Equals("RDV"))
+            {
+
+                nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")&& a.Formulaires.Last().DateRDV.Date == DateTime.Today.Date).ToList().Count();
+                nbTotLots = LotService.GetAll().Where(l => l.NumLot.Equals(numLot)).Count();
+                pourcentageAff = ((float)nbTotalAffectation / (float)nbTotLots) * 100;
+                pourcentageAgentDe = (int)pourcentageAff;
+
+                return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
+
+            }
+            else if(traite.Equals("RDV_REPORTE"))
+            {
+                nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "RDV_REPORTE")&& a.Formulaires.Last().DateRDVReporte.Date == DateTime.Today.Date).ToList().Count();
+                nbTotLots = LotService.GetAll().Where(l => l.NumLot.Equals(numLot)).Count();
+                pourcentageAff = ((float)nbTotalAffectation / (float)nbTotLots) * 100;
+                pourcentageAgentDe = (int)pourcentageAff;
+
+                return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
+
+            }
+            else
+            {
+                nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), traite)).Count();
+                nbTotLots = LotService.GetAll().Where(l => l.NumLot.Equals(numLot)).Count();
+                pourcentageAff = ((float)nbTotalAffectation / (float)nbTotLots) * 100;
+                pourcentageAgentDe = (int)pourcentageAff;
+
+                return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
+
+            }
+
+
         }
 
-    }
+        [HttpPost]
+        public ActionResult Reaffecter(string agentA,string agentDe, string numLot, string traite,int num)
+        {
+
+            List<Affectation> affectations = new List<Affectation>();
+            if (traite.Equals("NON_TRAITES"))
+            {
+
+                affectations = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).ToList();
+                                   
+            }
+            else if(traite.Equals("RDV"))
+            {
+
+                affectations = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).Where(a=> a.Formulaires.Last().DateRDV.Date == DateTime.Today.Date).ToList();
+
+            }
+            else if(traite.Equals("RDV_REPORTE"))
+            {
+               
+                affectations = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "RDV_REPORTE")).Where(a => a.Formulaires.Last().DateRDVReporte.Date == DateTime.Today.Date).ToList();
+
+            }
+            else
+            {
+                affectations = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+            }
+
+
+            for (int i = 0; i < num; i++)
+            {
+                Affectation aff = affectations[i];
+                aff.EmployeId = int.Parse(agentA);
+
+                AffectationService.Update(aff);
+            }
+            AffectationService.Commit();
+
+            return Json(new { });
+        }
+
+
 }
+
+    }
+

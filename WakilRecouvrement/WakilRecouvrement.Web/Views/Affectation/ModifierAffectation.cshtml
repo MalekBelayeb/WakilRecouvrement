@@ -29,7 +29,7 @@
                         Affecté a:
 
                     </div>
-                    <div class="col-xs-3 col-md-4">
+                    <div class="col-xs-3 col-md-3">
 
                         @Html.DropDownList("agentA", ViewBag.AgentList as SelectList, new { @class = "form-control" })
 
@@ -39,9 +39,14 @@
                         de:
 
                     </div>
-                    <div class="col-xs-3 col-md-4">
+                    <div class="col-xs-3 col-md-3">
 
                         @Html.DropDownList("agentDe", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+                    </div>
+                    <div class="col-xs-3 col-md-2">
+
+                        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
 
                     </div>
                     <div class="col-xs-3">
@@ -82,7 +87,9 @@
         <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    Affectations restantes pour  dans le lot @ViewData["numLot"]
+                   
+                <span id="affName"></span>
+
                 </button>
             </h5>
         </div>
@@ -91,9 +98,9 @@
             <div class="card-body">
 
                 <div class="container">
-                    <div id="testest" style="background-color: #4CAF50;" class="skills"><span><strong id="totAffect">  </strong></span>  </div>
+                    <div id="testest" style="background-color: #4CAF50;" class="skills">  </div>
                 </div>
-
+                <span><strong id="totAffect">  </strong></span>
             </div>
         </div>
     </div>
@@ -117,15 +124,70 @@
     var agentDe = document.getElementById("agentDe");
 
 
+ 
+
     $(document).ready(function () {
 
         $.noConflict();
 
+        $("#btnConf").click(function () {
+
+            reaffecter()
+
+        })
+
+
+        GetInfoAgent()
         $("#agentDe").change(function () {
 
             GetInfoAgent()
 
         })
+
+        document.getElementById("affName").innerHTML = " Affectations disponible dans le lot @ViewData["numLot"]";
+
+
+        $("#traite").change(function () {
+
+            GetInfoAgent()
+
+        })
+
+
+        function reaffecter() {
+
+         $.ajax({
+         type: 'POST',
+         url: '@Url.Action("Reaffecter")',
+         dataType: 'json',
+         data: { agentDe: document.getElementById("agentDe").value, numLot:  @ViewData["numLot"], traite: document.getElementById("traite").value, agentA: document.getElementById("agentA").value, num: $("#myRange").val()  },
+             beforeSend: function () {
+
+                 $("#loading").addClass("fa fa-spinner fa-spin");
+                 $("#btnConf").attr("disabled", true);
+
+             },
+
+
+
+             success: function (data) {
+
+                 GetInfoAgent()
+                 document.getElementById("myRange").value = 0
+                 document.getElementById("infoSpan").innerHTML = 0;
+                 $("#loading").removeClass("fa fa-spinner fa-spin");
+                 $("#btnConf").attr("disabled", false);
+
+         },
+        error: function (ex) {
+
+
+        }
+            });
+
+
+
+        }
 
  function GetInfoAgent() {
 
@@ -133,13 +195,15 @@
          type: 'POST',
          url: '@Url.Action("GetInfoAgent")',
          dataType: 'json',
-         data: { agentDe: document.getElementById("agentDe").value, numLot :  @ViewData["numLot"] },
+         data: { agentDe: document.getElementById("agentDe").value, numLot:  @ViewData["numLot"], traite: document.getElementById("traite").value  },
          success: function (data) {
 
-             console.log(data)
+            document.getElementById("testest").style.width = data['pourcentageAgentDe'] +'%'
+            document.getElementById("totAffect").innerHTML = data['nbTotalAffectation'] + '/' + data['nbTotLots']
+            document.getElementById("myRange").max = data['nbTotalAffectation']
 
 
-                },
+         },
                 error: function (ex) {
 
 
