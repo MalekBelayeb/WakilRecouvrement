@@ -24,31 +24,25 @@
             <div class="col-md-10">
 
                 <div class="row">
-                    <div class="col-xs-4">
 
-                        Affecté a:
+                    <di v class="col-xs-3 col-md-3">
 
-                    </div>
-                    <div class="col-xs-3 col-md-3">
-
-                        @Html.DropDownList("agentA", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+                        @Html.DropDownList("agentA",ViewBag.AgentList as SelectList, new { @class = "form-control" })
 
                     </div>
-                    <div class="col-xs-4">
 
-                        de:
-
-                    </div>
                     <div class="col-xs-3 col-md-3">
 
                         @Html.DropDownList("agentDe", ViewBag.AgentList as SelectList, new { @class = "form-control" })
 
                     </div>
+
                     <div class="col-xs-3 col-md-2">
 
                         @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
 
                     </div>
+
                     <div class="col-xs-3">
 
                         <button id="btnConf" class="buttonload">
@@ -123,12 +117,12 @@
     var agentA = document.getElementById("agentA");
     var agentDe = document.getElementById("agentDe");
 
-
- 
-
     $(document).ready(function () {
 
         $.noConflict();
+
+
+     
 
         $("#btnConf").click(function () {
 
@@ -138,11 +132,44 @@
 
 
         GetInfoAgent()
+
+        var selected = "";
+        var change = "";
+
+
         $("#agentDe").change(function () {
 
             GetInfoAgent()
+            // selectedDe = document.getElementById("agentDe").innerText
+            // document.getElementById("agentA").remove(document.getElementById("agentDe").innerText)
+
 
         })
+        updateDropDowns()
+            function updateDropDowns() {
+
+                var $select = $("#agentDe");
+                $select.data("previous-val", $select.val());
+
+                $select.on("change", function () {
+
+                    var current_value = $(this).val();
+
+                    if (current_value == "") {
+                        //Do stuff when empty   
+                    } else if (current_value != $(this).data("previousVal") && current_value != "") {
+
+                        //Do stuff when not empty and current value != previous value
+                        console.log("changed");
+                        console.log("currVal " + current_value);  
+                        console.log("pev " + $(this).data("previousVal"));  
+                        
+                    }
+
+                });
+
+            }
+
 
         document.getElementById("affName").innerHTML = " Affectations disponible dans le lot @ViewData["numLot"]";
 

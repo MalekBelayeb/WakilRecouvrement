@@ -39,7 +39,7 @@ namespace WakilRecouvrement.Web.Controllers
             return View(Lots.DistinctBy(l => l.NumLot));
         }
 
-
+      
         public ActionResult AffecterAgent(int numLot)
         {
 

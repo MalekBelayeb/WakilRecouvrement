@@ -21,6 +21,7 @@ namespace WakilRecouvrement.Data
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Formulaire> Formulaires { get; set; }
         public DbSet<Affectation> Affectationss { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
