@@ -10,6 +10,8 @@ namespace WakilRecouvrement.Service
 {
     public interface IFormulaireService : IService<Formulaire>
     {
+        Formulaire GetOrderedFormulaireByAffectation(int AffectationId);
+        IEnumerable<Formulaire> GetOrderedFormulaireByAffectationList(int AffectationId);
 
     }
 }

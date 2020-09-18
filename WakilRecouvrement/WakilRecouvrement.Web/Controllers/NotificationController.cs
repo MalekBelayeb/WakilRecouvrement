@@ -45,6 +45,7 @@ namespace WakilRecouvrement.Web.Controllers
                                 NotificationId = (int)x["NotificationId"],
                                 ToSingle = (string)x["ToSingle"],
                                 Message = (string)x["Message"],
+                                AffectationId = (int)x["AffectationId"],
                             }).ToList();
 
                     return Json(new { listCus = listCus }, JsonRequestBehavior.AllowGet);

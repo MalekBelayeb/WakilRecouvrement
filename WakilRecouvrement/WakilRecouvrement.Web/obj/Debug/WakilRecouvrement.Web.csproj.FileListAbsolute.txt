@@ -200,3 +200,6 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csproj.CopyComplete
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.dll
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.pdb
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Microsoft.AspNet.SignalR.Core.resources.dll
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Microsoft.AspNet.SignalR.SystemWeb.resources.dll
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Microsoft.Owin.resources.dll

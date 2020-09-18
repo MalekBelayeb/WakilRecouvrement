@@ -99,6 +99,18 @@
     <Compile Include="Migrations\202009151309388_migoofffffffffffffffzzzzfffffffzzz.designer.cs">
       <DependentUpon>202009151309388_migoofffffffffffffffzzzzfffffffzzz.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009160808007_poii.cs" />
+    <Compile Include="Migrations\202009160808007_poii.designer.cs">
+      <DependentUpon>202009160808007_poii.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009161233303_poiiuuu.cs" />
+    <Compile Include="Migrations\202009161233303_poiiuuu.designer.cs">
+      <DependentUpon>202009161233303_poiiuuu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009171051003_mpeeed.cs" />
+    <Compile Include="Migrations\202009171051003_mpeeed.designer.cs">
+      <DependentUpon>202009171051003_mpeeed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -144,6 +156,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009151309388_migoofffffffffffffffzzzzfffffffzzz.resx">
       <DependentUpon>202009151309388_migoofffffffffffffffzzzzfffffffzzz.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009160808007_poii.resx">
+      <DependentUpon>202009160808007_poii.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009161233303_poiiuuu.resx">
+      <DependentUpon>202009161233303_poiiuuu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009171051003_mpeeed.resx">
+      <DependentUpon>202009171051003_mpeeed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

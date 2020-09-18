@@ -24,3 +24,6 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.CopyComplete
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.dll
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.pdb
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.poii.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.poiiuuu.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.mpeeed.resources

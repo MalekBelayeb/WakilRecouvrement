@@ -11,7 +11,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <title>Wakil Recouvrement</title>
 
-    @Scripts.Render("~/bundles/jquery")
 
     <!-- Font Awesome Icons -->
     @Styles.Render("~/Content/css")
@@ -35,6 +34,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <body class="@ViewBag.bodyClass">
     <div class="wrapper">
+
+
 
         @if (Session["username"] != null)
         {
@@ -92,21 +93,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <div id="notifTable" class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 
 
-                         
-
-
-
-
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
                         </div>
 
-                     
-
-
                     </li>
 
-                   
+
 
                     <!-- Notifications Dropdown Menu -->
                     <li class="nav-item dropdown">
@@ -217,6 +210,47 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     </ul>
                                 </li>
 
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link active">
+                                        <i class="fas fa-list-ul mr-2"></i>
+                                        <p>
+                                            Gestion des traitements
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview">
+
+                                        <li class="nav-item">
+
+                                            <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
+
+                                                <i class="fas fa-check mr-3"></i>
+
+                                                <p>Validation des traitements</p>
+
+                                            </a>
+
+                                        </li>
+
+
+                                        <li class="nav-item">
+
+                                            <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
+
+                                                <i class="fas fa-archive mr-3"></i>
+
+                                                <p>Historique des traitements</p>
+
+                                            </a>
+
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+
                             }
                         }
 
@@ -232,9 +266,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <li class="nav-item">
 
                                     <a href="@Url.Action("AffectationList","Affectation")" class="nav-link">
-                                        <i class="fas fa-magic mr-2" aria-hidden="true"></i>
+
+                                        <i class="fas fa-fax mr-2" aria-hidden="true"></i>
+
                                         <p>Traiter les affectations</p>
+
                                     </a>
+
                                 </li>
 
 
@@ -243,15 +281,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
 
                                 <a href="@Url.Action("SuiviClient","Formulaire")" class="nav-link">
+
                                     <i class="fas fa-address-card mr-2" aria-hidden="true"></i>
+
                                     <p>Suivi des affectations</p>
+
                                 </a>
+
                             </li>
 
                             if (Session["role"].Equals("admin"))
                             {
-
-
 
                                 <li class="nav-item">
 
@@ -259,7 +299,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <i class="fas fa-eye mr-2"></i>
                                         <p>Suivi des agents</p>
                                     </a>
+
                                 </li>
+
+
+
+
 
                                 <li class="nav-item">
 
@@ -267,6 +312,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <i class="fas fa-percent mr-2" aria-hidden="true"></i>
                                         <p>Statistiques</p>
                                     </a>
+
                                 </li>
 
 
@@ -362,11 +408,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- ./wrapper -->
     <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/adminlte/js")
+
     @RenderSection("scripts", required: false)
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/bootstrap-notify.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/styles/alert-bangtidy.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/styles/alert-blackgloss.min.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>*@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+
+    <script type="text/javascript" src="~/Scripts/notify.js"></script>
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="~/signalr/Hubs"></script>
@@ -406,8 +462,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             "<div class='media-body'>"+
                                     "<h3 class='dropdown-item-title'>" +
                                     model.Message
-                                            +"<span class='float-right text-sm text-muted'><i class='fas fa-star'></i></span>"+
-                                                "</h3>"+
+                                            +
+                                        "</h3>"+
                                                " <p class='text-sm'>I got your message bro</p>"+
                                                 "<p class='text-sm text-muted'><i class='far fa-clock mr-1'></i> 4 Hours Ago</p>"+
                                            " </div>"+
@@ -416,14 +472,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                             );
 
+                            toastr.options.closeButton = true;
+                            toastr.options.closeMethod = 'fadeOut';
+                            toastr.options.closeDuration = 300;
+                            toastr.options.closeEasing = 'swing';
+                            toastr.options.onclick = function () {
+                                alert(model.AffectationId)
+                                console.log(model)
+                                $.ajax({
+                                    url: '@Url.Action("OnNotificationClick", "Formulaire")',
+                                    type: 'POST',
+                                    datatype: 'json',
+                                    data: { id: model.AffectationId},
+                                    success: function (data) {
+
+                                    }
+                                })
+
+                            }
+
+                            toastr.info(model.Message)
+
+
                         });
 
-                        console.log(data)
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                        /* alert(xhr.status);
                         alert(thrownError);*/
-                    
+
                     }
                 })
             }

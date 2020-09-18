@@ -18,5 +18,16 @@ namespace WakilRecouvrement.Service
         {
 
         }
+
+
+        public Formulaire GetOrderedFormulaireByAffectation(int AffectationId)
+        {
+            return GetMany(f=>f.AffectationId == AffectationId).OrderByDescending(f=>f.TraiteLe).FirstOrDefault();
+        }
+
+        public IEnumerable<Formulaire> GetOrderedFormulaireByAffectationList(int AffectationId)
+        {
+            return GetMany(f => f.AffectationId == AffectationId).OrderByDescending(f => f.TraiteLe).ToList();
+        }
     }
 }

@@ -89,7 +89,68 @@
 
 </table>
 
+<br />
+<h2>Remplir Formulaire</h2>
 
+@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
+
+        <div class="form-group">
+            @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
+            </div>
+        </div>
+
+        <div class="form-group" id="autre">
+            @Html.Label("DescriptionAutre", "Description", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Editor("DescriptionAutre", new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+
+        <div id="datetimePickerRDV" class="form-group row">
+            <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
+            <div class="col-8">
+                <input class="form-control" name="RDVDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+            </div>
+        </div>
+
+        <div id="datetimePickerRDVReporte" class="form-group row">
+            <label for="example-datetime-local-input" class="col-2 col-form-label">RDV reporté pour le:</label>
+            <div class="col-8">
+                <input class="form-control" name="RDVReporteDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+            </div>
+        </div>
+
+        <div id="montant" class="form-group row">
+            <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
+            <div class="col-8">
+
+                <input name="soldetranche"  type="number"  step="0.001"  id="exampleInputAmount" class="form-control" >
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Confirmer" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<br />
 <h2>Historique d'activités</h2>
 <br />
 
@@ -107,7 +168,7 @@
             @Html.DisplayNameFor(model => model.DateRDVReporte)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TrancheSolde)
+            @Html.DisplayNameFor(model => model.MontantVerseDeclare)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DescriptionAutre)
@@ -119,117 +180,55 @@
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
+        <tr>
+            <td>
 
-        @Html.DisplayFor(modelItem => item.EtatClient)
+                @Html.DisplayFor(modelItem => item.EtatClient)
 
-    </td>
+            </td>
 
-    <td>
-
-
-        @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.DateRDV)
-        }
+            <td>
 
 
-    </td>
-    <td>
+                @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.DateRDV)
+                }
 
-        @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.DateRDVReporte)
-        }
-    </td>
-    <td>
 
-        @Html.DisplayFor(modelItem => item.TrancheSolde)
+            </td>
+            <td>
 
-    </td>
-    <td>
+                @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.DateRDVReporte)
+                }
+            </td>
+            <td>
 
-        @Html.DisplayFor(modelItem => item.DescriptionAutre)
+                @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
+                
+            </td>
+            <td>
 
-    </td>
+                @Html.DisplayFor(modelItem => item.DescriptionAutre)
 
-</tr>
+            </td>
+
+        </tr>
     }
 
 </table>
 
-<br />
-<h2>Remplir Formulaire</h2>
 
-@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-    <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
-
-    <div class="form-group">
-        @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
-        </div>
-    </div>
-
-    <div class="form-group" id="autre">
-        @Html.Label("DescriptionAutre", "Description", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.Editor("DescriptionAutre", new { htmlAttributes = new { @class = "form-control" } })
-        </div>
-    </div>
-
-
-    <div id="datetimePickerRDV" class="form-group row">
-        <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
-        <div class="col-8">
-            <input class="form-control" name="RDVDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-        </div>
-    </div>
-
-    <div id="datetimePickerRDVReporte" class="form-group row">
-        <label for="example-datetime-local-input" class="col-2 col-form-label">RDV reporté pour le:</label>
-        <div class="col-8">
-            <input class="form-control" name="RDVReporteDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-        </div>
-    </div>
-
-    <div id="trancheSolde" class="form-group row">
-        <label for="example-datetime-local-input" class="col-2 col-form-label">Tranche en TND:</label>
-        <div class="col-8">
-            
-            <input name="soldetranche" type="number" min="0.000" max="any" step="0.01" value="1.000" id="exampleInputAmount" class="form-control" placeholder="Tranche">
-
-        </div>
-    </div>
-
-
-
-
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Confirmer" class="btn btn-default" />
-        </div>
-    </div>
-</div>
-}
 
 
 
@@ -246,7 +245,7 @@
             $("#autre").hide();
             $("#datetimePickerRDVReporte").hide();
             $("#datetimePickerRDV").hide();
-            $("#trancheSolde").hide();
+            $("#montant").hide();
 
         }
         hideAll()
@@ -278,13 +277,26 @@
                 case "SOLDE":
                     hideAll();
 
+                    $("#montant").show();
+
+                    document.getElementById("textLabel").innerHTML = "Versement en TND:";
+                    document.getElementById("exampleInputAmount").max = "any";
+                    document.getElementById("exampleInputAmount").value = @ViewBag.soldeDeb+ "";
+                    document.getElementById("exampleInputAmount").min = @ViewBag.soldeDeb +"";
+
                     break;
                 case "REFUS_PAIEMENT":
                     hideAll();
 
                     break;
                 case "A_VERIFIE":
+
                     hideAll();
+                    $("#montant").show();
+                    document.getElementById("textLabel").innerHTML = "Montant declaré en TND:";
+                    document.getElementById("exampleInputAmount").max =  "any";
+                    document.getElementById("exampleInputAmount").value = "1.000";
+                    document.getElementById("exampleInputAmount").min =0 +"";
 
                     break;
                 case "RAPPEL":
@@ -297,7 +309,13 @@
                     break;
                 case "SOLDE_TRANCHE":
                     hideAll();
-                    $("#trancheSolde").show();
+
+                    $("#montant").show();
+                    document.getElementById("textLabel").innerHTML = "Tranche en TND:";
+
+                    document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";
+                    document.getElementById("exampleInputAmount").value = "1.000";
+                    document.getElementById("exampleInputAmount").min =0 +"";
 
                     break;
                 case "AUTRE":
