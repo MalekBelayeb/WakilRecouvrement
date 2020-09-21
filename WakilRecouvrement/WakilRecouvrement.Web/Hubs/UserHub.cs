@@ -18,5 +18,24 @@ namespace WakilRecouvrement.Web.Hubs
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
             context.Clients.All.displayNotifs();
         }
+
+        public static void ShowByAdminRole()
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
+            context.Clients.All.displayAdminNotifs();
+         }
+
+        public static void ShowByAgentRole()
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
+            context.Clients.All.displayAgentNotifs();
+        }
+
+        public static void ShowByUser()
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
+            context.Clients.All.displayUserNotifs();
+        }
+
     }
 }

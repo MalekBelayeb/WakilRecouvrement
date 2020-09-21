@@ -7,6 +7,15 @@
 <h2>Valider les Traitements</h2>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<script type="text/javascript" src="~/Scripts/notify.js"></script>
+
+<script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="~/signalr/Hubs"></script>
+
+
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
@@ -63,8 +72,6 @@
         </tr>
     </thead>
     <tbody>
-
-
     </tbody>
 </table>
 
@@ -77,6 +84,7 @@
         $.noConflict();
 
         var Table = DemoDatatable();
+
 
 
         $("#numLot").change(function () {
@@ -97,7 +105,7 @@
 
         })
 
-        function validerTraitement(id,valid) {
+        function validerTraitement(id, valid) {
             $.ajax({
                 type: 'POST',
                 url: '/Formulaire/VerifierEtat/',
@@ -112,11 +120,15 @@
 
         }
 
+
+
         $(document).on('click', 'tbody  .verifie', function () {
             var data_row = Table.row($(this).closest('tr')).data();
 
-            validerTraitement(data_row["FormulaireId"],true)
+            validerTraitement(data_row["FormulaireId"], true)
         });
+
+
 
         $(document).on('click', 'tbody  .reject', function () {
             var data_row = Table.row($(this).closest('tr')).data();
@@ -124,12 +136,52 @@
             validerTraitement(data_row["FormulaireId"], false)
         });
 
+        $(document).on('click', 'tbody  .contactbanque', function () {
+
+            var data_row = Table.row($(this).closest('tr')).data();
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/Formulaire/SendGmail/',
+                dataType: 'json',
+                data: { id: data_row["FormulaireId"]},
+                success: function (data) {
+
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/Formulaire/UpdateContactBanque/',
+                dataType: 'json',
+                data: { id: data_row["FormulaireId"] },
+                success: function (data) {
+
+                    Table = DemoDatatable();
+
+                }
+            });
+
+        });
+
+
+
+
+
+
+        if (@ViewBag.IDClient != "0") {
+
+            Table.search(@ViewBag.IDClient).draw();
+        }
+
+
     });
 
 
     function DemoDatatable() {
         var table = $("#demodata").DataTable({
-           
+
 
             "processing": true,
             "serverSide": true,
@@ -145,11 +197,17 @@
 
             },
             "columns": [
-                 
+
                   { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , {
                     "data": "FormulaireId", "name": "FormulaireId", "autoWidth": true, "render": function (data, type, row, meta) {
-                        return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='verifie dropdown-item' type='button'>Valider</button><button class='reject dropdown-item' type='button'>Rejeter</button></div></div>";
+                        if (row["Etat"] == "A_VERIFIE" && row["ContactBanque"] == false)
+                            return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='contactbanque dropdown-item' type='button'>Contacter la banque</button><button class='verifie dropdown-item' type='button' disabled>Valider</button><button class='reject dropdown-item' type='button' disabled>Rejeter</button></div></div>";
+                        if (row["Etat"] == "A_VERIFIE" && row["ContactBanque"] == true)
+                            return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='verifie dropdown-item' type='button' >Valider</button><button class='reject dropdown-item' type='button' >Rejeter</button><button class='reject dropdown-item' type='button' disabled>Contacter la banque</button></div></div>";
+                        else
+                            return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='verifie dropdown-item' type='button'>Valider</button><button class='reject dropdown-item' type='button'>Rejeter</button></div></div>";
+
                     }
                   }
                 , { "data": "Etat", "name": "Etat", "autoWidth": true }
@@ -160,9 +218,9 @@
                 , { "data": "Compte", "Name": "Compte", "autoWidth": true }
                 , { "data": "IDClient", "name": "IDClient", "autoWidth": true }
                 , { "data": "NomClient", "name": "NomClient", "autoWidth": true }
-                , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }  
-                
-            ] 
+                , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }
+
+            ]
         });
 
         table.on('xhr.dt',
@@ -171,7 +229,7 @@
                  document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
             });
 
-      
+
         return table;
     }
 

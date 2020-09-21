@@ -58,8 +58,10 @@
     <Compile Include="IEmployeService.cs" />
     <Compile Include="IFormulaireService.cs" />
     <Compile Include="ILotService.cs" />
+    <Compile Include="INotificationService.cs" />
     <Compile Include="IRoleService.cs" />
     <Compile Include="LotService.cs" />
+    <Compile Include="NotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleService.cs" />
   </ItemGroup>

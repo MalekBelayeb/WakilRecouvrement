@@ -73,10 +73,10 @@ namespace WakilRecouvrement.Web.Controllers
         }
     
         
-        public void updateView(int numLot)
+        public void updateViewForAgent(int numLot,string agent)
         {
 
-            
+
         }
 
         [HttpPost]
@@ -149,7 +149,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tout les traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {
@@ -233,45 +233,60 @@ namespace WakilRecouvrement.Web.Controllers
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
 
-            if (numLot == "0")
-            {
-                listLot = LotService.GetAll().ToList();
-            }
-            else
-            {
-                listLot = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
-            }
-
-
-            listAffectation = AffectationService.GetAll().ToList().Where(a => a.Employe.Username.Equals(Session["username"])).ToList();
-
-
             if (traite == "ALL")
             {
+                JoinedList = (from a in AffectationService.GetAll()
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                              select new ClientAffecteViewModel
+                              {
+                                  Formulaire = FormulaireService.GetOrderedFormulaireByAffectation(a.AffectationId),
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).ToList().OrderByDescending(o => o.Affectation.DateAffectation).DistinctBy(a => a.Affectation.AffectationId).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
 
             }
             else if (traite == "SAUF")
             {
 
-                listAffectation = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient != (Note)Enum.Parse(typeof(Note), "SOLDE") && a.Formulaires.Last().EtatClient != (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList();
+                JoinedList = (from f in FormulaireService.GetAll()
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              where f.EtatClient != (Note)Enum.Parse(typeof(Note), "SOLDE") && f.EtatClient != (Note)Enum.Parse(typeof(Note), "FAUX_NUM")
+
+                              select new ClientAffecteViewModel
+                              {
+
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
 
             }
             else
             {
-                listAffectation = AffectationService.GetAll().ToList().Where(a => a.Employe.Username.Equals(Session["username"]) ).ToList();
+                JoinedList = (from f in FormulaireService.GetAll()
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              orderby f.TraiteLe descending
+                              select new ClientAffecteViewModel
+                              {
 
-                listAffectation = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList(); ;
+
             }
 
 
-            JoinedList = (from a in listAffectation
-                          join l in listLot on a.LotId equals l.LotId
-                          select new ClientAffecteViewModel
-                          {
-                              Affectation = a,
-                              Lot = l,
-                          }).ToList();
-
+            if (numLot != "0")
+            {
+                JoinedList = JoinedList.ToList().Where(l => l.Lot.NumLot.Equals(numLot)).ToList();
+            }
            
 
             JsonResult result = new JsonResult();

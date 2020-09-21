@@ -111,6 +111,30 @@
     <Compile Include="Migrations\202009171051003_mpeeed.designer.cs">
       <DependentUpon>202009171051003_mpeeed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009190623319_mpoidsq.cs" />
+    <Compile Include="Migrations\202009190623319_mpoidsq.designer.cs">
+      <DependentUpon>202009190623319_mpoidsq.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009200052154_errrr.cs" />
+    <Compile Include="Migrations\202009200052154_errrr.designer.cs">
+      <DependentUpon>202009200052154_errrr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009201419241_poissff.cs" />
+    <Compile Include="Migrations\202009201419241_poissff.designer.cs">
+      <DependentUpon>202009201419241_poissff.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009201806544_iuytr.cs" />
+    <Compile Include="Migrations\202009201806544_iuytr.designer.cs">
+      <DependentUpon>202009201806544_iuytr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009201928425_iuytreea.cs" />
+    <Compile Include="Migrations\202009201928425_iuytreea.designer.cs">
+      <DependentUpon>202009201928425_iuytreea.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009210837210_diies.cs" />
+    <Compile Include="Migrations\202009210837210_diies.designer.cs">
+      <DependentUpon>202009210837210_diies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -165,6 +189,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009171051003_mpeeed.resx">
       <DependentUpon>202009171051003_mpeeed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009190623319_mpoidsq.resx">
+      <DependentUpon>202009190623319_mpoidsq.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009200052154_errrr.resx">
+      <DependentUpon>202009200052154_errrr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009201419241_poissff.resx">
+      <DependentUpon>202009201419241_poissff.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009201806544_iuytr.resx">
+      <DependentUpon>202009201806544_iuytr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009201928425_iuytreea.resx">
+      <DependentUpon>202009201928425_iuytreea.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009210837210_diies.resx">
+      <DependentUpon>202009210837210_diies.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

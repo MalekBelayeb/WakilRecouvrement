@@ -4,9 +4,11 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WakilRecouvrement.Web.Job;
 
 namespace WakilRecouvrement.Web
 {
@@ -15,9 +17,16 @@ namespace WakilRecouvrement.Web
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+
+
+
+            JobScheduler.StartAsync().GetAwaiter().GetResult();
+            ConfigurationManager.AppSettings["ExecuteTaskServiceCallSchedulingStatus"] = "OFF";
 
 
             SqlDependency.Start(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);

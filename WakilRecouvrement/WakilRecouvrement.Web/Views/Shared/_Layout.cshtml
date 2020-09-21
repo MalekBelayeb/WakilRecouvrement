@@ -29,13 +29,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
         ViewBag.bodyClass = "hold-transition sidebar-collapse";
     }
 
+    var role = Session["username"];
+    var username = Session["username"];
 }
 
 
 <body class="@ViewBag.bodyClass">
     <div class="wrapper">
-
-
 
         @if (Session["username"] != null)
         {
@@ -86,8 +86,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <li class="nav-item dropdown">
 
                         <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="far fa-bell"></i>
-                            <span class="badge badge-warning navbar-badge">15</span>
+                            <i class="fas fa-bell"></i>
+                            <span id="nbNotif" class="badge badge-warning navbar-badge">0</span>
                         </a>
 
                         <div id="notifTable" class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -99,37 +99,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     </li>
 
+                    <!--
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link" data-toggle="dropdown" href="#">
+                                                <i class="far fa-bell"></i>
+                                                <span class="badge badge-warning navbar-badge">15</span>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                                <span class="dropdown-header">15 Notifications</span>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-envelope mr-2"></i> 4 new messages
+                                                    <span class="float-right text-muted text-sm">3 mins</span>
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-users mr-2"></i> 8 friend requests
+                                                    <span class="float-right text-muted text-sm">12 hours</span>
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-file mr-2"></i> 3 new reports
+                                                    <span class="float-right text-muted text-sm">2 days</span>
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                                            </div>
+                                        </li>
 
-
-                    <!-- Notifications Dropdown Menu -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="far fa-bell"></i>
-                            <span class="badge badge-warning navbar-badge">15</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <span class="dropdown-header">15 Notifications</span>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                                <i class="fas fa-envelope mr-2"></i> 4 new messages
-                                <span class="float-right text-muted text-sm">3 mins</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                                <i class="fas fa-users mr-2"></i> 8 friend requests
-                                <span class="float-right text-muted text-sm">12 hours</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                                <i class="fas fa-file mr-2"></i> 3 new reports
-                                <span class="float-right text-muted text-sm">2 days</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                        </div>
-                    </li>
-
-
+                    -->
 
                     <li class="nav-item">
                         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
@@ -146,7 +144,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="index3.html" class="brand-link">
+            <a href='@Url.Action("Index", "Home")' class="brand-link">
                 <img src="~/adminlte/img/WakilLogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                      style="opacity: .8">
                 <span class="brand-text font-weight-light">AL Wakil Recouv. </span>
@@ -413,36 +411,72 @@ scratch. This page gets rid of all links and provides the needed markup only.
     @Scripts.Render("~/adminlte/js")
 
     @RenderSection("scripts", required: false)
+    
 
-    @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/bootstrap-notify.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/styles/alert-bangtidy.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/styles/alert-blackgloss.min.css">
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>*@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
 
     <script type="text/javascript" src="~/Scripts/notify.js"></script>
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="~/signalr/Hubs"></script>
-
     <script type="text/javascript">
 
         $(document).ready(function () {
 
-                var cus = $.connection.userHub
-                console.log($.connection);
-                cus.client.displayNotifs = function () {
+            var cus = $.connection.userHub
 
-                    getData();
-
-                }
-
-                $.connection.hub.start();
+         /*   cus.client.displayNotifs = function () {
                 getData();
+            }
+            */
 
+            cus.client.displayAdminNotifs = function () {
+                if (@Html.Raw(Json.Encode(@role))== "admin")
+                getNotifsByRole("admin");
+            }
+
+            cus.client.displayAgentNotifs = function () {
+                if (@Html.Raw(Json.Encode(@role)) == "agent")
+                getNotifsByRole("agent");
+            }
+
+
+            cus.client.displayUserNotifs = function () {
+                alert("sssss")
+                getNotifsByUser(@Html.Raw(Json.Encode(@username)));
+            }
+
+           $.connection.hub.start();
+
+            if(@Html.Raw(Json.Encode(@username))!=null)
+            getNotifsByUser(@Html.Raw(Json.Encode(@username)));
+
+            if (@Html.Raw(Json.Encode(@role))== "admin")
+                getNotifsByRole("admin");
+
+            if (@Html.Raw(Json.Encode(@role)) == "agent")
+                getNotifsByRole("agent");
+
+        })
+
+
+        function RedirectTo(elem) {
+
+            $.ajax({
+            url: '@Url.Action("OnNotificationClickIntermediate", "Formulaire")',
+                type: 'POST',
+                datatype: 'json',
+                        data: { id: elem.id},
+                success: function(data) {
+
+                    window.location.replace(data.redirectUrl);
+                }
             })
+
+        }
+
+
             function getData() {
                 var $tbl = $('#notifTable');
                 $.ajax({
@@ -450,24 +484,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     type: 'POST',
                     datatype: 'json',
                     success: function (data) {
+                        $tbl.empty();
 
-                          $tbl.empty();
                         $.each(data.listCus, function (i, model) {
-                            $tbl.append
+
+
+                                $tbl.append
                                 (
 
-                                    "<div class='dropdown-divider'></div>"+
-                                    "<a href='#' class='dropdown-item'>"+
-                                    "<div class='media'>"+
-                                            "<div class='media-body'>"+
+                                    "<div class='dropdown-divider'></div>" +
+                                    "<a  onclick='MyFunction(this)' id='" + model.FormulaireId + "' class='dropdown-item'>" +
+                                    "<div class='media'>" +
+                                            "<div class='media-body'>" +
                                     "<h3 class='dropdown-item-title'>" +
                                     model.Message
                                             +
-                                        "</h3>"+
-                                               " <p class='text-sm'>I got your message bro</p>"+
-                                                "<p class='text-sm text-muted'><i class='far fa-clock mr-1'></i> 4 Hours Ago</p>"+
-                                           " </div>"+
-                                       " </div>"+
+                                        "</h3>" +
+                                               " <p class='text-sm'>I got your message bro</p>" +
+                                                "<p class='text-sm text-muted'><i class='far fa-clock mr-1'></i> 4 Hours Ago</p>" +
+                                           " </div>" +
+                                       " </div>" +
                                     "</a>"
 
                             );
@@ -476,22 +512,185 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             toastr.options.closeMethod = 'fadeOut';
                             toastr.options.closeDuration = 300;
                             toastr.options.closeEasing = 'swing';
-                            toastr.options.onclick = function () {
-                                alert(model.AffectationId)
+                            toastr.options.onclick = function() {
                                 console.log(model)
-                                $.ajax({
-                                    url: '@Url.Action("OnNotificationClick", "Formulaire")',
+                                            $.ajax({
+                                url: '@Url.Action("OnNotificationClickIntermediate", "Formulaire")',
                                     type: 'POST',
                                     datatype: 'json',
-                                    data: { id: model.AffectationId},
-                                    success: function (data) {
+                                                data: { id: model.FormulaireId},
+                                    success: function(data) {
 
+                                        window.location.replace(data.redirectUrl);
                                     }
                                 })
-
                             }
 
-                            toastr.info(model.Message)
+                                toastr.success(model.Message)
+
+                        });
+
+                    },
+                    complete: function (data) {
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                       /* alert(xhr.status);
+                        alert(thrownError);*/
+
+                    }
+                })
+        }
+
+
+        function getNotifsByRole(role) {
+                var $tbl = $('#notifTable');
+                $.ajax({
+                    url: '@Url.Action("GetByRoleDestination", "Notification")',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: { role: role },
+                    success: function (data) {
+                        $tbl.empty();
+                        var nb = 0;
+                        $.each(data.listCus, function (i, model) {
+                            nb++;
+
+                            var title = ""
+                            var time = model.AddedIn
+                            var message = model.From + ": " + model.Message;
+
+                            if (model.Type == "SOLDE") {
+                                title = "Client soldé"
+                            } else if (model.Type == "SOLDE_TRANCHE") {
+                                title = "Tranche versé"
+                            } else if (model.Type = "A_VERIFIE") {
+                                title = "Client a verifié"
+                            }
+
+
+
+
+                            $tbl.append
+                                (
+
+                                    "<div class='dropdown-divider'></div>" +
+                                    "<a onclick='RedirectTo(this)' id='" + model.FormulaireId + "' href='' class='dropdown-item'>" +
+                                    "<div class='media'>" +
+                                            "<div class='media-body'>" +
+                                    "<h3 class='dropdown-item-title'><strong>" +
+
+                                           title
+                                            +
+                                    "</strong></h3>" +
+                                    " <p class='text-sm'>" + message + "</p>" +
+                                    "<p class='text-sm text-muted'><i class='far fa-clock mr-1'></i>" + time +"</p>" +
+                                           " </div>" +
+                                       " </div>" +
+                                    "</a>"
+
+                            );
+
+                            toastr.options.closeButton = true;
+                            toastr.options.closeMethod = 'fadeOut';
+                            toastr.options.closeDuration = 300;
+                            toastr.options.closeEasing = 'swing';
+                            toastr.options.onclick = function() {
+                            $.ajax({
+                                url: '@Url.Action("OnNotificationClickIntermediate", "Formulaire")',
+                                    type: 'POST',
+                                    datatype: 'json',
+                                data: { id: model.FormulaireId},
+                                    success: function(data) {
+
+                                        window.location.replace(data.redirectUrl);
+                                    }
+                                })
+                            }
+
+                            if (model.Status == "UNSEEN") {
+                                if (model.Type == "SOLDE" || model.Type == "SOLDE_TRANCHE") {
+
+                                    toastr.success(model.From+": "+model.Message)
+
+                                } else if (model.Type == "A_VERIFIE") {
+
+                                    toastr.info(model.From + ": " + model.Message)
+
+                                }
+
+                                MarkAsSeen(model.NotificationId);
+                            }
+
+
+                        });
+
+                        document.getElementById("nbNotif").innerHTML = nb;
+
+                    },
+
+
+                    error: function (xhr, ajaxOptions, thrownError) {
+                       /* alert(xhr.status);
+                        alert(thrownError);*/
+
+                    }
+                })
+            }
+
+        function getNotifsByUser(user) {
+                var $tbl = $('#notifTable');
+                $.ajax({
+                    url: '@Url.Action("GetBySingleDestination", "Notification")',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: { tosingle:user},
+                    success: function (data) {
+                        $tbl.empty();
+
+                        $.each(data.listCus, function (i, model) {
+
+
+                                $tbl.append
+                                (
+
+                                    "<div class='dropdown-divider'></div>" +
+                                    "<a href='#' class='dropdown-item'>" +
+                                    "<div class='media'>" +
+                                            "<div class='media-body'>" +
+                                    "<h3 class='dropdown-item-title'>" +
+
+                                            +
+                                        "</h3>" +
+                                    "<p class='text-sm text-muted'>" +
+
+                                    model.Message
+
+                                    +"</p > " +
+                                           " </div>" +
+                                       " </div>" +
+                                    "</a>"
+
+                            );
+
+                            toastr.options.closeButton = true;
+                            toastr.options.closeMethod = 'fadeOut';
+                            toastr.options.closeDuration = 300;
+                            toastr.options.closeEasing = 'swing';
+                            toastr.options.onclick = function() {
+
+                                $.ajax({
+                                url: '@Url.Action("OnNotificationClickIntermediate", "Formulaire")',
+                                    type: 'POST',
+                                    datatype: 'json',
+                                    data: { id: model.FormulaireId},
+                                    success: function(data) {
+
+                                        window.location.replace(data.redirectUrl);
+                                    }
+                                })
+                            }
+                                toastr.success(model.Message)
 
 
                         });
@@ -503,7 +702,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     }
                 })
-            }
+        }
+
+
+        function MarkAsSeen(id) {
+
+            $.ajax({
+                type: 'POST',
+                url: '/Notification/MarkAsSeen/',
+                dataType: 'json',
+                data: { id: id},
+                success: function (data) {
+
+
+                }
+            });
+
+        }
+
     </script>
 
 

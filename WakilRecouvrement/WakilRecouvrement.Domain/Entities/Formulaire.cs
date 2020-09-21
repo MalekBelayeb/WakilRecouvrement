@@ -13,7 +13,6 @@ namespace WakilRecouvrement.Domain.Entities
                 
         public int FormulaireId { get; set; }
         
-
         [Display(Name ="Etat Client")]
         [Required(ErrorMessage ="Vous devez selectionner une note")]
         public Note EtatClient { get; set; }
@@ -32,18 +31,29 @@ namespace WakilRecouvrement.Domain.Entities
         [DataType(DataType.DateTime)]
         public DateTime DateRDVReporte { get; set; }
 
+        [Display(Name = "Traite Le:")]
+
         [DataType(DataType.DateTime)]
         public DateTime TraiteLe { get; set; }
-       
+        [Display(Name = "Verifié Le:")]
+
         [DataType(DataType.DateTime)]
         public DateTime VerifieLe { get; set; }
 
         [Display(Name ="Montant declaré/versé en TND")]
         public double MontantVerseDeclare { get; set; }
+        [Display(Name = "Verification")]
 
         [DefaultValue(false)]
         public bool IsVerified { get; set; }
-        
+       
+        [DefaultValue(false)]
+        public bool ContacteBanque { get; set; }
+
+        [DefaultValue(false)]
+        public bool NotifieBanque { get; set; }
+
+
         public int AffectationId { get; set; }
         public Affectation Affectation { get; set; }
     

@@ -96,57 +96,64 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 
-        <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
+    <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
 
-        <div class="form-group">
-            @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
-            </div>
-        </div>
-
-        <div class="form-group" id="autre">
-            @Html.Label("DescriptionAutre", "Description", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.Editor("DescriptionAutre", new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-
-
-        <div id="datetimePickerRDV" class="form-group row">
-            <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
-            <div class="col-8">
-                <input class="form-control" name="RDVDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-            </div>
-        </div>
-
-        <div id="datetimePickerRDVReporte" class="form-group row">
-            <label for="example-datetime-local-input" class="col-2 col-form-label">RDV reporté pour le:</label>
-            <div class="col-8">
-                <input class="form-control" name="RDVReporteDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-            </div>
-        </div>
-
-        <div id="montant" class="form-group row">
-            <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
-            <div class="col-8">
-
-                <input name="soldetranche"  type="number"  step="0.001"  id="exampleInputAmount" class="form-control" >
-
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Confirmer" class="btn btn-default" />
-            </div>
+    <div class="form-group">
+        @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
         </div>
     </div>
+
+    <div class="form-group" id="autre">
+        @Html.Label("DescriptionAutre", "Description", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.Editor("DescriptionAutre", new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+
+    <div id="datetimePickerRDV" class="form-group row">
+        <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
+        <div class="col-8">
+            <input class="form-control" name="RDVDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+        </div>
+    </div>
+
+    <div id="datetimePickerRDVReporte" class="form-group row">
+        <label for="example-datetime-local-input" class="col-2 col-form-label">RDV reporté pour le:</label>
+        <div class="col-8">
+            <input class="form-control" name="RDVReporteDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+        </div>
+    </div>
+
+    <div id="datetimePickerRappel" class="form-group row">
+        <label for="example-datetime-local-input" class="col-2 col-form-label">Rappel pour le:</label>
+        <div class="col-8">
+            <input class="form-control" name="datetimePickerRappel" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+        </div>
+    </div>
+
+    <div id="montant" class="form-group row">
+        <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
+        <div class="col-8">
+
+            <input name="soldetranche" type="number" step="0.001" id="exampleInputAmount" class="form-control">
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Confirmer" class="btn btn-default" />
+        </div>
+    </div>
+</div>
 }
 
 
@@ -170,60 +177,102 @@
         <th>
             @Html.DisplayNameFor(model => model.MontantVerseDeclare)
         </th>
+
+
         <th>
             @Html.DisplayNameFor(model => model.DescriptionAutre)
         </th>
 
+        <th>
+            @Html.DisplayNameFor(model => model.TraiteLe)
+        </th>
 
+        <th>
+            @Html.DisplayNameFor(model => model.VerifieLe)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsVerified)
+        </th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
+<tr>
+    <td>
 
-                @Html.DisplayFor(modelItem => item.EtatClient)
+        @Html.DisplayFor(modelItem => item.EtatClient)
 
-            </td>
+    </td>
 
-            <td>
-
-
-                @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
-                {
-                    <text></text>
-                }
-                else
-                {
-                    @Html.DisplayFor(modelItem => item.DateRDV)
-                }
+    <td>
 
 
-            </td>
-            <td>
+        @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+        {
+            <text></text>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.DateRDV)
+        }
 
-                @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
-                {
-                    <text></text>
-                }
-                else
-                {
-                    @Html.DisplayFor(modelItem => item.DateRDVReporte)
-                }
-            </td>
-            <td>
 
-                @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
-                
-            </td>
-            <td>
+    </td>
+    <td>
 
-                @Html.DisplayFor(modelItem => item.DescriptionAutre)
+        @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
+        {
+            <text></text>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.DateRDVReporte)
+        }
+    </td>
+    <td>
 
-            </td>
+        @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
 
-        </tr>
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.DescriptionAutre)
+
+    </td>
+    <td>
+        @if (item.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+        {
+            <text></text>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.TraiteLe)
+        }
+
+    </td>
+    <td>
+        @if (item.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
+        {
+            <text></text>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.VerifieLe)
+        }
+    </td>
+    <td>
+        @if (item.IsVerified == false)
+        {
+            <text>Non verifié</text>
+        }
+        else
+        {
+            <text>Verifié</text>
+        }
+    </td>
+
+</tr>
     }
 
 </table>
@@ -246,6 +295,7 @@
             $("#datetimePickerRDVReporte").hide();
             $("#datetimePickerRDV").hide();
             $("#montant").hide();
+            $("#datetimePickerRappel").hide();
 
         }
         hideAll()
@@ -301,6 +351,7 @@
                     break;
                 case "RAPPEL":
                     hideAll();
+                    $("#datetimePickerRappel").show();
 
                     break;
                 case "RACCROCHE":
