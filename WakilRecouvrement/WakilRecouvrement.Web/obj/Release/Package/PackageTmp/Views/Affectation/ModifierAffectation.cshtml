@@ -1,0 +1,258 @@
+﻿@model WakilRecouvrement.Domain.Entities.Affectation
+
+@{
+    ViewBag.Title = "";
+}
+
+<h2>Modifier Affectation</h2>
+
+<h4>Lot @ViewData["numLot"] </h4>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css">
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<link href="~/Content/SkillsStyle.css" rel="stylesheet">
+<link href="~/Content/RoundSlider.css" rel="stylesheet">
+<link href="~/Content/buttonload.css" rel="stylesheet">
+
+<br />
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <div class="form-group">
+
+            <div class="col-md-10">
+
+                <div class="row">
+
+                    <div class="col-xs-3 ">
+
+                        Affecté a:
+
+                    </div>
+
+                    <div class="col-xs-3 col-md-2">
+
+                        @Html.DropDownList("agentA", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+                    </div>
+
+                    <div class="col-xs-3  ">
+
+                        de:
+
+                    </div>
+                    <div class="col-xs-3 col-md-2">
+
+                        @Html.DropDownList("agentDe", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+                    </div>
+
+                    <div class="col-xs-3 col-md-4">
+
+                        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+
+                    </div>
+
+                    <div class="col-xs-3">
+
+                        <button id="btnConf" class="buttonload">
+                            <i id="loading"></i>
+                            Modifier
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="slidecontainer">
+            <input type="range" min="0" value="0" class="slider" id="myRange">
+        </div>
+
+        <div>
+
+
+            <span style="font-size:18px" class="badge" id="infoSpan"></span><span> Client(s) du Lot @ViewData["numLot"]</span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="accordion">
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                   
+                <span id="affName"></span>
+
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+
+                <div class="container">
+                    <div id="testest" style="background-color: #4CAF50;" class="skills">  </div>
+                </div>
+                <span><strong id="totAffect">  </strong></span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("infoSpan");
+    var sliderText = document.getElementById("totAffect");
+    var affProgress = document.getElementById("testest");
+    output.innerHTML = slider.value;
+
+    slider.oninput = function () {
+        output.innerHTML = this.value;
+    }
+
+    var agentA = document.getElementById("agentA");
+    var agentDe = document.getElementById("agentDe");
+
+    $(document).ready(function () {
+
+        $.noConflict();
+
+
+     
+
+        $("#btnConf").click(function () {
+
+            reaffecter()
+
+        })
+
+
+        GetInfoAgent()
+
+        var selected = "";
+        var change = "";
+
+
+        $("#agentDe").change(function () {
+
+            GetInfoAgent()
+            // selectedDe = document.getElementById("agentDe").innerText
+            // document.getElementById("agentA").remove(document.getElementById("agentDe").innerText)
+
+
+        })
+        updateDropDowns()
+            function updateDropDowns() {
+
+                var $select = $("#agentDe");
+                $select.data("previous-val", $select.val());
+
+                $select.on("change", function () {
+
+                    var current_value = $(this).val();
+
+                    if (current_value == "") {
+                        //Do stuff when empty   
+                    } else if (current_value != $(this).data("previousVal") && current_value != "") {
+
+                        //Do stuff when not empty and current value != previous value
+                        console.log("changed");
+                        console.log("currVal " + current_value);  
+                        console.log("pev " + $(this).data("previousVal"));  
+                        
+                    }
+
+                });
+
+            }
+
+
+        document.getElementById("affName").innerHTML = " Affectations disponible dans le lot @ViewData["numLot"]";
+
+
+        $("#traite").change(function () {
+
+            GetInfoAgent()
+
+        })
+
+
+        function reaffecter() {
+
+         $.ajax({
+         type: 'POST',
+         url: '@Url.Action("Reaffecter")',
+         dataType: 'json',
+         data: { agentDe: document.getElementById("agentDe").value, numLot:  @ViewData["numLot"], traite: document.getElementById("traite").value, agentA: document.getElementById("agentA").value, num: $("#myRange").val()  },
+             beforeSend: function () {
+
+                 $("#loading").addClass("fa fa-spinner fa-spin");
+                 $("#btnConf").attr("disabled", true);
+
+             },
+
+
+
+             success: function (data) {
+
+                 GetInfoAgent()
+                 document.getElementById("myRange").value = 0
+                 document.getElementById("infoSpan").innerHTML = 0;
+                 $("#loading").removeClass("fa fa-spinner fa-spin");
+                 $("#btnConf").attr("disabled", false);
+
+         },
+        error: function (ex) {
+
+
+        }
+            });
+
+
+
+        }
+
+ function GetInfoAgent() {
+
+     $.ajax({
+         type: 'POST',
+         url: '@Url.Action("GetInfoAgent")',
+         dataType: 'json',
+         data: { agentDe: document.getElementById("agentDe").value, numLot:  @ViewData["numLot"], traite: document.getElementById("traite").value  },
+         success: function (data) {
+
+            document.getElementById("testest").style.width = data['pourcentageAgentDe'] +'%'
+            document.getElementById("totAffect").innerHTML = data['nbTotalAffectation'] + '/' + data['nbTotLots']
+            document.getElementById("myRange").max = data['nbTotalAffectation']
+
+
+         },
+                error: function (ex) {
+
+
+                }
+            });
+
+        }
+
+    })
+
+
+</script>
+

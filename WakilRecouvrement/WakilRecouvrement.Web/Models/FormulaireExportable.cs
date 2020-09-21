@@ -12,6 +12,9 @@ namespace WakilRecouvrement.Web.Models
        public string NomClient { get; set; }
        public string IDClient { get; set; }
        public string Etat { get; set; }
+       public string Versement { get; set; }
+       public string RDV { get; set; }
+    
 
 
     }

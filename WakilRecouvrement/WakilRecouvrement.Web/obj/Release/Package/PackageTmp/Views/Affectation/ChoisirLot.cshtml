@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WakilRecouvrement.Domain.Entities.Lot>
+
+@{
+    ViewBag.Title = "";
+}
+
+<h2>Choisir un Lot</h2>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<br />
+
+<table class="table">
+   
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+
+                Lot  @Html.DisplayFor(modelItem => item.NumLot)
+                
+            </td>
+
+            <td>
+                @Html.ActionLink("Affecter", "AffecterAgent", new { numLot = item.NumLot }) |
+                @Html.ActionLink("Modifier", "ModifierAffectation", new { numLot = item.NumLot })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+

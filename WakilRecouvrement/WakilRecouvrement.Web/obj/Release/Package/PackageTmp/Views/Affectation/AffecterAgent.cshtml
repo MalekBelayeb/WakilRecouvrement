@@ -1,0 +1,166 @@
+﻿@model WakilRecouvrement.Domain.Entities.Affectation
+
+@{
+    ViewBag.Title = "";
+}
+
+<h2>Affecter des Agents</h2>
+<h4>Lot @ViewData["numLot"] </h4>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css">
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<link href="~/Content/SkillsStyle.css" rel="stylesheet">
+<link href="~/Content/RoundSlider.css" rel="stylesheet">
+<link href="~/Content/buttonload.css" rel="stylesheet">
+<br />
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <div class="form-group">
+
+            <div class="col-md-10">
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-8">
+
+                        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+                    </div>
+                    <div class="col-xs-6">
+
+
+                        <button id="btnConf" class="buttonload">
+                            <i id="loading"></i>
+                            Confirmer
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="slidecontainer">
+            <input type="range" min="0" value="0" class="slider" id="myRange">
+        </div>
+        <div>
+
+            <span style="font-size:18px" class="badge" id="infoSpan"></span><span> Client(s) du Lot @ViewData["numLot"]</span>
+
+        </div>
+       
+    </div>
+</div>
+
+
+<div id="accordion">
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Clients affectés
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+
+                <div class="container">
+                    <div id="testest" style="background-color: #4CAF50;" class="skills"><span><strong id="totAffect">  </strong></span>  </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("infoSpan");
+    var sliderText = document.getElementById("totAffect");
+    var affProgress = document.getElementById("testest");
+    output.innerHTML = slider.value;
+
+    slider.oninput = function () {
+        output.innerHTML = this.value;
+    }
+
+
+    if ( parseInt(@ViewData["pourcentageAffectationParLot"])>10)
+        sliderText.innerHTML = "@ViewData["totalAffectationParLots"] / @ViewData["totalClientsParLots"]"
+
+
+    slider.max = @ViewData["totalClientsRestantParLots"]
+        affProgress.style.width = '@ViewData["pourcentageAffectationParLot"]%'
+    console.log(@ViewData["pourcentageAffectationParLot"])
+
+    $(document).ready(function () {
+
+        $.noConflict();
+
+        $("#btnConf").click(function () {
+
+            AffecterAgentsLot()
+
+        })
+
+ function AffecterAgentsLot() {
+
+     $.ajax({
+         type: 'POST',
+         url: '@Url.Action("AffecterAgents", new { numLot = @ViewData["numLot"] })',
+         dataType: 'json',
+         data: { nbClient: $("#myRange").val(), agent: $("#agent").val() },
+         beforeSend: function () {
+
+             $("#loading").addClass("fa fa-spinner fa-spin");
+             $("#btnConf").attr("disabled", true);
+
+         },
+         success: function (data) {
+
+
+             sliderText.innerHTML = data["totalAffectationParLotUpdated"] + "/" + data["totalClientParLotUpdated"]
+             document.getElementById("myRange").max = data["nbClientsNonAffecteParLots"]
+             document.getElementById("myRange").value = 0
+             document.getElementById("infoSpan").innerHTML = 0;
+             $("#testest").width(data["pourcentageAffectationParLotUpdated"] + '%');
+
+             $("#loading").removeClass("fa fa-spinner fa-spin");
+             $("#btnConf").attr("disabled", false);
+
+                },
+                error: function (ex) {
+
+                    $("#loading").removeClass("fa fa-spinner fa-spin");
+
+                    $("#btnConf").attr("disabled", false);
+
+
+                }
+            });
+
+        }
+
+
+
+
+
+
+
+    })
+
+
+</script>

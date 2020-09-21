@@ -160,9 +160,7 @@ namespace WakilRecouvrement.Web.Controllers
                           }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).ToList();
 
 
-            //Debug.WriteLine(GenerateDatatableFromJoinedList(JoinedList2).AsEnumerable().Count());
-            ExportExcel(JoinedList2);
-            GenerateExcel
+           // GenerateExcel(GenerateDatatableFromJoinedList(JoinedList2), @"C:\Users\Admin\Downloads\test.xlsx");
 
             if (traite == "ALL")
             {
@@ -445,6 +443,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.TraiteLe = DateTime.Now;
                     Formulaire.EtatClient = Note.RDV;
                     Formulaire.DateRDV = DateTime.Parse(RDVDateTime);
+                    Formulaire.IsVerified = true;
 
                     break;
                 case Note.RDV_REPORTE:
@@ -452,12 +451,14 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.EtatClient = Note.RDV_REPORTE;
                     Formulaire.TraiteLe = DateTime.Now;
                     Formulaire.DateRDVReporte = DateTime.Parse(RDVReporteDateTime);
+                    Formulaire.IsVerified = true;
 
 
                     break; 
                 case Note.REFUS_PAIEMENT:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
+                    Formulaire.IsVerified = true;
 
                     Formulaire.EtatClient = Note.REFUS_PAIEMENT;
 
@@ -480,6 +481,7 @@ namespace WakilRecouvrement.Web.Controllers
                 case Note.FAUX_NUM:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
+                    Formulaire.IsVerified = true;
 
                     Formulaire.EtatClient = Note.FAUX_NUM;
 
@@ -514,6 +516,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
+                    Formulaire.IsVerified = true;
 
                     Formulaire.EtatClient = Note.RAPPEL;
                  
@@ -537,7 +540,7 @@ namespace WakilRecouvrement.Web.Controllers
                 
                     break;
             }
-
+            Formulaire.NotifieBanque = false;
             FormulaireService.Add(Formulaire);
             FormulaireService.Commit();
 
@@ -797,6 +800,19 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+
+
+        public IEnumerable<SelectListItem> EnvoyerTraiteListForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Text = "RDV", Value = "RDV" });
+            listItems.Add(new SelectListItem { Text = "Versement", Value = "SOLDE" });
+            listItems.Add(new SelectListItem { Text = "Verification", Value = "A_VERIFIE" });
+            listItems.Add(new SelectListItem { Text = "En cours de traitement", Value = "Autre" });
+
+            return listItems;
+        }
+
         public IEnumerable<SelectListItem> TraiteValidationValideListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -861,6 +877,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
             return lst;
         }
+
 
         private List<ClientAffecteViewModel> SortTableDataForHistory(string order, string orderDir, List<ClientAffecteViewModel> data)
         {
@@ -1114,67 +1131,386 @@ namespace WakilRecouvrement.Web.Controllers
 
 
 
-        public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list)
+        public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list,string traite)
         {
-            List<FormulaireExportable> newList = list.Select(j=>
-            new FormulaireExportable
+            List<FormulaireExportable> newList = new List<FormulaireExportable>();
+            DataTable dataTable = new DataTable();
+
+
+            if (traite.Equals("RDV"))
             {
+               newList = list.Select(j =>
+                new FormulaireExportable
+                {
                 NomClient = j.Lot.NomClient,
                 NumLot = j.Lot.NumLot,
                 Compte = j.Lot.Compte,
-                IDClient= j.Lot.IDClient,
-                Etat = j.Formulaire.EtatClient.ToString()
-            }
- 
-            ).ToList();
-
-            DataTable dataTable = new DataTable();
-
-            dataTable.Columns.Add("NumLot", typeof(string));
-            dataTable.Columns.Add("IDClient", typeof(string));
-            dataTable.Columns.Add("Compte", typeof(string));
-            dataTable.Columns.Add("NomClient", typeof(string));
-            dataTable.Columns.Add("Etat", typeof(string));
-          
-            foreach(FormulaireExportable c in newList)
-            {
-
-                string etat = "";
-
-                if(c.Etat == "SOLDE")
-                {
-                    etat = "Client soldé";
-                
-                }else if(c.Etat == "SOLDE_TRANCHE")
-                {
-                
-                    etat = "tranche versé";
-                
-                }else
-                {
-                    etat = "En cours de traitement...";
+                IDClient = j.Lot.IDClient,
+                Etat = j.Formulaire.EtatClient.ToString(),
+                RDV = j.Formulaire.DateRDV.ToString()
                 }
 
-                DataRow row = dataTable.NewRow();
-                row["NumLot"] = c.NumLot;
-                row["IDClient"] = c.IDClient;
-                row["Compte"] = c.Compte;
-                row["NomClient"] = c.NomClient;
-                row["Etat"] = etat;
-                dataTable.Rows.Add(row);
+                ).ToList();
+
+                dataTable.Columns.Add("NumLot", typeof(string));
+                dataTable.Columns.Add("IDClient", typeof(string));
+                dataTable.Columns.Add("Compte", typeof(string));
+                dataTable.Columns.Add("NomClient", typeof(string));
+                dataTable.Columns.Add("Etat", typeof(string));
+                dataTable.Columns.Add("RDV", typeof(string));
+                
+                foreach (FormulaireExportable c in newList)
+                {
+
+                    string etat = "";
+
+                    if (c.Etat == "SOLDE")
+                    {
+                        etat = "Client soldé";
+
+                    }
+                    else if (c.Etat == "SOLDE_TRANCHE")
+                    {
+
+                        etat = "tranche versé";
+
+                    }
+                    else if (c.Etat == "RDV")
+                    {
+                        etat = "RDV";
+                    }
+                    else
+                    {
+                        etat = "En cours de traitement...";
+                    }
+
+                    DataRow row = dataTable.NewRow();
+                    row["NumLot"] = c.NumLot;
+                    row["IDClient"] = c.IDClient;
+                    row["Compte"] = c.Compte;
+                    row["NomClient"] = c.NomClient;
+                    row["Etat"] = etat;
+                    row["RDV"] = c.RDV;
+                    dataTable.Rows.Add(row);
+
+                }
+
+
+
 
             }
+            else if(traite.Equals("SOLDE"))
+            {
+                newList = list.Select(j =>
+                new FormulaireExportable
+                {
+                    NomClient = j.Lot.NomClient,
+                    NumLot = j.Lot.NumLot,
+                    Compte = j.Lot.Compte,
+                    IDClient = j.Lot.IDClient,
+                    Etat = j.Formulaire.EtatClient.ToString(),
+                    Versement = j.Formulaire.MontantVerseDeclare.ToString()
+                }
+
+                ).ToList();
+
+                dataTable.Columns.Add("NumLot", typeof(string));
+                dataTable.Columns.Add("IDClient", typeof(string));
+                dataTable.Columns.Add("Compte", typeof(string));
+                dataTable.Columns.Add("NomClient", typeof(string));
+                dataTable.Columns.Add("Etat", typeof(string));
+                dataTable.Columns.Add("Versement", typeof(string));
+
+                foreach (FormulaireExportable c in newList)
+                {
+
+                    string etat = "";
+
+                    if (c.Etat == "SOLDE")
+                    {
+                        etat = "Client soldé";
+
+                    }
+                    else if (c.Etat == "SOLDE_TRANCHE")
+                    {
+
+                        etat = "tranche versé";
+
+                    }
+                    else
+                    {
+                        etat = "En cours de traitement...";
+                    }
+
+                    DataRow row = dataTable.NewRow();
+                    row["NumLot"] = c.NumLot;
+                    row["IDClient"] = c.IDClient;
+                    row["Compte"] = c.Compte;
+                    row["NomClient"] = c.NomClient;
+                    row["Etat"] = etat;
+                    row["Versement"] = c.Versement;
+                    dataTable.Rows.Add(row);
+
+                }
+
+
+
+            }
+            else
+            {
+                newList = list.Select(j =>
+                new FormulaireExportable
+                {
+                NomClient = j.Lot.NomClient,
+                NumLot = j.Lot.NumLot,
+                Compte = j.Lot.Compte,
+                IDClient = j.Lot.IDClient,
+                Etat = j.Formulaire.EtatClient.ToString()
+                }
+
+                ).ToList();
+
+                dataTable.Columns.Add("NumLot", typeof(string));
+                dataTable.Columns.Add("IDClient", typeof(string));
+                dataTable.Columns.Add("Compte", typeof(string));
+                dataTable.Columns.Add("NomClient", typeof(string));
+                dataTable.Columns.Add("Etat", typeof(string));
+                
+                foreach (FormulaireExportable c in newList)
+                {
+
+                    string etat = "";
+
+                    if (c.Etat == "SOLDE")
+                    {
+                        etat = "Client soldé";
+
+                    }
+                    else if (c.Etat == "SOLDE_TRANCHE")
+                    {
+
+                        etat = "tranche versé";
+
+                    }
+                    else
+                    {
+                        etat = "En cours de traitement...";
+                    }
+
+                    DataRow row = dataTable.NewRow();
+                    row["NumLot"] = c.NumLot;
+                    row["IDClient"] = c.IDClient;
+                    row["Compte"] = c.Compte;
+                    row["NomClient"] = c.NomClient;
+                    row["Etat"] = etat;
+                    dataTable.Rows.Add(row);
+
+                }
+
+            }
+
+
+
 
             return dataTable;
         }
 
-        public void ExportExcel(List<ClientAffecteViewModel> list)
+   
+
+
+        public ActionResult EnvoyerBanque()
+        {
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+
+            return View();
+        }
+
+
+
+        [HttpPost]
+        public ActionResult EnvoyerBanqueLoadData(string traite,string numLot, bool send)
         {
 
-          
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
 
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                          select new ClientAffecteViewModel
+                          {
+                              
+                              Formulaire = f,
+                              Lot = l,
+                              Affectation = a
+
+                          }).ToList().Where(j => j.Formulaire.IsVerified == true && j.Formulaire.NotifieBanque == false).ToList();
+
+
+            if(traite == "RDV")
+            {
+
+                
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.RDV || j.Formulaire.EtatClient == Note.RDV_REPORTE).ToList();
+
+
+            }else if(traite == "SOLDE")
+            {
+                
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE).ToList();
+
+
+            }
+            else if(traite == "A_VERIFIE")
+            {
+                
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE ).ToList();
+
+            }
+            else if(traite == "Autre")
+            {
+              
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient== Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
+
+            }
+
+            if (numLot != "0")
+            {
+                JoinedList = JoinedList.ToList().Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+            }
+
+
+
+
+
+            if(send == true)
+            {
+
+                //string fileName = Path.GetFileName(fileUploader.FileName);
+                //mail.Attachments.Add(new Attachment(fileUploader.InputStream, fileName));
+                string subject = "";
+                string body = "";
+                string name = "";
+               
+                if (traite == "RDV")
+                {
+                    subject = "Liste des RDV";
+                    name = "RDV";
+                }
+                else if (traite == "SOLDE")
+                {
+                    subject = "Liste des soldés";
+                    name = "SOLDE";
+
+                }
+                else if (traite == "A_VERIFIE")
+                {
+
+                    subject = "Liste des clients a verifiés";
+                    name = "VERIFIE";
+
+                }
+                else if (traite == "Autre")
+                {
+                    subject = "Liste des clients en cours de traitement";
+                    name = "en_cours_traitement";
+
+                }
+
+                string path = @"C:\Users\Admin\Downloads\"+name+".xlsx";
+                GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
+
+                SendMail("zaitounabank@gmail.com", subject,"Hiiiiii",path);
+
+                foreach(var j in JoinedList)
+                {
+                    
+                    j.Formulaire.NotifieBanque = true;
+                    FormulaireService.Update(j.Formulaire);
+                }
+                FormulaireService.Commit();
+             
+                // return RedirectToAction("EnvoyerBanque");
+            }
+
+
+            JsonResult result = new JsonResult();
+
+            try
+            {
+                string search = Request.Form.GetValues("search[value]")[0];
+                string draw = Request.Form.GetValues("draw")[0];
+                string order = Request.Form.GetValues("order[0][column]")[0];
+                string orderDir = Request.Form.GetValues("order[0][dir]")[0];
+                int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
+                int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
+
+                int totalRecords = JoinedList.Count();
+
+                if (!string.IsNullOrEmpty(search) &&
+                    !string.IsNullOrWhiteSpace(search))
+                {
+                    JoinedList = JoinedList.Where(j =>
+
+                        j.Lot.Numero.ToString().Contains(search)
+                    || j.Lot.Adresse.ToString().ToLower().Contains(search.ToLower())
+                    || j.Lot.IDClient.ToString().Contains(search)
+                    || j.Lot.Compte.ToString().Contains(search)
+                    || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
+                    || j.Lot.DescIndustry.ToString().ToLower().Contains(search.ToLower())
+                    || j.Formulaire.MontantVerseDeclare.ToString().ToLower().Contains(search.ToLower())
+
+                        ).ToList();
+                }
+
+                
+                JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
+
+                int recFilter = JoinedList.Count();
+
+                JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
+
+                var modifiedData = JoinedList.Select(j =>
+                   new
+                   {
+
+                       j.Lot.NumLot,
+                       j.Lot.Compte,
+                       j.Lot.IDClient,
+                       j.Lot.NomClient,
+                       Etat = j.Formulaire.EtatClient.ToString(),
+                      
+                   }
+                   );
+              
+                int x = JoinedList.Count();
+                ViewBag.x = x;
+                var info = new { nbTotal = x };
+
+                result = this.Json(new
+                {
+
+                    draw = Convert.ToInt32(draw),
+                    recordsTotal = totalRecords,
+                    recordsFiltered = recFilter,
+                    data = modifiedData,
+                    info = info
+
+                }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex);
+            }
+
+            return result;
         }
-    
 
 
     public static void GenerateExcel(DataTable dataTable, string path)
@@ -1211,6 +1547,31 @@ namespace WakilRecouvrement.Web.Controllers
             excelWorkBook.Close();
             excelApp.Quit();
         }
+
+
+
+        public void SendMail(string to,string subject,string body,string path)
+        {
+
+            MailMessage mm = new MailMessage();
+            mm.From = new MailAddress("alwakilrecouvrementmailtest@gmail.com");
+            mm.To.Add(to);
+            mm.Subject = subject;
+            mm.Body = body;
+            mm.IsBodyHtml = false;
+
+            mm.Attachments.Add(new Attachment(path));
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com");
+            smtp.UseDefaultCredentials = false;
+            smtp.Port = 587;
+            smtp.EnableSsl = true;
+
+            smtp.Credentials = new NetworkCredential("alwakilrecouvrementmailtest@gmail.com", "wakil123456");
+            smtp.Send(mm);
+
+
+        }
+
 
 }  
 
