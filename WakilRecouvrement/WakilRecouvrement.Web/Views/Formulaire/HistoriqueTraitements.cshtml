@@ -110,7 +110,7 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Formulaire/ValiderTraitement',
+                "url": '@Url.Action("ValiderTraitement", "Formulaire")',
                 "type": "POST",
                 "datatype": "json",
                 "data": { IsValid: true, numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }

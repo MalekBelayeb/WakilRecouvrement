@@ -34,6 +34,9 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult ChoisirLot()
         {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
             List<Lot> Lots = LotService.GetAll().ToList();
 
             return View(Lots.DistinctBy(l => l.NumLot));
@@ -41,6 +44,8 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult AffecterAgent(int numLot)
         {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
 
             List<Lot> listClients = LotService.GetClientsByLot(numLot + "").ToList();
 
@@ -123,7 +128,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                select lot;
 
             int nbClientsNonAffecteParLotsUpdated = clientsNonAffecteListUpdated.Count();
-
+            
             int totalAffectationParLotUpdated = listAffectationsUpdated.Count();
 
             float pourcentageAffectationParLotUpdated = ((float)totalAffectationParLotUpdated / (float)totalClientParLotUpdated) * 100;
@@ -446,6 +451,9 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult ModifierAffectation(int numLot)
         {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
             var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
             ViewBag.AgentList = new SelectList(agents, "EmployeId", "Username");
             ViewData["numLot"] = numLot;

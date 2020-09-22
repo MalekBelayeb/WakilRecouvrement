@@ -109,7 +109,7 @@
         function validerTraitement(id, valid) {
             $.ajax({
                 type: 'POST',
-                url: '/Formulaire/VerifierEtat/',
+                url: '@Url.Action("VerifierEtat", "Formulaire")',
                 dataType: 'json',
                 data: { id: id, valid: valid },
                 success: function (data) {
@@ -144,7 +144,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/Formulaire/SendGmail/',
+                url: '@Url.Action("SendGmail", "Formulaire")',
                 dataType: 'json',
                 data: { id: data_row["FormulaireId"]},
                 success: function (data) {
@@ -154,7 +154,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/Formulaire/UpdateContactBanque/',
+                url: '@Url.Action("UpdateContactBanque", "Formulaire")',
                 dataType: 'json',
                 data: { id: data_row["FormulaireId"] },
                 success: function (data) {
@@ -191,7 +191,7 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Formulaire/ValiderTraitement',
+                "url": '@Url.Action("ValiderTraitement", "Formulaire")',
                 "type": "POST",
                 "datatype": "json",
                 "data": { IsValid: false, numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }

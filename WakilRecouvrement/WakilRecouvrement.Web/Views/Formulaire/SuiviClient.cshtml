@@ -108,7 +108,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '/Formulaire/GetFormulaires/',
+                    url: '@Url.Action("GetFormulaires", "Formulaire")',
                     dataType: 'json',
                     data: { id: row.data()["AffectationId"] },
                     success: function (data) {
@@ -204,7 +204,7 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Formulaire/LoadData',
+                "url": '@Url.Action("LoadData", "Formulaire")',
                 "type": "POST",
                 "datatype": "json",
                 "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }

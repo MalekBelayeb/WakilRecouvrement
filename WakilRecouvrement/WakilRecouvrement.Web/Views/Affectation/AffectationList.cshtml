@@ -82,12 +82,12 @@
         })
 
         $("#traite").change(function () {
-       
+
             Table = DemoDatatable();
-           
+
         })
 
-        
+
         $('#demodata tbody').on('click', 'td', function () {
 
              redirectToRoute(Table.row(this).data()["AffectationId"])
@@ -103,7 +103,7 @@
     {
          $.ajax({
          type: 'POST',
-         url: '/Formulaire/CreerFormulaireIntermediate/',
+         url: '@Url.Action("CreerFormulaireIntermediate", "Formulaire")',
          dataType: 'json',
              data: { id: id },
              success: function (data) {
@@ -124,7 +124,7 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Affectation/LoadData',
+                "url": '@Url.Action("LoadData", "Affectation")',
                 "type": "POST",
                 "datatype": "json",
                 "data": { numLot: $("#numLot").val(), traite: $("#traite").val() }

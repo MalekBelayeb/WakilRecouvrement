@@ -100,6 +100,8 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult ChangePassword()
         {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
 
             return View();
         }
