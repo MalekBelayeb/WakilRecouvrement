@@ -143,7 +143,7 @@
                 "destroy": true,
                 "ordering": true,
                 "ajax": {
-                    "url": '/Formulaire/EnvoyerBanqueLoadData',
+                    "url": '@Url.Action("EnvoyerBanqueLoadData", "Formulaire")',
                     "type": "POST",
                     "datatype": "json",
                     "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), objet: $("#form_objet").val(), email: $("#form_message").val(), send: send }

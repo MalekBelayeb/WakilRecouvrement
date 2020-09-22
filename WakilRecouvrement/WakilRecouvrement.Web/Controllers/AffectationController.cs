@@ -142,6 +142,8 @@ namespace WakilRecouvrement.Web.Controllers
         {
             if(Session["username"]==null || Session["username"].ToString().Length<1)
                 return RedirectToAction("Login","Authentification");
+
+
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
@@ -191,22 +193,6 @@ namespace WakilRecouvrement.Web.Controllers
             Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                 listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
             });
-
-
-            List<Affectation> listAffectation = AffectationService.GetAll().ToList().Where(a => a.Employe.Username.Equals(Session["username"])).ToList();
-
-           var JoinedList = (from a in listAffectation
-                          join l in Lots on a.LotId equals l.LotId
-                          
-                          select new ClientAffecteViewModel
-                          {
-                              Affectation = a,
-                              Lot = l,
-                          }).ToList();
-
-            ViewBag.affectationRestant = JoinedList.Count();
-            ViewBag.totalAffectation = listAffectation.Count();
-
 
             return listItems;
         }

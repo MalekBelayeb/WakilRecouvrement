@@ -693,7 +693,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             $.ajax({
                 type: 'POST',
-                url: '/Notification/MarkAsSeen/',
+                url: '@Url.Action("MarkAsSeen", "Notification")',
                 dataType: 'json',
                 data: { id: id},
                 success: function (data) {
