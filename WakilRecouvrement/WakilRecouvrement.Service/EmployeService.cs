@@ -34,5 +34,6 @@ namespace WakilRecouvrement.Service
             return Get(e => e.Username.Equals(username));
         }
 
+
     }
 }

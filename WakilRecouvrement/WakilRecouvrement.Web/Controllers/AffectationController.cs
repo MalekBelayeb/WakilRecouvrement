@@ -69,9 +69,13 @@ namespace WakilRecouvrement.Web.Controllers
             float pourcentageAffectationParLot = ((float)totalAffectationParLot / (float)totalClientParLot) * 100;
 
             ViewData["numLot"] = numLot;
+            
             ViewData["totalClientsParLots"] = totalClientParLot;
+            
             ViewData["totalAffectationParLots"] = totalAffectationParLot;
+            
             ViewData["totalClientsRestantParLots"] = nbClientsNonAffecteParLots;
+            
             ViewData["pourcentageAffectationParLot"] = (int)pourcentageAffectationParLot;
          
             return View();
@@ -103,7 +107,7 @@ namespace WakilRecouvrement.Web.Controllers
             {
              
                 AffectationService.Add(new Affectation { EmployeId = agent, AffectePar = "", DateAffectation = DateTime.Now, LotId = clientsNonAffecteList.ToList()[i].LotId });
-
+            
             }
 
             AffectationService.Commit();
@@ -216,9 +220,6 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult LoadData(string numLot, string traite)
         {
-            List<Lot> listLot = new List<Lot>();
-            List<Affectation> listAffectation = new List<Affectation>();
-            List<Formulaire> listFormulaire = new List<Formulaire>();
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
@@ -240,7 +241,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
             else if (traite == "SAUF")
             {
-
+                
                 JoinedList = (from f in FormulaireService.GetAll()
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -543,8 +544,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             return Json(new { });
         }
-
-
 }
 
     }

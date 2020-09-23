@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "";
+    var imagePath = @"~\Uploads\Recu\";
+
 }
 
 <h2>Valider les Traitements</h2>
@@ -20,6 +22,7 @@
 
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/zoomImage.css" rel="stylesheet" />
 
 
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
@@ -60,6 +63,8 @@
 
             <th>Num Lot</th>
             <th>Verification</th>
+            <th>Recu</th>
+
             <th>Etat Client</th>
             <th>Montant Versé/Déclaré </th>
             <th>Affecté le:</th>
@@ -78,6 +83,9 @@
 
 
 <span id="LocalStorage" style="visibility:hidden"></span>
+
+
+
 
 <script>
 
@@ -122,11 +130,28 @@
         }
 
 
+        function validerTraitementVerification(id, valid, montant) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("VerifierEtat", "Formulaire")',
+                dataType: 'json',
+                data: { id: id, valid: valid, montant:  montant },
+                success: function (data) {
+
+                    Table = DemoDatatable();
+
+                }
+            });
+
+        }
+
+
 
         $(document).on('click', 'tbody  .verifie', function () {
             var data_row = Table.row($(this).closest('tr')).data();
 
             validerTraitement(data_row["FormulaireId"], true)
+
         });
 
 
@@ -135,41 +160,18 @@
             var data_row = Table.row($(this).closest('tr')).data();
 
             validerTraitement(data_row["FormulaireId"], false)
+
         });
 
-        $(document).on('click', 'tbody  .contactbanque', function () {
 
+        $(document).on('click', 'tbody  .validerA_VERIFIE', function () {
             var data_row = Table.row($(this).closest('tr')).data();
 
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("SendGmail", "Formulaire")',
-                dataType: 'json',
-                data: { id: data_row["FormulaireId"]},
-                success: function (data) {
-
-                }
-            });
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("UpdateContactBanque", "Formulaire")',
-                dataType: 'json',
-                data: { id: data_row["FormulaireId"] },
-                success: function (data) {
-
-                    Table = DemoDatatable();
-
-                }
-            });
+            validerTraitementVerification(data_row["FormulaireId"], true, $("#montant").val() )
 
         });
 
-
-
-
-
+       
 
         if (@ViewBag.IDClient != "0") {
 
@@ -178,6 +180,9 @@
 
 
     });
+
+
+
 
 
     function DemoDatatable() {
@@ -202,12 +207,25 @@
                   { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , {
                     "data": "FormulaireId", "name": "FormulaireId", "autoWidth": true, "render": function (data, type, row, meta) {
-                        if (row["Etat"] == "A_VERIFIE" && row["ContactBanque"] == false)
-                            return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='contactbanque dropdown-item' type='button'>Contacter la banque</button><button class='verifie dropdown-item' type='button' disabled>Valider</button><button class='reject dropdown-item' type='button' disabled>Rejeter</button></div></div>";
-                        if (row["Etat"] == "A_VERIFIE" && row["ContactBanque"] == true)
-                            return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='verifie dropdown-item' type='button' >Valider</button><button class='reject dropdown-item' type='button' >Rejeter</button><button class='reject dropdown-item' type='button' disabled>Contacter la banque</button></div></div>";
-                        else
+
+                        if (row["Etat"] == "A_VERIFIE") {
+
+                            return "<div class='btn-group'><button type='button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Verifier</button><div class='dropdown-menu dropdown-menu-right'><input class='dropdown-item form-control' id='montant' value='1.000' step='0.001' type='number' min='0' max='any' ><button class='validerA_VERIFIE dropdown-item' type='button'>Valider</button><button class='reject dropdown-item' type='button'>Rejeter</button></div></div>";
+
+                        } else {
+
                             return "<div class='btn-group'><button type = 'button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >Vérifier</button><div class='dropdown-menu dropdown-menu-right'><button class='verifie dropdown-item' type='button'>Valider</button><button class='reject dropdown-item' type='button'>Rejeter</button></div></div>";
+
+                        }
+
+                    }
+                }
+                , {
+                    "data": "Image", "name": "Image", "autoWidth": true, "data": "Image", "name": "FormulaireId", "autoWidth": true, "render": function (data, type, row, meta) {
+                        if (row["Image"] != "")
+                            return '<div class="zoomin"><img class="img-responsive" src="' + "../Uploads/Recu/" + row["Image"] + '" runat="server" height="80" width="80"></div>';
+                        if (row["Image"] == "")
+                            return '<p></p>';
 
                     }
                   }

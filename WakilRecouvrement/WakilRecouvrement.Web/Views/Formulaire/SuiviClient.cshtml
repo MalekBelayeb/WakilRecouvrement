@@ -86,7 +86,7 @@
         var Table = DemoDatatable();
 
         function format(d) {
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Montant declaré/versé </th><th>Description autre </th><th> Verification </th><th>Traite le </th></tr></thead><tbody>  ' +
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Montant declaré/versé </th><th>Montant deb. MAJ </th><th>Montant deb. initial </th><th>Description autre </th><th> Verification </th><th>Traite le </th></tr></thead><tbody>  ' +
 
                 d
 
@@ -121,6 +121,8 @@
                             var tranche = data["list"][i]["tranche"]
                             var traitele = data["list"][i]["traitele"]
                             var verif = data["list"][i]["verif"]
+                            var montantDebInitial = data["list"][i]["montantDebInitial"]
+                            var montantDebMaj = data["list"][i]["montantDebMaj"]
 
                             if (d1 == "01/01/0001 00:00:00") {
                                 d1 = ""
@@ -138,6 +140,14 @@
                                 tranche = ""
                             }
 
+                            if (montantDebInitial == 0) {
+                                montantDebInitial = ""
+                            }
+
+                            if (montantDebMaj == 0) {
+                                montantDebMaj = ""
+                            }
+
                             if (verif == false) {
                                 verif = "Non vérifié"
                             } else if (verif == true) {
@@ -150,6 +160,8 @@
                                 '<td>' + d1 + '</td>' +
                                 '<td>' + d2 + '</td>' +
                                 '<td>' + tranche + '</td>' +
+                                '<td>' + montantDebMaj + '</td>' +
+                                '<td>' + montantDebInitial + '</td>' +
                                 '<td>' + desc + '</td>' +
                                 '<td>' + verif + '</td>' +
                                 '<td>' + traitele + '</td>' +

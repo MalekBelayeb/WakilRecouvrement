@@ -33,3 +33,8 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.csproj.CopyComplete
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.dll
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.pdb
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.iisddd.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.iisdddsq.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.iyssssz.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.iysssszhh.resources
+C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eeer.resources

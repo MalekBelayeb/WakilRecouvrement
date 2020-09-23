@@ -7,7 +7,8 @@
 <h2>Modifier Affectation</h2>
 
 <h4>Lot @ViewData["numLot"] </h4>
-<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css">
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
@@ -93,8 +94,8 @@
         <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                   
-                <span id="affName"></span>
+
+                    <span id="affName"></span>
 
                 </button>
             </h5>
@@ -134,7 +135,7 @@
         $.noConflict();
 
 
-     
+
 
         $("#btnConf").click(function () {
 
@@ -168,14 +169,14 @@
                     var current_value = $(this).val();
 
                     if (current_value == "") {
-                        //Do stuff when empty   
+                        //Do stuff when empty
                     } else if (current_value != $(this).data("previousVal") && current_value != "") {
 
                         //Do stuff when not empty and current value != previous value
                         console.log("changed");
-                        console.log("currVal " + current_value);  
-                        console.log("pev " + $(this).data("previousVal"));  
-                        
+                        console.log("currVal " + current_value);
+                        console.log("pev " + $(this).data("previousVal"));
+
                     }
 
                 });

@@ -412,10 +412,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
             }
             */
 
-
-            if (@Html.Raw(Json.Encode(@role))== "admin")
-                getNotifsByRole("admin");
-
             cus.client.displayAdminNotifs = function () {
                 if (@Html.Raw(Json.Encode(@role))== "admin")
                 getNotifsByRole("admin");
@@ -428,7 +424,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
             cus.client.displayUserNotifs = function () {
-                alert("sssss")
                 getNotifsByUser(@Html.Raw(Json.Encode(@username)));
             }
 
@@ -437,7 +432,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
             @*if(@Html.Raw(Json.Encode(@username))!=null)
             getNotifsByUser(@Html.Raw(Json.Encode(@username)));*@
 
-
+            if (@Html.Raw(Json.Encode(@role))== "admin")
+            getNotifsByRole("admin");
 
             if (@Html.Raw(Json.Encode(@role)) == "agent")
                 getNotifsByRole("agent");

@@ -135,6 +135,26 @@
     <Compile Include="Migrations\202009210837210_diies.designer.cs">
       <DependentUpon>202009210837210_diies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009220759155_iisddd.cs" />
+    <Compile Include="Migrations\202009220759155_iisddd.designer.cs">
+      <DependentUpon>202009220759155_iisddd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009220827401_iisdddsq.cs" />
+    <Compile Include="Migrations\202009220827401_iisdddsq.designer.cs">
+      <DependentUpon>202009220827401_iisdddsq.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009222157389_iyssssz.cs" />
+    <Compile Include="Migrations\202009222157389_iyssssz.designer.cs">
+      <DependentUpon>202009222157389_iyssssz.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009222323192_iysssszhh.cs" />
+    <Compile Include="Migrations\202009222323192_iysssszhh.designer.cs">
+      <DependentUpon>202009222323192_iysssszhh.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009231336347_eeer.cs" />
+    <Compile Include="Migrations\202009231336347_eeer.designer.cs">
+      <DependentUpon>202009231336347_eeer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -207,6 +227,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009210837210_diies.resx">
       <DependentUpon>202009210837210_diies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009220759155_iisddd.resx">
+      <DependentUpon>202009220759155_iisddd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009220827401_iisdddsq.resx">
+      <DependentUpon>202009220827401_iisdddsq.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009222157389_iyssssz.resx">
+      <DependentUpon>202009222157389_iyssssz.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009222323192_iysssszhh.resx">
+      <DependentUpon>202009222323192_iysssszhh.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009231336347_eeer.resx">
+      <DependentUpon>202009231336347_eeer.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

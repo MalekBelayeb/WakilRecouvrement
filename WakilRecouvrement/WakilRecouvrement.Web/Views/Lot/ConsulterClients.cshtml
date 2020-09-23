@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<WakilRecouvrement.Domain.Entities.Lot>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
@@ -80,7 +80,7 @@
             "destroy": true,
             "ordering": true,
             "ajax": {
-                "url": '/Lot/LoadData',
+                "url": '@Url.Action("LoadData", "Lot")',
                 "type": "POST",
                 "datatype": "json",
                 "data": { numLot : $("#numLot").val() }

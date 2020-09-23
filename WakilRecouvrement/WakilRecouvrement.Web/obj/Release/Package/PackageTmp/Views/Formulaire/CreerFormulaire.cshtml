@@ -7,6 +7,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+<link rel="stylesheet" href="~/Content/zoomImage.css" />
 
 <h2>Client a traité </h2>
 <br />
@@ -92,7 +93,7 @@
 <br />
 <h2>Remplir Formulaire</h2>
 
-@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post))
+@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data"}))
 {
     @Html.AntiForgeryToken()
 
@@ -148,6 +149,23 @@
         </div>
     </div>
 
+    <div id="recu" class="form-group row">
+        <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
+        <div class="col-8">
+
+            <div class="custom-file">
+                <input type="file" name="postedFile" class="custom-file-input" id="customFileLang" lang="es">
+                <label class="custom-file-label" for="customFileLang">Importer recu</label>
+
+
+            </div>
+            <br />
+            <img id="blah" width="200" height="150" src="#" alt="your image" />
+
+        </div>
+    </div>
+
+
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Confirmer" class="btn btn-default" />
@@ -174,6 +192,15 @@
         <th>
             @Html.DisplayNameFor(model => model.DateRDVReporte)
         </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.MontantDebInitial)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.MontantDebMAJ)
+        </th>
+
         <th>
             @Html.DisplayNameFor(model => model.MontantVerseDeclare)
         </th>
@@ -230,6 +257,21 @@
             @Html.DisplayFor(modelItem => item.DateRDVReporte)
         }
     </td>
+
+    <td>
+    
+        
+        @Html.DisplayFor(modelItem => item.MontantDebInitial)
+  
+   
+    </td>
+
+    <td>
+        
+        @Html.DisplayFor(modelItem => item.MontantDebMAJ)
+
+    </td>
+
     <td>
 
         @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
@@ -277,15 +319,26 @@
 
 </table>
 
-
-
-
-
 <script>
 
     var datetimePicker = document.getElementById("datetimePicker")
 
     var dropdown = document.getElementById("dropdown");
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]); // convert to base64 string
+        }
+    }
+
+
 
     $(document).ready(function () {
 
@@ -296,9 +349,15 @@
             $("#datetimePickerRDV").hide();
             $("#montant").hide();
             $("#datetimePickerRappel").hide();
+            $("#recu").hide();
 
         }
         hideAll()
+
+        $("#customFileLang").change(function () {
+            readURL(this);
+        });
+
         dropdown.onchange = function () {
 
             switch (dropdown.value) {
@@ -328,6 +387,7 @@
                     hideAll();
 
                     $("#montant").show();
+                    $("#recu").show();
 
                     document.getElementById("textLabel").innerHTML = "Versement en TND:";
                     document.getElementById("exampleInputAmount").max = "any";
@@ -362,6 +422,8 @@
                     hideAll();
 
                     $("#montant").show();
+                    $("#recu").show();
+
                     document.getElementById("textLabel").innerHTML = "Tranche en TND:";
 
                     document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";

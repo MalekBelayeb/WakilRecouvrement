@@ -452,6 +452,7 @@
     <Content Include="Content\SkillsStyle.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
+    <Content Include="Content\zoomImage.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -520,6 +521,16 @@
     <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile10.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile11.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile2.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile3.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile4.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile5.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile6.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile7.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile8.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile9.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <None Include="Scripts\jquery-3.5.1-vsdoc.js" />
     <Content Include="Scripts\jquery-3.5.1.js" />

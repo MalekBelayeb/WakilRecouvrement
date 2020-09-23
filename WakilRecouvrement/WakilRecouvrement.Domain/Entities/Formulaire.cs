@@ -42,6 +42,13 @@ namespace WakilRecouvrement.Domain.Entities
 
         [Display(Name ="Montant declaré/versé en TND")]
         public double MontantVerseDeclare { get; set; }
+
+        [Display(Name = "Montant debiteur initial en TND")]
+        public double MontantDebInitial { get; set; }
+
+        [Display(Name = "Montant debiteur MAJ en TND")]
+        public double MontantDebMAJ { get; set; }
+
         [Display(Name = "Verification")]
 
         [DefaultValue(false)]
@@ -52,7 +59,6 @@ namespace WakilRecouvrement.Domain.Entities
 
         [DefaultValue(false)]
         public bool NotifieBanque { get; set; }
-
 
         public int AffectationId { get; set; }
         public Affectation Affectation { get; set; }

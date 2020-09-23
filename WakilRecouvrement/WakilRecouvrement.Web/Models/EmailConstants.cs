@@ -18,7 +18,7 @@ namespace WakilRecouvrement.Web.Models
         public const string ENCOURS_SUBJECT = "Liste des clients en cours de traitement";
         public const string RDV_SUBJECT = "Liste des rendez-vous";
        
-        public const string TO = "zaitounabank@gmail.com";
+        public const string TO = "zaitounabank@gmail.com,aucunnoma@gmail.com";
 
     }
 }
