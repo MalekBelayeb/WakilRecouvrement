@@ -325,7 +325,7 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Lot.Adresse,
                        j.Lot.Type,
                        j.Lot.Numero,
-                       j.Affectation.Employe.Username,
+                        j.Affectation.Employe.Username,
                        j.Affectation.AffectationId,
                        DateAff = j.Affectation.DateAffectation.ToString(),
                         
@@ -356,6 +356,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
+        
 
         private List<ClientAffecteViewModel> SortTableData(string order, string orderDir, List<ClientAffecteViewModel> data)
         {
