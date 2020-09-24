@@ -165,28 +165,11 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult LoadData(string numLot,string agent, string traite )
         {
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-            List<ClientAffecteViewModel> JoinedList2 = new List<ClientAffecteViewModel>();
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
-
-
-
-            JoinedList2 = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-
-                          select new ClientAffecteViewModel
-                          {
-
-                              Formulaire = f,
-                              Affectation = a,
-                              Lot = l,
-
-                          }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-
-
+          
            // GenerateExcel(GenerateDatatableFromJoinedList(JoinedList2), @"C:\Users\Admin\Downloads\test.xlsx");
 
             if (traite == "ALL")
@@ -201,8 +184,6 @@ namespace WakilRecouvrement.Web.Controllers
                                   Lot = l,
 
                               }).ToList().DistinctBy(a => a.Affectation.AffectationId).ToList();
-
-
 
             
             }
@@ -520,10 +501,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.EtatClient = Note.A_VERIFIE;
 
 
-                    if (soldetranche.IndexOf('.') != -1)
-                    {
-                        soldetranche = soldetranche.Replace('.', ',');
-                    }
+ 
 
                     Formulaire.ContacteBanque = false;
 
@@ -567,6 +545,8 @@ namespace WakilRecouvrement.Web.Controllers
             
             Formulaire.NotifieBanque = false;
 
+            FormulaireService.Add(Formulaire);
+            FormulaireService.Commit();
 
             var nbVerfie = (from f in FormulaireService.GetAll()
                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
@@ -586,8 +566,9 @@ namespace WakilRecouvrement.Web.Controllers
                 }
             }
 
-            FormulaireService.Add(Formulaire);
-            FormulaireService.Commit();
+
+
+
 
             Lot Joinedlot = (from f in FormulaireService.GetAll()
                        join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
@@ -599,13 +580,11 @@ namespace WakilRecouvrement.Web.Controllers
                            SoldeDebiteur = l.SoldeDebiteur
                        
                        }).FirstOrDefault();
-
+            
 
             Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
 
-
-            if (Formulaire.EtatClient == Note.A_VERIFIE || Formulaire.EtatClient == Note.SOLDE || Formulaire.EtatClient == Note.SOLDE_TRANCHE)
-            {
+           
                 if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
                 {
                     Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
@@ -615,7 +594,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.MontantDebMAJ = FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Where(o => o.MontantDebMAJ != 0).OrderByDescending(o => o.MontantDebMAJ).LastOrDefault().MontantDebMAJ;
                 }
 
-            }
+            
 
 
             FormulaireService.Update(Formulaire);
@@ -1061,6 +1040,23 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
+        public Formulaire GetFormulaire(int affId)
+        {
+            var forms = (from f in FormulaireService.GetAll()
+                         join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                         where a.AffectationId == affId
+                         orderby f.MontantDebMAJ ascending
+                         select new ClientAffecteViewModel
+                         {
+                             Formulaire = f,
+                             Affectation = a
+                         }).FirstOrDefault();
+
+
+            return forms.Formulaire;
+
+        }
+
         [HttpPost]
         public ActionResult VerifierEtat(int id,bool valid,string montant)
         {
@@ -1074,7 +1070,9 @@ namespace WakilRecouvrement.Web.Controllers
          
             Lot Lot = JoinedLot.ToList().FirstOrDefault().Lot;
             Formulaire Formulaire = JoinedLot.ToList().FirstOrDefault().Formulaire;
-            
+
+            double DebMaJ = GetFormulaire(Formulaire.AffectationId).MontantDebMAJ;
+
             if(valid == false)
             {
                 DeleteFromulaire(Formulaire);
@@ -1102,7 +1100,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                 case Note.SOLDE_TRANCHE:
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
 
                     if (NewSolde > 0 )
                     {
