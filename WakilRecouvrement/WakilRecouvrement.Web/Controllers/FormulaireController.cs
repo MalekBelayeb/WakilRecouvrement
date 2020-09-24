@@ -500,9 +500,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.EtatClient = Note.A_VERIFIE;
 
-
- 
-
                     Formulaire.ContacteBanque = false;
 
                     Formulaire.Status = Status.EN_COURS;
@@ -545,9 +542,7 @@ namespace WakilRecouvrement.Web.Controllers
             
             Formulaire.NotifieBanque = false;
 
-            FormulaireService.Add(Formulaire);
-            FormulaireService.Commit();
-
+           
             var nbVerfie = (from f in FormulaireService.GetAll()
                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                            where a.AffectationId == int.Parse(id) && f.Status == Status.EN_COURS && f.EtatClient == Note.A_VERIFIE
@@ -556,6 +551,7 @@ namespace WakilRecouvrement.Web.Controllers
                                Formulaire = f,
                                Affectation = a
                            }).ToList();
+
 
 
             if(Formulaire.EtatClient == Note.A_VERIFIE)
@@ -567,6 +563,8 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
 
+            FormulaireService.Add(Formulaire);
+            FormulaireService.Commit();
 
 
 
@@ -582,16 +580,27 @@ namespace WakilRecouvrement.Web.Controllers
                        }).FirstOrDefault();
             
 
-            Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
+                Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
 
            
+
                 if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
                 {
-                    Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
+            
+                Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
+                
                 }
                 else
                 {
-                    Formulaire.MontantDebMAJ = FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Where(o => o.MontantDebMAJ != 0).OrderByDescending(o => o.MontantDebMAJ).LastOrDefault().MontantDebMAJ;
+                    Formulaire.MontantDebMAJ = (from f in FormulaireService.GetAll()
+                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                where a.AffectationId == int.Parse(id) && f.MontantDebMAJ!=0
+                                                orderby f.MontantDebMAJ ascending
+                                                select new ClientAffecteViewModel
+                                                {
+                                                    Formulaire = f,
+                                                    Affectation = a
+                                                }).FirstOrDefault().Formulaire.MontantDebMAJ;
                 }
 
             
@@ -1086,7 +1095,7 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 case Note.SOLDE:
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
 
                     if ( NewSolde <=0 )
                     {
@@ -1112,6 +1121,17 @@ namespace WakilRecouvrement.Web.Controllers
                         Formulaire.VerifieLe = DateTime.Now;
 
                     }
+                    else if( NewSolde<=0)
+                    {
+
+
+                        Formulaire.MontantDebMAJ = 0;
+
+                        Formulaire.Status = Status.VERIFIE;
+                        Formulaire.VerifieLe = DateTime.Now;
+                        Formulaire.EtatClient = Note.SOLDE;
+
+                    }
 
                     break;
 
@@ -1119,7 +1139,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.MontantVerseDeclare = double.Parse(montant.Replace('.', ','));
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()) );
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()) );
 
                    
                     if (NewSolde<=0)
@@ -1146,8 +1166,12 @@ namespace WakilRecouvrement.Web.Controllers
                     break;
             }
 
-            NotificationService.Delete(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).FirstOrDefault());
-            NotificationService.Commit();
+            if(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).Count()!=0)
+            {
+                NotificationService.Delete(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).FirstOrDefault());
+                NotificationService.Commit();
+
+            }
 
             FormulaireService.Update(Formulaire);
             FormulaireService.Commit();
@@ -1908,8 +1932,6 @@ namespace WakilRecouvrement.Web.Controllers
             FormulaireService.Commit();
         
         }
-
-
 
         public ActionResult SuiviRDV()
         {

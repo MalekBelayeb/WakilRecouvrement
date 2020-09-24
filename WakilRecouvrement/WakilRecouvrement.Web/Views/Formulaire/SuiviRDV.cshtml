@@ -47,10 +47,11 @@
 <table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
     <thead>
         <tr>
+            <th>Traiter</th>
             <th>Date RDV</th>
             <th>Affecté Le</th>
-            <th>NumClient</th>
             <th>NumLot</th>
+
             <th>Compte</th>
             <th>IDClient</th>
             <th>NomClient</th>
@@ -193,10 +194,30 @@
             Table = DemoDatatable();
 
         })
+        $(document).on('click', 'tbody  .redirect', function () {
+            var data_row = Table.row($(this).closest('tr')).data();
 
+            redirectToRoute(data_row["AffectationId"])
+
+
+        });
 
     });
 
+    function redirectToRoute(id)
+    {
+         $.ajax({
+         type: 'POST',
+         url: '@Url.Action("CreerFormulaireIntermediate", "Formulaire")',
+         dataType: 'json',
+             data: { id: id },
+             success: function (data) {
+
+                 window.location.replace(data.redirectUrl);
+
+             }
+         });
+    }
 
     function DemoDatatable() {
         var table = $("#demodata").DataTable({
@@ -215,7 +236,14 @@
             },
             "columns": [
 
-                { "data": "DateRDV", "name": "Etat", "autoWidth": true }
+                {
+                    "data": "Traiter", "name": "Traiter", "autoWidth": true, "render": function (data, type, row, meta) {
+
+
+                        return "<button  class='redirect btn btn-default'>Traiter</button>";
+
+                    } }
+                ,{ "data": "DateRDV", "name": "DateRDV", "autoWidth": true }
                 , { "data": "DateAff", "name": "DateAff", "autoWidth": true }
                 , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
                 , { "data": "Compte", "Name": "Compte", "autoWidth": true }

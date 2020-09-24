@@ -425,6 +425,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\btnStyle.css" />
     <Content Include="Content\buttonload.css" />
+    <Content Include="Content\cdns\responsive.bootstrap.min.css" />
     <Content Include="Content\CollapsideStyle.css" />
     <Content Include="Content\datableHover.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
@@ -450,6 +451,7 @@
     <Content Include="Content\RoundSlider.css" />
     <Content Include="Content\simple-sidebar.css" />
     <Content Include="Content\SkillsStyle.css" />
+    <Content Include="Content\cdns\dataTables.bootstrap.min.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="Content\zoomImage.css" />
@@ -553,6 +555,9 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jQuery\dataTables.bootstrap4.min.js" />
+    <Content Include="Scripts\jQuery\jquery.dataTables.min.js" />
+    <Content Include="Scripts\jQuery\jquery.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\notifier.js" />
     <Content Include="Scripts\notifier.min.js" />

@@ -5,17 +5,13 @@
 }
 
 <h2>Suivi des clients affectés</h2>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<script src="~/Scripts/jQuery/jquery.min.js"></script>
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-
-<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
-
-
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-
-<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js">
+<link href="~/Content/cdns/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/cdns/responsive.bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jQuery/jquery.dataTables.min.js"></script>
+<script src="~/Scripts/jQuery/dataTables.bootstrap4.min.js">
 </script>
 
 
@@ -145,7 +141,7 @@
                             }
 
                             if (montantDebMaj == 0) {
-                                montantDebMaj = ""
+                                montantDebMaj = "Soldé"
                             }
 
                             if (verif == "NON_VERIFIE") {
