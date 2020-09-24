@@ -148,10 +148,12 @@
                                 montantDebMaj = ""
                             }
 
-                            if (verif == false) {
+                            if (verif == "NON_VERIFIE") {
                                 verif = "Non vérifié"
-                            } else if (verif == true) {
+                            } else if (verif == "VERIFIE") {
                                 verif = "Vérifié"
+                            } else if (verif == "EN_COURS") {
+                                verif = "En attente..."
                             }
 
                             x += '<tr>' +

@@ -51,8 +51,8 @@ namespace WakilRecouvrement.Domain.Entities
 
         [Display(Name = "Verification")]
 
-        [DefaultValue(false)]
-        public bool IsVerified { get; set; }
+        [DefaultValue(Status.EN_COURS)]
+        public Status Status { get; set; }
        
         [DefaultValue(false)]
         public bool ContacteBanque { get; set; }

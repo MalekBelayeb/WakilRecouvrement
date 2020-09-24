@@ -523,6 +523,7 @@
     <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile10.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile11.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile12.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile2.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile3.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile4.pubxml" />
@@ -670,6 +671,7 @@
     <Content Include="Views\Formulaire\ValiderTraitement.cshtml" />
     <Content Include="Views\Formulaire\HistoriqueTraitements.cshtml" />
     <Content Include="Views\Formulaire\EnvoyerBanque.cshtml" />
+    <Content Include="Views\Formulaire\SuiviRDV.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

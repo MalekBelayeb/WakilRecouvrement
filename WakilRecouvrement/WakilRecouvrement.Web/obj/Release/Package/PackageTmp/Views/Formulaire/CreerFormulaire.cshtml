@@ -93,14 +93,14 @@
 <br />
 <h2>Remplir Formulaire</h2>
 
-@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data"}))
+@using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
 <div class="form-horizontal">
     <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
 
@@ -108,6 +108,7 @@
         @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
+
         </div>
     </div>
 
@@ -167,10 +168,15 @@
 
 
     <div class="form-group">
+
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Confirmer" class="btn btn-default" />
+            <span class="text-danger">@ViewBag.errormsg</span>
+
         </div>
+
     </div>
+
 </div>
 }
 
@@ -218,103 +224,108 @@
             @Html.DisplayNameFor(model => model.VerifieLe)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IsVerified)
+            @Html.DisplayNameFor(model => model.Status)
         </th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
+        <tr>
+            <td>
 
-        @Html.DisplayFor(modelItem => item.EtatClient)
+                @Html.DisplayFor(modelItem => item.EtatClient)
 
-    </td>
+            </td>
 
-    <td>
-
-
-        @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.DateRDV)
-        }
+            <td>
 
 
-    </td>
-    <td>
+                @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.DateRDV)
+                }
 
-        @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.DateRDVReporte)
-        }
-    </td>
 
-    <td>
-    
-        
-        @Html.DisplayFor(modelItem => item.MontantDebInitial)
-  
-   
-    </td>
+            </td>
+            <td>
 
-    <td>
-        
-        @Html.DisplayFor(modelItem => item.MontantDebMAJ)
+                @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.DateRDVReporte)
+                }
+            </td>
 
-    </td>
+            <td>
 
-    <td>
 
-        @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
+                @Html.DisplayFor(modelItem => item.MontantDebInitial)
 
-    </td>
-    <td>
 
-        @Html.DisplayFor(modelItem => item.DescriptionAutre)
+            </td>
 
-    </td>
-    <td>
-        @if (item.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.TraiteLe)
-        }
+            <td>
 
-    </td>
-    <td>
-        @if (item.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
-        {
-            <text></text>
-        }
-        else
-        {
-            @Html.DisplayFor(modelItem => item.VerifieLe)
-        }
-    </td>
-    <td>
-        @if (item.IsVerified == false)
-        {
-            <text>Non verifié</text>
-        }
-        else
-        {
-            <text>Verifié</text>
-        }
-    </td>
+                @Html.DisplayFor(modelItem => item.MontantDebMAJ)
 
-</tr>
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
+
+            </td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.DescriptionAutre)
+
+            </td>
+            <td>
+                @if (item.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.TraiteLe)
+                }
+
+            </td>
+            <td>
+                @if (item.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.VerifieLe)
+                }
+            </td>
+            <td>
+                @if (item.Status.ToString().Equals("NON_VERIFIE"))
+                {
+                    <text>Non verifié</text>
+                }
+                else if (item.Status.ToString().Equals("VERIFIE"))
+                {
+                    <text>Verifié</text>
+
+                }
+                else if (item.Status.ToString().Equals("EN_COURS"))
+                {
+                    <text>En attente...</text>
+                }
+            </td>
+
+        </tr>
     }
 
 </table>
@@ -402,11 +413,12 @@
                 case "A_VERIFIE":
 
                     hideAll();
-                    $("#montant").show();
+                   /* $("#montant").show();
                     document.getElementById("textLabel").innerHTML = "Montant declaré en TND:";
                     document.getElementById("exampleInputAmount").max =  "any";
                     document.getElementById("exampleInputAmount").value = "1.000";
                     document.getElementById("exampleInputAmount").min =0 +"";
+                    */
 
                     break;
                 case "RAPPEL":

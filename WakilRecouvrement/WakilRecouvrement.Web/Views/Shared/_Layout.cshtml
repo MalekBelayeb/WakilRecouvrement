@@ -109,217 +109,226 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             <nav class="mt-2">
 
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-                        @if (Session["role"] != null)
+                    @if (Session["role"] != null)
+                    {
+                        if (Session["role"].Equals("admin"))
                         {
-                            if (Session["role"].Equals("admin"))
-                            {
 
 
 
 
 
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
-                                        @*<i class="fas fa-upload mr-4"></i>*@
-                                        <p>Importer un lot</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                        @*<i class="fas fa-book mr-4"></i>*@
-                                        <p>Consulter les clients</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                        @*<i class="fas fa-gavel mr-4"></i>*@
-                                        <p>Affecter aux agents</p>
-                                    </a>
-                                </li>
-                                <!-- Sidebar Menu
-
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link active">
-                            <i class="fa fa-address-book mr-2"></i>
-                            <p>
-                                Gestion des lots
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
-                                    <i class="fas fa-upload mr-4"></i>
+                                <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
+                                    @*<i class="fas fa-upload mr-4"></i>*@
                                     <p>Importer un lot</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                    <i class="fas fa-book mr-4"></i>
+                                    @*<i class="fas fa-book mr-4"></i>*@
                                     <p>Consulter les clients</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                    <i class="fas fa-gavel mr-4"></i>
+                                    @*<i class="fas fa-gavel mr-4"></i>*@
                                     <p>Affecter aux agents</p>
                                 </a>
                             </li>
+                            <!-- Sidebar Menu
 
-                                    </ul>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link active">
+                    <i class="fa fa-address-book mr-2"></i>
+                    <p>
+                        Gestion des lots
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
+                            <i class="fas fa-upload mr-4"></i>
+                            <p>Importer un lot</p>
+                        </a>
+                    </li>
 
-                                        </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
+                            <i class="fas fa-book mr-4"></i>
+                            <p>Consulter les clients</p>
+                        </a>
+                    </li>
 
-                                            -->
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
-
-                                        @*<i class="fas fa-check mr-3"></i>*@
-
-                                        <p>Validation des traitements</p>
-
-                                    </a>
-
-                                </li>
-
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
-
-                                        @*<i class="fas fa-archive mr-3"></i>*@
-
-                                        <p>Historique des traitements</p>
-
-                                    </a>
-
-                                </li>
-
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
-
-                                        @*<i class="fas fa-archive mr-3"></i>*@
-
-                                        <p>Informer la banque</p>
-
-                                    </a>
-
-                                </li>
-
-
-
-                                @*<li class="nav-item has-treeview">
-                            <a href="#" class="nav-link active">
-                                <i class="fas fa-list-ul mr-2"></i>
-                                <p>
-                                    Gestion des traitements
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-
-                            <ul class="nav nav-treeview">
-
+                    <li class="nav-item">
+                        <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
+                            <i class="fas fa-gavel mr-4"></i>
+                            <p>Affecter aux agents</p>
+                        </a>
+                    </li>
 
                             </ul>
-                        </li>*@
-
-
-
-                            }
-                        }
-
-
-                        @if (Session["role"] != null)
-                        {
-
-
-
-                            if (Session["role"].Equals("agent"))
-                            {
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("AffectationList","Affectation")" class="nav-link">
-
-                                        @*<i class="fas fa-fax mr-2" aria-hidden="true"></i>*@
-
-                                        <p>Traiter les affectations</p>
-
-                                    </a>
 
                                 </li>
 
-
-                            }
+                                    -->
 
                             <li class="nav-item">
 
-                                <a href="@Url.Action("SuiviClient","Formulaire")" class="nav-link">
+                                <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
 
-                                    @*<i class="fas fa-address-card mr-2" aria-hidden="true"></i>*@
+                                    @*<i class="fas fa-check mr-3"></i>*@
 
-                                    <p>Suivi des affectations</p>
+                                    <p>Validation des traitements</p>
 
                                 </a>
 
                             </li>
 
-                            if (Session["role"].Equals("admin"))
-                            {
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("AccountList","Home")" class="nav-link">
-                                        @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
-                                        <p>Statistiques</p>
-                                    </a>
-
-                                </li>
-
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("AccountList","Home")" class="nav-link">
-                                        @*<i class="fas fa-users mr-2"></i>*@
-                                        <p>Gestion des comptes</p>
-                                    </a>
-
-                                </li>
-
-
-                            }
 
                             <li class="nav-item">
 
-                                <a href="@Url.Action("ChangePassword","Authentification")" class="nav-link">
-                                    @*<i class="fas fa-cog fa-fw mr-2"></i>*@
-                                    <p>Parametre du compte</p>
+                                <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
+
+                                    @*<i class="fas fa-archive mr-3"></i>*@
+
+                                    <p>Historique des traitements</p>
+
                                 </a>
 
                             </li>
 
+
                             <li class="nav-item">
 
-                                <a href="@Url.Action("Deconnect","Authentification")" class="nav-link">
-                                    @*<i class="fa fa-sign-out mr-2"></i>*@
-                                    <p>Se deconnecter</p>
+                                <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
+
+                                    @*<i class="fas fa-archive mr-3"></i>*@
+
+                                    <p>Informer la banque</p>
+
                                 </a>
 
                             </li>
 
-                        }
+
+
+                            @*<li class="nav-item has-treeview">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-list-ul mr-2"></i>
+                        <p>
+                            Gestion des traitements
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+
 
                     </ul>
+                </li>*@
+
+
+
+                        }
+                    }
+
+
+                    @if (Session["role"] != null)
+                    {
+
+
+
+                        if (Session["role"].Equals("agent"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a href="@Url.Action("AffectationList","Affectation")" class="nav-link">
+
+                                    @*<i class="fas fa-fax mr-2" aria-hidden="true"></i>*@
+
+                                    <p>Traiter les affectations</p>
+
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a href="@Url.Action("SuiviRDV","Formulaire")" class="nav-link">
+
+                                    <p>Suivi des RDV</p>
+
+                                </a>
+
+                            </li>
+
+                        }
+
+                        <li class="nav-item">
+
+                            <a href="@Url.Action("SuiviClient","Formulaire")" class="nav-link">
+
+                                @*<i class="fas fa-address-card mr-2" aria-hidden="true"></i>*@
+
+                                <p>Suivi des affectations</p>
+
+                            </a>
+
+                        </li>
+
+                        if (Session["role"].Equals("admin"))
+                        {
+
+                            <li class="nav-item">
+
+                                <a href="@Url.Action("AccountList","Home")" class="nav-link">
+                                    @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
+                                    <p>Statistiques</p>
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a href="@Url.Action("AccountList","Home")" class="nav-link">
+                                    @*<i class="fas fa-users mr-2"></i>*@
+                                    <p>Gestion des comptes</p>
+                                </a>
+
+                            </li>
+
+
+                        }
+
+                        <li class="nav-item">
+
+                            <a href="@Url.Action("ChangePassword","Authentification")" class="nav-link">
+                                @*<i class="fas fa-cog fa-fw mr-2"></i>*@
+                                <p>Parametre du compte</p>
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a href="@Url.Action("Deconnect","Authentification")" class="nav-link">
+                                @*<i class="fa fa-sign-out mr-2"></i>*@
+                                <p>Se deconnecter</p>
+                            </a>
+
+                        </li>
+
+                    }
+
+                </ul>
 
             </nav>
                 <!-- /.sidebar-menu -->

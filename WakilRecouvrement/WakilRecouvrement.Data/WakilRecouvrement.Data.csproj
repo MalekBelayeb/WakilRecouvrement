@@ -155,6 +155,10 @@
     <Compile Include="Migrations\202009231336347_eeer.designer.cs">
       <DependentUpon>202009231336347_eeer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009240929067_poeis.cs" />
+    <Compile Include="Migrations\202009240929067_poeis.designer.cs">
+      <DependentUpon>202009240929067_poeis.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -242,6 +246,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009231336347_eeer.resx">
       <DependentUpon>202009231336347_eeer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009240929067_poeis.resx">
+      <DependentUpon>202009240929067_poeis.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

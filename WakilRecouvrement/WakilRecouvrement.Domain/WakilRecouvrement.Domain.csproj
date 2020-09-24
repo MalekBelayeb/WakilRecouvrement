@@ -58,6 +58,7 @@
     <Compile Include="Entities\Note.cs" />
     <Compile Include="Entities\Notification.cs" />
     <Compile Include="Entities\Role.cs" />
+    <Compile Include="Entities\Status.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
