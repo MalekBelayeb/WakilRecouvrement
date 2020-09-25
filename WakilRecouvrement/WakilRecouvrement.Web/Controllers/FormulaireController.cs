@@ -33,7 +33,7 @@ namespace WakilRecouvrement.Web.Controllers
         EmployeService EmpService;
         FormulaireService FormulaireService;
         NotificationService NotificationService;
-   
+
         public int id = 0;
 
         public FormulaireController()
@@ -46,7 +46,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public ActionResult CreerFormulaire(string id,string msgError)
+        public ActionResult CreerFormulaire(string id, string msgError)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
@@ -57,8 +57,8 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.errormsg = msgError;
             string soldeDeb = AffectationService.GetById(long.Parse(id)).Lot.SoldeDebiteur;
             ViewBag.soldeDeb = soldeDeb.Replace(',', '.');
-         
-            return View(FormulaireService.GetAll().OrderByDescending(o=>o.TraiteLe).ToList().Where(f=>f.AffectationId == int.Parse(id)));
+
+            return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
         }
 
         [HttpPost]
@@ -83,7 +83,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         public IEnumerable<SelectListItem> NumLotListForDropDown()
         {
-           
+
             List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
@@ -104,10 +104,10 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
 
             listItems.Add(new SelectListItem { Selected = true, Text = "Touts les RDV", Value = "ALL" });
-            listItems.Add(new SelectListItem {  Text = "RDV du jour", Value = "RDV_J" });
-            listItems.Add(new SelectListItem {  Text = "RDV pour demain", Value = "RDV_DEMAIN" });
-            listItems.Add(new SelectListItem {  Text = "RDV pour les prochains jours", Value = "RDV_JOURS_PROCHAINE" });
-            listItems.Add(new SelectListItem {  Text = "RDV pour la semaine prochaine", Value = "RDV_SEMAINE_PROCHAINE" });
+            listItems.Add(new SelectListItem { Text = "RDV du jour", Value = "RDV_J" });
+            listItems.Add(new SelectListItem { Text = "RDV pour demain", Value = "RDV_DEMAIN" });
+            listItems.Add(new SelectListItem { Text = "RDV pour les prochains jours", Value = "RDV_JOURS_PROCHAINE" });
+            listItems.Add(new SelectListItem { Text = "RDV pour la semaine prochaine", Value = "RDV_SEMAINE_PROCHAINE" });
 
 
             return listItems;
@@ -123,7 +123,7 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Selected = true, Text = "Touts les agents", Value = "0" });
 
             agents.ForEach(l => {
-                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId+"" });
+                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
             });
 
             return listItems;
@@ -136,11 +136,11 @@ namespace WakilRecouvrement.Web.Controllers
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {
-               
-                    listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString()  });
-              
+
+                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
+
             }
-  
+
 
             return listItems;
         }
@@ -162,32 +162,15 @@ namespace WakilRecouvrement.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult LoadData(string numLot,string agent, string traite )
+        public ActionResult LoadData(string numLot, string agent, string traite)
         {
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-            List<ClientAffecteViewModel> JoinedList2 = new List<ClientAffecteViewModel>();
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
 
-
-
-            JoinedList2 = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-
-                          select new ClientAffecteViewModel
-                          {
-
-                              Formulaire = f,
-                              Affectation = a,
-                              Lot = l,
-
-                          }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-
-
-           // GenerateExcel(GenerateDatatableFromJoinedList(JoinedList2), @"C:\Users\Admin\Downloads\test.xlsx");
+            // GenerateExcel(GenerateDatatableFromJoinedList(JoinedList2), @"C:\Users\Admin\Downloads\test.xlsx");
 
             if (traite == "ALL")
             {
@@ -203,8 +186,6 @@ namespace WakilRecouvrement.Web.Controllers
                               }).ToList().DistinctBy(a => a.Affectation.AffectationId).ToList();
 
 
-
-            
             }
 
             else if (traite == "SAUF")
@@ -250,7 +231,7 @@ namespace WakilRecouvrement.Web.Controllers
 
 
 
-            if(int.Parse(agent)!=0)
+            if (int.Parse(agent) != 0)
             {
                 JoinedList = JoinedList.ToList().Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
             }
@@ -261,14 +242,14 @@ namespace WakilRecouvrement.Web.Controllers
             int nbTrancheSoldeTotal = 0;
             int nbFNTotal = 0;
 
-          /*  if (listAffectation.Select(a=>a.Formulaires).Count()>0)
-            {
-                 nbSoldeTotal = listAffectation.Select(a => a.Formulaires).Where(a => a.LastOrDefault().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE")).ToList().Count();
-                 nbTrancheSoldeTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE")).ToList().Count();
-                 nbFNTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList().Count();
-            }
-            */
-            
+            /*  if (listAffectation.Select(a=>a.Formulaires).Count()>0)
+              {
+                   nbSoldeTotal = listAffectation.Select(a => a.Formulaires).Where(a => a.LastOrDefault().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE")).ToList().Count();
+                   nbTrancheSoldeTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE")).ToList().Count();
+                   nbFNTotal = listAffectation.Where(a => a.Formulaires.Count() > 0).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "FAUX_NUM")).ToList().Count();
+              }
+              */
+
             JsonResult result = new JsonResult();
 
             try
@@ -308,8 +289,8 @@ namespace WakilRecouvrement.Web.Controllers
                 int recFilter = JoinedList.Count();
 
                 JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
-              
-                
+
+
                 var modifiedData = JoinedList.Select(j =>
                    new
                    {
@@ -325,12 +306,12 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Lot.Adresse,
                        j.Lot.Type,
                        j.Lot.Numero,
-                        j.Affectation.Employe.Username,
+                       j.Affectation.Employe.Username,
                        j.Affectation.AffectationId,
                        DateAff = j.Affectation.DateAffectation.ToString(),
-                        
+
                        Etat = GetEtat(j.Formulaire).ToString()
-                   
+
                    }
                    );
 
@@ -356,7 +337,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        
+
 
         private List<ClientAffecteViewModel> SortTableData(string order, string orderDir, List<ClientAffecteViewModel> data)
         {
@@ -375,7 +356,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                                  : data.OrderBy(j => long.Parse(j.Lot.NumLot)).ToList();
                         break;
                     case "2":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j=> j.Lot.Compte).ToList()
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.Compte).ToList()
                                                                                                  : data.OrderBy(j => j.Lot.Compte).ToList();
                         break;
                     case "3":
@@ -410,7 +391,7 @@ namespace WakilRecouvrement.Web.Controllers
                         break;
                     case "10":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.Type).ToList()
-                                                                                                   : data.OrderBy(j=> j.Lot.Type).ToList();
+                                                                                                   : data.OrderBy(j => j.Lot.Type).ToList();
                         break;
 
                     case "11":
@@ -432,10 +413,10 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreerFormulaireNote(string id,string DescriptionAutre,string EtatClient,string RDVDateTime, string RDVReporteDateTime,string soldetranche, HttpPostedFileBase PostedFile)
+        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RDVReporteDateTime, string soldetranche, HttpPostedFileBase PostedFile)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
-            
+
             Formulaire Formulaire = new Formulaire();
             ViewBag.errormsg = "";
             switch ((Note)Enum.Parse(typeof(Note), EtatClient))
@@ -443,15 +424,15 @@ namespace WakilRecouvrement.Web.Controllers
                 case Note.INJOIGNABLE:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
-                    Formulaire.Status =  Status.VERIFIE;
+                    Formulaire.Status = Status.VERIFIE;
 
                     Formulaire.EtatClient = Note.INJOIGNABLE;
-                    
+
                     break;
                 case Note.NRP:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
-                    Formulaire.Status =  Status.VERIFIE;
+                    Formulaire.Status = Status.VERIFIE;
 
                     Formulaire.EtatClient = Note.NRP;
 
@@ -464,12 +445,12 @@ namespace WakilRecouvrement.Web.Controllers
 
                     break;
                 case Note.RDV:
-                    
+
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
                     Formulaire.EtatClient = Note.RDV;
                     Formulaire.DateRDV = DateTime.Parse(RDVDateTime);
-                    Formulaire.Status =  Status.VERIFIE;
+                    Formulaire.Status = Status.VERIFIE;
 
                     break;
                 case Note.RDV_REPORTE:
@@ -480,7 +461,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.Status = Status.VERIFIE;
 
 
-                    break; 
+                    break;
                 case Note.REFUS_PAIEMENT:
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
@@ -519,12 +500,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.EtatClient = Note.A_VERIFIE;
 
-
-                    if (soldetranche.IndexOf('.') != -1)
-                    {
-                        soldetranche = soldetranche.Replace('.', ',');
-                    }
-
                     Formulaire.ContacteBanque = false;
 
                     Formulaire.Status = Status.EN_COURS;
@@ -537,7 +512,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.DescriptionAutre = DescriptionAutre;
 
-                    break;                
+                    break;
                 case Note.RAPPEL:
 
                     Formulaire.AffectationId = int.Parse(id);
@@ -545,7 +520,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.Status = Status.VERIFIE;
 
                     Formulaire.EtatClient = Note.RAPPEL;
-                 
+
                     break;
                 case Note.SOLDE_TRANCHE:
 
@@ -558,27 +533,28 @@ namespace WakilRecouvrement.Web.Controllers
                     {
                         soldetranche = soldetranche.Replace('.', ',');
                     }
-                    
+
                     Formulaire.MontantVerseDeclare = double.Parse(soldetranche);
-                
+
                     break;
             }
 
-            
+
             Formulaire.NotifieBanque = false;
 
 
             var nbVerfie = (from f in FormulaireService.GetAll()
-                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                           where a.AffectationId == int.Parse(id) && f.Status == Status.EN_COURS && f.EtatClient == Note.A_VERIFIE
-                           select new ClientAffecteViewModel
-                           {
-                               Formulaire = f,
-                               Affectation = a
-                           }).ToList();
+                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                            where a.AffectationId == int.Parse(id) && f.Status == Status.EN_COURS && f.EtatClient == Note.A_VERIFIE
+                            select new ClientAffecteViewModel
+                            {
+                                Formulaire = f,
+                                Affectation = a
+                            }).ToList();
 
 
-            if(Formulaire.EtatClient == Note.A_VERIFIE)
+
+            if (Formulaire.EtatClient == Note.A_VERIFIE)
             {
                 if (nbVerfie.Count() >= 1)
                 {
@@ -586,36 +562,48 @@ namespace WakilRecouvrement.Web.Controllers
                 }
             }
 
+
             FormulaireService.Add(Formulaire);
             FormulaireService.Commit();
 
-            Lot Joinedlot = (from f in FormulaireService.GetAll()
-                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                       where f.FormulaireId == Formulaire.FormulaireId
-                       select new Lot
-                       {
 
-                           SoldeDebiteur = l.SoldeDebiteur
-                       
-                       }).FirstOrDefault();
+
+            Lot Joinedlot = (from f in FormulaireService.GetAll()
+                             join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                             join l in LotService.GetAll() on a.LotId equals l.LotId
+                             where f.FormulaireId == Formulaire.FormulaireId
+                             select new Lot
+                             {
+
+                                 SoldeDebiteur = l.SoldeDebiteur
+
+                             }).FirstOrDefault();
 
 
             Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
 
 
-            if (Formulaire.EtatClient == Note.A_VERIFIE || Formulaire.EtatClient == Note.SOLDE || Formulaire.EtatClient == Note.SOLDE_TRANCHE)
+
+            if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
             {
-                if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
-                {
-                    Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
-                }
-                else
-                {
-                    Formulaire.MontantDebMAJ = FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Where(o => o.MontantDebMAJ != 0).OrderByDescending(o => o.MontantDebMAJ).LastOrDefault().MontantDebMAJ;
-                }
+
+                Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
 
             }
+            else
+            {
+                Formulaire.MontantDebMAJ = (from f in FormulaireService.GetAll()
+                                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                            where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
+                                            orderby f.MontantDebMAJ ascending
+                                            select new ClientAffecteViewModel
+                                            {
+                                                Formulaire = f,
+                                                Affectation = a
+                                            }).FirstOrDefault().Formulaire.MontantDebMAJ;
+            }
+
+
 
 
             FormulaireService.Update(Formulaire);
@@ -682,24 +670,24 @@ namespace WakilRecouvrement.Web.Controllers
                 traitele = f.Formulaire.TraiteLe.ToString(),
                 montantDebInitial = f.Formulaire.MontantDebInitial.ToString(),
                 montantDebMaj = f.Formulaire.MontantDebMAJ.ToString()
-            }) ; 
+            });
 
-            return Json(new { list=list });
+            return Json(new { list = list });
         }
 
         public string GetEtat(Formulaire formulaire)
         {
 
 
-            if(formulaire==null)
+            if (formulaire == null)
             {
                 return "";
             }
             else
             {
-                    
+
                 return formulaire.IfNotNull(i => i.EtatClient).ToString();
-            
+
             }
 
         }
@@ -717,7 +705,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
         }
-    
+
         public ActionResult ValiderTraitement()
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
@@ -730,8 +718,8 @@ namespace WakilRecouvrement.Web.Controllers
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
-            
-            if(TempData["IDClient"]==null)
+
+            if (TempData["IDClient"] == null)
             {
                 ViewBag.IDClient = "0";
             }
@@ -744,7 +732,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ValiderTraitement(bool IsValid,string numLot,string traite,string agent)
+        public ActionResult ValiderTraitement(bool IsValid, string numLot, string traite, string agent)
         {
 
             string status = "";
@@ -758,7 +746,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
-            if (IsValid ==false )
+            if (IsValid == false)
                 ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
             if (IsValid == true)
                 ViewBag.TraiteList = new SelectList(TraiteValidationValideListForDropDown(), "Value", "Text");
@@ -809,13 +797,13 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
 
-         
+
 
             JsonResult result = new JsonResult();
 
             try
             {
-            
+
                 string search = Request.Form.GetValues("search[value]")[0];
                 string draw = Request.Form.GetValues("draw")[0];
                 string order = Request.Form.GetValues("order[0][column]")[0];
@@ -875,7 +863,7 @@ namespace WakilRecouvrement.Web.Controllers
                    );
                 int x = JoinedList.Count();
 
-                var info = new { nbTotal =  x};
+                var info = new { nbTotal = x };
 
                 result = this.Json(new
                 {
@@ -902,9 +890,9 @@ namespace WakilRecouvrement.Web.Controllers
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "Touts les traitements non validés", Value = "ALL" });
-            listItems.Add(new SelectListItem {  Text = "Soldé", Value = "SOLDE" });
-            listItems.Add(new SelectListItem {  Text = "Tranche", Value = "SOLDE_TRANCHE" });
-            listItems.Add(new SelectListItem {  Text = "A verifié", Value = "A_VERIFIE" });
+            listItems.Add(new SelectListItem { Text = "Soldé", Value = "SOLDE" });
+            listItems.Add(new SelectListItem { Text = "Tranche", Value = "SOLDE_TRANCHE" });
+            listItems.Add(new SelectListItem { Text = "A verifié", Value = "A_VERIFIE" });
 
             return listItems;
         }
@@ -939,7 +927,7 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 switch (order)
                 {
-                  
+
                     case "0":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => long.Parse(j.Lot.NumLot)).ToList()
                                                                                                  : data.OrderBy(j => long.Parse(j.Lot.NumLot)).ToList();
@@ -961,7 +949,7 @@ namespace WakilRecouvrement.Web.Controllers
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Affectation.EmployeId).ToList()
                                                                                                  : data.OrderBy(j => j.Affectation.EmployeId).ToList();
                         break;
-                   
+
                     case "7":
 
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList()
@@ -972,7 +960,7 @@ namespace WakilRecouvrement.Web.Controllers
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.NomClient).ToList()
                                                                                                    : data.OrderBy(j => j.Lot.NomClient).ToList();
                         break;
-                                   
+
                     default:
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => GetTraiteLe(j.Affectation)).ToList()
                                                                                                    : data.OrderBy(j => GetTraiteLe(j.Affectation)).ToList();
@@ -1004,7 +992,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                                  : data.OrderBy(j => j.Formulaire.MontantVerseDeclare).ToList();
                         break;
                     case "3":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j =>j.Formulaire.VerifieLe).ToList()
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Formulaire.VerifieLe).ToList()
                                                                                                  : data.OrderBy(j => j.Formulaire.VerifieLe).ToList();
                         break;
                     case "4":
@@ -1029,14 +1017,14 @@ namespace WakilRecouvrement.Web.Controllers
                     case "10":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.NomClient).ToList()
                                                                                                    : data.OrderBy(j => j.Lot.NomClient).ToList();
-                        break;        
+                        break;
                     case "11":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.DescIndustry).ToList()
                                                                                                    : data.OrderBy(j => j.Lot.DescIndustry).ToList();
                         break;
 
                     default:
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j =>j.Formulaire.VerifieLe).ToList()
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Formulaire.VerifieLe).ToList()
                                                                                                    : data.OrderBy(j => j.Formulaire.VerifieLe).ToList();
                         break;
                 }
@@ -1061,21 +1049,40 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
+        public Formulaire GetFormulaire(int affId)
+        {
+            var forms = (from f in FormulaireService.GetAll()
+                         join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                         where a.AffectationId == affId
+                         orderby f.MontantDebMAJ ascending
+                         select new ClientAffecteViewModel
+                         {
+                             Formulaire = f,
+                             Affectation = a
+                         }).FirstOrDefault();
+
+
+            return forms.Formulaire;
+
+        }
+
         [HttpPost]
-        public ActionResult VerifierEtat(int id,bool valid,string montant)
+        public ActionResult VerifierEtat(int id, bool valid, string montant)
         {
 
-                var JoinedLot = from f in FormulaireService.GetAll()
-                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                join l in LotService.GetAll() on a.LotId equals l.LotId
-                where f.FormulaireId == id
-                    select new ClientAffecteViewModel {Lot = l,Formulaire = f };
-            
-         
+            var JoinedLot = from f in FormulaireService.GetAll()
+                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                            join l in LotService.GetAll() on a.LotId equals l.LotId
+                            where f.FormulaireId == id
+                            select new ClientAffecteViewModel { Lot = l, Formulaire = f };
+
+
             Lot Lot = JoinedLot.ToList().FirstOrDefault().Lot;
             Formulaire Formulaire = JoinedLot.ToList().FirstOrDefault().Formulaire;
-            
-            if(valid == false)
+
+            double DebMaJ = GetFormulaire(Formulaire.AffectationId).MontantDebMAJ;
+
+            if (valid == false)
             {
                 DeleteFromulaire(Formulaire);
                 return Json(new { });
@@ -1088,9 +1095,9 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 case Note.SOLDE:
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
 
-                    if ( NewSolde <=0 )
+                    if (NewSolde <= 0)
                     {
 
                         Formulaire.MontantDebMAJ = 0;
@@ -1102,16 +1109,27 @@ namespace WakilRecouvrement.Web.Controllers
 
                 case Note.SOLDE_TRANCHE:
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
 
-                    if (NewSolde > 0 )
+                    if (NewSolde > 0)
                     {
-                        
+
                         Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
 
-                        Formulaire.Status =  Status.VERIFIE;
+                        Formulaire.Status = Status.VERIFIE;
 
                         Formulaire.VerifieLe = DateTime.Now;
+
+                    }
+                    else if (NewSolde <= 0)
+                    {
+
+
+                        Formulaire.MontantDebMAJ = 0;
+
+                        Formulaire.Status = Status.VERIFIE;
+                        Formulaire.VerifieLe = DateTime.Now;
+                        Formulaire.EtatClient = Note.SOLDE;
 
                     }
 
@@ -1121,39 +1139,43 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire.MontantVerseDeclare = double.Parse(montant.Replace('.', ','));
 
-                    NewSolde = Decimal.Subtract(decimal.Parse(Formulaire.MontantDebMAJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()) );
+                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
 
-                   
-                    if (NewSolde<=0)
+
+                    if (NewSolde <= 0)
                     {
 
-                         Formulaire.MontantDebMAJ = 0;
+                        Formulaire.MontantDebMAJ = 0;
 
-                         Formulaire.Status =  Status.VERIFIE;
-                         Formulaire.VerifieLe = DateTime.Now;
-                         Formulaire.EtatClient = Note.SOLDE;
+                        Formulaire.Status = Status.VERIFIE;
+                        Formulaire.VerifieLe = DateTime.Now;
+                        Formulaire.EtatClient = Note.SOLDE;
 
                     }
-                     else if(NewSolde>0)
-                     {
-                         Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
+                    else if (NewSolde > 0)
+                    {
+                        Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
 
-                         Formulaire.Status =  Status.VERIFIE;
-                         Formulaire.VerifieLe = DateTime.Now;
-                         Formulaire.EtatClient = Note.SOLDE_TRANCHE;
+                        Formulaire.Status = Status.VERIFIE;
+                        Formulaire.VerifieLe = DateTime.Now;
+                        Formulaire.EtatClient = Note.SOLDE_TRANCHE;
 
-                     }
-                   
-                
+                    }
+
+
                     break;
             }
 
-            NotificationService.Delete(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).FirstOrDefault());
-            NotificationService.Commit();
+            if (NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).Count() != 0)
+            {
+                NotificationService.Delete(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).FirstOrDefault());
+                NotificationService.Commit();
+
+            }
 
             FormulaireService.Update(Formulaire);
             FormulaireService.Commit();
-          
+
             return Json(new { });
         }
 
@@ -1172,11 +1194,11 @@ namespace WakilRecouvrement.Web.Controllers
 
             //ViewBag.searching = "1";
             TempData["IDClient"] = affectation.Lot.IDClient;
-            
+
             return Json(new { redirectUrl = Url.Action("ValiderTraitement", "Formulaire") });
 
-        } 
-        
+        }
+
         [HttpPost]
         public ActionResult UpdateContactBanque(int id)
         {
@@ -1185,9 +1207,9 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
 
             Formulaire formulaire = FormulaireService.GetById(id);
-            
-            Debug.WriteLine(id);    
-            
+
+            Debug.WriteLine(id);
+
             formulaire.ContacteBanque = true;
 
             FormulaireService.Update(formulaire);
@@ -1197,25 +1219,25 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list,string traite)
+        public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list, string traite)
         {
             List<FormulaireExportable> newList = new List<FormulaireExportable>();
             DataTable dataTable = new DataTable();
 
             if (traite.Equals("RDV"))
             {
-               newList = list.Select(j =>
-                new FormulaireExportable
-                {
-                NomClient = j.Lot.NomClient,
-                NumLot = j.Lot.NumLot,
-                Compte = j.Lot.Compte,
-                IDClient = j.Lot.IDClient,
-                Etat = j.Formulaire.EtatClient.ToString(),
-                RDV = j.Formulaire.DateRDV.ToString()
-                }
+                newList = list.Select(j =>
+                 new FormulaireExportable
+                 {
+                     NomClient = j.Lot.NomClient,
+                     NumLot = j.Lot.NumLot,
+                     Compte = j.Lot.Compte,
+                     IDClient = j.Lot.IDClient,
+                     Etat = j.Formulaire.EtatClient.ToString(),
+                     RDV = j.Formulaire.DateRDV.ToString()
+                 }
 
-                ).ToList();
+                 ).ToList();
 
                 dataTable.Columns.Add("NumLot", typeof(string));
                 dataTable.Columns.Add("IDClient", typeof(string));
@@ -1223,7 +1245,7 @@ namespace WakilRecouvrement.Web.Controllers
                 dataTable.Columns.Add("NomClient", typeof(string));
                 dataTable.Columns.Add("Etat", typeof(string));
                 dataTable.Columns.Add("RDV", typeof(string));
-                
+
                 foreach (FormulaireExportable c in newList)
                 {
 
@@ -1264,7 +1286,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-            else if(traite.Equals("SOLDE"))
+            else if (traite.Equals("SOLDE"))
             {
                 newList = list.Select(j =>
                 new FormulaireExportable
@@ -1301,7 +1323,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                         etat = "Tranche versé";
 
-                    } else if(c.Etat =="A_VERIFIE")
+                    }
+                    else if (c.Etat == "A_VERIFIE")
                     {
 
                         etat = "A verifié";
@@ -1377,7 +1400,7 @@ namespace WakilRecouvrement.Web.Controllers
                     row["IDClient"] = c.IDClient;
                     row["Compte"] = c.Compte;
                     row["NomClient"] = c.NomClient;
-                    row["Etat"] = etat;                    
+                    row["Etat"] = etat;
                     dataTable.Rows.Add(row);
 
                 }
@@ -1388,11 +1411,11 @@ namespace WakilRecouvrement.Web.Controllers
                 newList = list.Select(j =>
                 new FormulaireExportable
                 {
-                NomClient = j.Lot.NomClient,
-                NumLot = j.Lot.NumLot,
-                Compte = j.Lot.Compte,
-                IDClient = j.Lot.IDClient,
-                Etat = j.Formulaire.EtatClient.ToString()
+                    NomClient = j.Lot.NomClient,
+                    NumLot = j.Lot.NumLot,
+                    Compte = j.Lot.Compte,
+                    IDClient = j.Lot.IDClient,
+                    Etat = j.Formulaire.EtatClient.ToString()
                 }
 
                 ).ToList();
@@ -1402,7 +1425,7 @@ namespace WakilRecouvrement.Web.Controllers
                 dataTable.Columns.Add("Compte", typeof(string));
                 dataTable.Columns.Add("NomClient", typeof(string));
                 dataTable.Columns.Add("Etat", typeof(string));
-                
+
                 foreach (FormulaireExportable c in newList)
                 {
 
@@ -1439,7 +1462,7 @@ namespace WakilRecouvrement.Web.Controllers
             return dataTable;
         }
 
-   
+
 
 
         public ActionResult EnvoyerBanque()
@@ -1456,12 +1479,12 @@ namespace WakilRecouvrement.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult EnvoyerBanqueLoadData(string traite,string numLot,string objet,string email, bool send,string to)
+        public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string objet, string email, bool send, string to)
         {
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
-            
+
 
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
@@ -1471,12 +1494,12 @@ namespace WakilRecouvrement.Web.Controllers
 
                           select new ClientAffecteViewModel
                           {
-                              
+
                               Formulaire = f,
                               Lot = l,
                               Affectation = a
 
-                          }).ToList().Where(  j => ((j.Formulaire.Status ==  Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE)  && j.Formulaire.NotifieBanque == false) ).ToList();
+                          }).ToList().Where(j => ((j.Formulaire.Status == Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE) && j.Formulaire.NotifieBanque == false)).ToList();
 
             string subject = "";
             string body = "";
@@ -1487,16 +1510,16 @@ namespace WakilRecouvrement.Web.Controllers
             if (traite == "RDV")
             {
 
-                
+
                 JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.RDV || j.Formulaire.EtatClient == Note.RDV_REPORTE).ToList();
                 subject = EmailConstants.RDV_SUBJECT;
                 body = EmailConstants.RDV_BODY;
                 name = "RDV";
                 To = EmailConstants.TO;
             }
-            else if(traite == "SOLDE")
+            else if (traite == "SOLDE")
             {
-                
+
                 JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE).ToList();
                 subject = EmailConstants.VERSEMENT_SUBJECT;
                 body = EmailConstants.VERSEMENT_BODY;
@@ -1504,20 +1527,20 @@ namespace WakilRecouvrement.Web.Controllers
                 To = EmailConstants.TO;
 
             }
-            else if(traite == "A_VERIFIE")
+            else if (traite == "A_VERIFIE")
             {
-                
-                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE ).ToList();
+
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE).ToList();
                 subject = EmailConstants.AVERIFIE_SUBJECT;
                 body = EmailConstants.AVERIFIE_BODY;
                 name = "A_VERIFIE";
                 To = EmailConstants.TO;
 
             }
-            else if(traite == "Autre")
+            else if (traite == "Autre")
             {
-              
-                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient== Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
+
+                JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient == Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
                 subject = EmailConstants.ENCOURS_SUBJECT;
                 body = EmailConstants.ENCOURS_BODY;
                 name = "EN_COURS";
@@ -1531,27 +1554,27 @@ namespace WakilRecouvrement.Web.Controllers
                 JoinedList = JoinedList.ToList().Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
             }
 
-            if(send == true)
+            if (send == true)
             {
 
                 //string fileName = Path.GetFileName(fileUploader.FileName);
                 //mail.Attachments.Add(new Attachment(fileUploader.InputStream, fileName));
-                
-                string path = GetFolderName()+ "/" + name+"_MAJ_"+DateTime.Now.ToString("dd.MM.yyyy")+"_"+ ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
-          
+
+                string path = GetFolderName() + "/" + name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+
                 GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
 
                 SendMail(to, objet, email, path);
 
-                foreach(var j in JoinedList)
+                foreach (var j in JoinedList)
                 {
-                    
+
                     j.Formulaire.NotifieBanque = true;
                     FormulaireService.Update(j.Formulaire);
 
                 }
                 FormulaireService.Commit();
-             
+
                 // return RedirectToAction("EnvoyerBanque");
             }
 
@@ -1585,7 +1608,7 @@ namespace WakilRecouvrement.Web.Controllers
                         ).ToList();
                 }
 
-                
+
                 JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
 
                 int recFilter = JoinedList.Count();
@@ -1601,13 +1624,13 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Lot.IDClient,
                        j.Lot.NomClient,
                        Etat = j.Formulaire.EtatClient.ToString(),
-                      
+
                    }
                    );
-              
+
                 int x = JoinedList.Count();
                 ViewBag.x = x;
-                var info = new { nbTotal = x, subject = subject, body = body,to= To };
+                var info = new { nbTotal = x, subject = subject, body = body, to = To };
 
                 result = this.Json(new
                 {
@@ -1630,55 +1653,55 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-    public static void GenerateExcel(DataTable dataTable, string path)
-    {
-
-        dataTable.TableName = "Table1";
-
-        DataSet dataSet = new DataSet();
-        dataSet.Tables.Add(dataTable);
-        // create a excel app along side with workbook and worksheet and give a name to it
-        Excel.Application excelApp = new Excel.Application();
-        Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
-            
-        Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
-        Excel.Range xlRange = xlWorksheet.UsedRange;
-      
-            foreach (DataTable table in dataSet.Tables)
+        public static void GenerateExcel(DataTable dataTable, string path)
         {
+
+            dataTable.TableName = "Table1";
+
+            DataSet dataSet = new DataSet();
+            dataSet.Tables.Add(dataTable);
+            // create a excel app along side with workbook and worksheet and give a name to it
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
+
+            Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
+            Excel.Range xlRange = xlWorksheet.UsedRange;
+
+            foreach (DataTable table in dataSet.Tables)
+            {
                 //Add a new worksheet to workbook with the Datatable name
                 // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
                 Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
 
                 excelWorkSheet.Name = table.TableName;
-            // add all the columns
-            for (int i = 1; i < table.Columns.Count + 1; i++)
-            {
-                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
-            }
-            // add all the rows
-            for (int j = 0; j < table.Rows.Count; j++)
-            {
-                for (int k = 0; k < table.Columns.Count; k++)
+                // add all the columns
+                for (int i = 1; i < table.Columns.Count + 1; i++)
                 {
+                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+                }
+                // add all the rows
+                for (int j = 0; j < table.Rows.Count; j++)
+                {
+                    for (int k = 0; k < table.Columns.Count; k++)
+                    {
                         excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+                    }
                 }
             }
-        }
             // excelWorkBook.Save(); -> this will save to its default location
-            
+
             excelWorkBook.SaveAs(path); // -> this will do the custom
-            
+
             excelWorkBook.Close();
             excelApp.Quit();
         }
 
-        public void SendMail(string to,string subject,string body,string path)
+        public void SendMail(string to, string subject, string body, string path)
         {
 
             MailMessage mm = new MailMessage();
             mm.From = new MailAddress("alwakilrecouvrementmailtest@gmail.com");
-            foreach(string t in to.Split(',').ToList())
+            foreach (string t in to.Split(',').ToList())
             {
                 Debug.WriteLine(t);
                 mm.To.Add(t);
@@ -1701,10 +1724,10 @@ namespace WakilRecouvrement.Web.Controllers
         public string GetFolderName()
         {
             string folderName = Server.MapPath("~/Uploads/Updates");
-            if(!Directory.Exists(folderName))
+            if (!Directory.Exists(folderName))
             {
                 Directory.CreateDirectory(folderName);
-                
+
             }
 
             return folderName;
@@ -1713,17 +1736,17 @@ namespace WakilRecouvrement.Web.Controllers
         public string getImagePath(Formulaire formulaire)
         {
             string path = "";
-            foreach(string  f in Directory.GetFiles(Server.MapPath("~/Uploads/Recu/")))
+            foreach (string f in Directory.GetFiles(Server.MapPath("~/Uploads/Recu/")))
             {
                 string extension = Path.GetExtension(f);
                 string name = Path.GetFileName(f);
-                if (name.Equals(formulaire.FormulaireId+extension))
+                if (name.Equals(formulaire.FormulaireId + extension))
                 {
-                   
+
                     path = name;
-                    
+
                 }
-           
+
             }
             return path;
         }
@@ -1807,7 +1830,7 @@ namespace WakilRecouvrement.Web.Controllers
                                 string argNomClient = "NomClient";
                                 string argEtat = "Etat";
                                 string argMontant = "Montant";
-                             
+
 
                                 foreach (DataRow row in dt.Rows)
                                 {
@@ -1851,7 +1874,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public void VerifyClient(string idclient,string montant)
+        public void VerifyClient(string idclient, string montant)
         {
             var formulaireAtraite = (from f in FormulaireService.GetAll()
                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
@@ -1874,11 +1897,15 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 DeleteFromulaire(formulaireAtraite.Formulaire);
             }
-           
+
             Decimal NewSolde = 0;
 
             NewSolde = Decimal.Subtract(decimal.Parse(formulaireAtraite.Formulaire.MontantDebMAJ.ToString()), decimal.Parse(formulaireAtraite.Formulaire.MontantVerseDeclare.ToString()));
+            double DebMaJ = GetFormulaire(formulaireAtraite.Formulaire.AffectationId).MontantDebMAJ;
 
+
+
+            NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(formulaireAtraite.Formulaire.MontantVerseDeclare.ToString()));
 
             if (NewSolde <= 0)
             {
@@ -1905,13 +1932,11 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void DeleteFromulaire(Formulaire formulaire)
         {
-        
+
             FormulaireService.Delete(formulaire);
             FormulaireService.Commit();
-        
+
         }
-
-
 
         public ActionResult SuiviRDV()
         {
@@ -1921,14 +1946,14 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.RDVList = new SelectList(RDVForDropDown(), "Value", "Text");
-         
+
             return View();
 
         }
 
 
         [HttpPost]
-        public ActionResult SuiviRDV(string numLot,string RDVType)
+        public ActionResult SuiviRDV(string numLot, string RDVType)
         {
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
@@ -1947,7 +1972,7 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Lot = l,
 
-                          }).ToList().DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV") ).ToList();
+                          }).ToList().DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).ToList();
 
 
             if (numLot != "0")
@@ -1958,13 +1983,15 @@ namespace WakilRecouvrement.Web.Controllers
             if (RDVType == "RDV_J")
             {
                 JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.Date).ToList();
-            
-            }else if(RDVType == "RDV_DEMAIN")
+
+            }
+            else if (RDVType == "RDV_DEMAIN")
             {
 
                 JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.AddDays(1).Date).ToList();
 
-            }else if(RDVType == "RDV_JOURS_PROCHAINE")
+            }
+            else if (RDVType == "RDV_JOURS_PROCHAINE")
             {
 
                 JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date >= DateTime.Today.AddDays(2).Date && j.Formulaire.DateRDV.Date < DateTime.Today.AddDays(7).Date).ToList();
@@ -1980,7 +2007,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             int nbTotal = JoinedList.Count();
 
-        JsonResult result = new JsonResult();
+            JsonResult result = new JsonResult();
 
             try
             {
@@ -2064,7 +2091,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-    }  
+    }
 
 
 }

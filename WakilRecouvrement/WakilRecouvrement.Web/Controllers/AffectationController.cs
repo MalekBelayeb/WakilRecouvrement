@@ -227,6 +227,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (traite == "ALL")
             {
+                
                 JoinedList = (from a in AffectationService.GetAll()
                               join l in LotService.GetAll() on a.LotId equals l.LotId
 
@@ -366,10 +367,12 @@ namespace WakilRecouvrement.Web.Controllers
                 switch (order)
                 {
                     case "0":
+                 
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Affectation.DateAffectation).ToList()
                                                                                                  : data.OrderBy(j => j.Affectation.DateAffectation).ToList();
                         break;
                     case "1":
+
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.LotId).ToList()
                                                                                                  : data.OrderBy(l => l.Lot.LotId).ToList();
                         break;
