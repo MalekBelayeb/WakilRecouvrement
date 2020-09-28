@@ -259,7 +259,7 @@ namespace WakilRecouvrement.Web.Controllers
                                         IDClient = IdClient,
                                         Compte = Compte,
                                         NomClient = NomClient,
-                                        SoldeDebiteur = CompteDebiteur,
+                                        SoldeDebiteur = CompteDebiteur.Replace("-",""),
                                         TelPortable = TelPortable,
                                         TelFixe = TelFixe,
                                         DescIndustry = Agence,
@@ -270,16 +270,18 @@ namespace WakilRecouvrement.Web.Controllers
                                     };
 
                                     //On verifie est ce que l client hedha aana menou fel base ouala le
-                                    if(LotService.GetClientByIDClient(Lot.IDClient)!=null)
+                                    if(LotService.Get(l=>l.Compte.Equals(Compte))!=null)
                                     {
                                         //Ken aana menou nshoufou ken identique ouala le
                                         //ken identique manaamlou chay 
                                         //ken aaana menou ama fama difference => donc nhotouh a jour
                                         //sinon ken maanesh menou on l'ajouter fel base
                                         //Benesba l ViewData rahom des flag lel affichage 
-                                        Lot lot = LotService.GetClientByIDClient(Lot.IDClient);
-                                        
-                                        if(lot.Equals(Lot))
+                                        Lot lot = LotService.Get(l => l.Compte.Equals(Compte));
+
+                                        Debug.WriteLine(Compte);
+
+                                        if (lot.Equals(Lot))
                                         {
                                             dup++;
                                             ViewData["nbDup"] = dup;
@@ -503,6 +505,7 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 AffectePar = "",
                 EmployeId = emp.EmployeId,
+                DateAffectation = DateTime.Now,
                 LotId = lot.LotId
             };
 

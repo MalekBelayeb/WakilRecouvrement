@@ -61,7 +61,17 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.id = id;
             ViewBag.affectation = AffectationService.GetById(long.Parse(id));
             ViewBag.errormsg = msgError;
-            string soldeDeb = AffectationService.GetById(long.Parse(id)).Lot.SoldeDebiteur;
+
+            string soldeDeb = (from a in AffectationService.GetAll()
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              where a.AffectationId == long.Parse(id)
+                              select new
+                              {
+                                  SoldeDeb = l.SoldeDebiteur
+
+                              }).FirstOrDefault().SoldeDeb;
+
+
             ViewBag.soldeDeb = soldeDeb.Replace(',', '.');
 
             return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
@@ -2085,11 +2095,12 @@ namespace WakilRecouvrement.Web.Controllers
                     JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
                     break;
                 case "5":
-                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.DateRDV).ToList();
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.DateRDV).ToList();
 
                     break;
                 case "6":
-                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.DateRDV).ToList();
+
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.DateRDV).ToList();
 
                     break;
 

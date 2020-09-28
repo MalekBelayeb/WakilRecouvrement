@@ -10,13 +10,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <title>Wakil Recouvrement</title>
-    
-    <!-- Font Awesome Icons -->
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+    <!-- Font Awesome Icons -->
+    <!-- Google Font: Source Sans Pro -->
 
 
 </head>
@@ -404,16 +400,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
     @Scripts.Render("~/bundles/jquery")
-
     @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/themes/base/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/themes/base/css")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/adminlte/js")
 
     @RenderSection("scripts", required: false)
-
 
     <script type="text/javascript" src="~/Scripts/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">

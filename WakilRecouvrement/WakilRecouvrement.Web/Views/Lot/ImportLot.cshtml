@@ -27,10 +27,10 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Importer" class="btn btn-default" />
+                    <input id="sbmit" type="submit" value="Importer" class="btn btn-default" />
                 </div>
             </div>
-
+            <span id="fileLoad"></span>
         </div>
         <div class="col-xs-2 container-img">
 
@@ -95,9 +95,21 @@
 
     <script>
 
+        document.getElementById("customFileLang").onchange = function () {
+            if (this.files && this.files[0]) {
+
+                document.getElementById("fileLoad").innerHTML = this.files[0].name
+
+            }
+        }
+
+
+
         function ShowLoader() {
             if (document.getElementById("customFileLang").files.length != 0)
+
                 document.getElementById("loader").style.display = "block";
+
         }
 
     </script>

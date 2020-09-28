@@ -25,19 +25,19 @@ namespace WakilRecouvrement.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 
-
-
             JobScheduler.StartAsync().GetAwaiter().GetResult();
             ConfigurationManager.AppSettings["ExecuteTaskServiceCallSchedulingStatus"] = "OFF";
 
 
             SqlDependency.Start(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
+        
+            
         }
 
 
         protected void Application_End()
         {
-            SqlDependency.Stop(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
+           SqlDependency.Stop(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
 
         }
     }
