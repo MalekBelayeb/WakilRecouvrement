@@ -13,5 +13,8 @@ namespace WakilRecouvrement.Web.Models
         public Formulaire Formulaire { get; set; }
 
         public Lot Lot { get; set; }
+
+        public int NbCountHist { get; set; }
+   
     }
 }

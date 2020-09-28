@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Extensions;
 using Owin;
@@ -13,9 +14,7 @@ namespace WakilRecouvrement.Web
     {
         public void Configuration(IAppBuilder app)
         {
-
-
-            app.MapSignalR();
+              app.MapSignalR();
             
         }
     }

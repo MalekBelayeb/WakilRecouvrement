@@ -176,6 +176,12 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Quartz, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
       <HintPath>..\packages\Quartz.3.1.0\lib\net461\Quartz.dll</HintPath>
@@ -333,6 +339,8 @@
     <Compile Include="Hubs\UserHub.cs" />
     <Compile Include="Models\EmailConstants.cs" />
     <Compile Include="Models\FormulaireExportable.cs" />
+    <Compile Include="Models\ViewModel\RentabiliteViewModel.cs" />
+    <Compile Include="Models\ViewModel\SuiviAffectationViewModel.cs" />
     <Compile Include="Scheduler\JobScheduler.cs" />
     <Compile Include="Scheduler\MyJob.cs" />
     <Compile Include="Models\ClientAffecteViewModel.cs" />
@@ -447,7 +455,9 @@
     <Content Include="Content\jquery.dataTables.min.css" />
     <Content Include="Content\notifier.css" />
     <Content Include="Content\notifier.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\RangeSlider.css" />
+    <Content Include="Content\responsive.bootstrap.min.css" />
     <Content Include="Content\RoundSlider.css" />
     <Content Include="Content\simple-sidebar.css" />
     <Content Include="Content\SkillsStyle.css" />
@@ -677,6 +687,9 @@
     <Content Include="Views\Formulaire\HistoriqueTraitements.cshtml" />
     <Content Include="Views\Formulaire\EnvoyerBanque.cshtml" />
     <Content Include="Views\Formulaire\SuiviRDV.cshtml" />
+    <Content Include="Views\Formulaire\HistoriqueClient.cshtml" />
+    <Content Include="Views\Formulaire\Rentablite.cshtml" />
+    <Content Include="Views\Formulaire\DetailsRevenue.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

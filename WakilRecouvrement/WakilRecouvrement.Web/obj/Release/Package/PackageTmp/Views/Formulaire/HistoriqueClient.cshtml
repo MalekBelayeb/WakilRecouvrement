@@ -1,0 +1,155 @@
+﻿@model IEnumerable<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@{
+    ViewBag.Title = "";
+}
+
+
+<br />
+<h2>Historique d'activités</h2>
+<br />
+<br />
+
+
+
+@if (@ViewBag.username == Session["username"])
+{
+
+    @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { id = ViewBag.id, msgError = "" }, null)
+
+}
+
+<br />
+<br />
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.EtatClient)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.DateRDV)
+        </th>
+
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.MontantDebInitial)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.MontantDebMAJ)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.MontantVerseDeclare)
+        </th>
+
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.DescriptionAutre)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.TraiteLe)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.VerifieLe)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Formulaire.Status)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+
+            </td>
+
+            <td>
+
+
+                @if (item.Formulaire.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Formulaire.DateRDV)
+                }
+
+
+            </td>
+
+
+            <td>
+
+
+                @Html.DisplayFor(modelItem => item.Formulaire.MontantDebInitial)
+
+
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Formulaire.MontantDebMAJ)
+
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Formulaire.MontantVerseDeclare)
+
+            </td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Formulaire.DescriptionAutre)
+
+            </td>
+            <td>
+                @if (item.Formulaire.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+                }
+
+            </td>
+            <td>
+                @if (item.Formulaire.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Formulaire.VerifieLe)
+                }
+            </td>
+            <td>
+                @if (item.Formulaire.Status.ToString().Equals("NON_VERIFIE"))
+                {
+                    <text>Non verifié</text>
+                }
+                else if (item.Formulaire.Status.ToString().Equals("VERIFIE"))
+                {
+                    <text>Verifié</text>
+
+                }
+                else if (item.Formulaire.Status.ToString().Equals("EN_COURS"))
+                {
+                    <text>En attente...</text>
+                }
+            </td>
+
+        </tr>
+    }
+
+</table>

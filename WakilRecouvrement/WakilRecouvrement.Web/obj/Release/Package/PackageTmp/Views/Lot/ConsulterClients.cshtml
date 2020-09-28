@@ -1,108 +1,162 @@
-﻿@model IEnumerable<WakilRecouvrement.Domain.Entities.Lot>
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ViewModel.SuiviAffectationViewModel>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+@using PagedList.Mvc;
 
-<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<h2> Consulter tous les clients</h2>
 
-<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js">
-</script>
 
-<h2> Consulter les clients</h2>
+@using (Html.BeginForm("ConsulterClients", "Lot", FormMethod.Get))
+{
+    <br />
+
+    <div class="row">
+        <div class="col-xs-3 ">
+
+            <span> Choix du lot:</span>
+        </div>
+        <div class="col-xs-3 col-md-2 ">
+
+            @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+        </div>
+        <div class="col-xs-3 ">
+
+            <span> Trier par:</span>
+        </div>
+        <div class="col-xs-3 col-md-2">
+
+            @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+        </div>
+
+    </div>
+
+    <br />
+
+    <p>
+        Chercher: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+        <br />
+        <input type="submit" class="btn btn-default" value="Search" />
+    </p>
+}
 
 <br />
 
-@Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
-
+<span> Total: </span>
+<span><strong>@ViewBag.total</strong></span>
+<br />
 <br />
 
-<table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
-    <thead>
+<table class="table">
+    <tr>
+        <th>
+
+           Num Lot
+        </th>
+        <th>
+Compte
+        
+        </th>
+        <th>
+        
+        
+            IDClient
+        </th>
+        <th>
+     
+        Nom Client
+        </th>
+        <th>
+       Tel Portable
+        </th>
+        <th>
+      Tel Fixe
+        </th>
+        <th>
+        Fax
+        </th>
+        <th>
+
+            Solde Debiteur
+
+        </th>
+
+        <th>
+
+            Agence
+        </th>
+        <th>
+Adresse
+        </th>
+        <th>
+        Type
+        </th>
+        <th>
+        Numero
+        
+        </th>
+        <th>
+        Poste Code
+
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
-            <th>NumClient</th>
-            <th>NumLot</th>
-            <th>Compte</th>
-            <th>IDClient</th>
-            <th>NomClient</th>
-            <th>TelPortable</th>
-            <th>TelFixe</th>
-            <th>Solde debiteur</th>
-            <th>Agence</th>
-            <th>Adresse</th>
-            <th>Type</th>
-            <th>Numero</th>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumLot)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Compte)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IDClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TelPortable)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TelFixe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoldeDebiteur)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DescIndustry)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adresse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostCode)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
         </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<script>
-
-    DemoDatatable();
-
-        $(document).ready(function () {
-            $.noConflict();
-
-        $("#numLot").change(function () {
-            DemoDatatable();
-
-            @*$.ajax({
-                type: 'POST',
-                url: '@Url.Action("SetNumLot", "Lot")',
-                dataType: 'json',
-                data: { numLot: $("#numLot").val() },
-                success: function (data) {
-
-                   // DemoDatatable();
-
-                },
-                error: function (ex) {
-                    //alert('Failed to retrieve states.' + ex);
-                }
-            });*@
-
-
-
-
-        })
-    });
-
-
-    function DemoDatatable() {
-        $("#demodata").DataTable({
-            "processing": true,
-            "serverSide": true,
-            "filter": true,
-            "orderMulti": false,
-            "destroy": true,
-            "ordering": true,
-            "ajax": {
-                "url": '@Url.Action("LoadData", "Lot")',
-                "type": "POST",
-                "datatype": "json",
-                "data": { numLot : $("#numLot").val() }
-            },
-            "columns": [
-                { "data": "LotId", "name": "LotId", "autoWidth": true }
-                , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
-                , { "data": "Compte", "Name": "Compte", "autoWidth": true }
-                , { "data": "IDClient", "name": "IDClient", "autoWidth": true }
-                , { "data": "NomClient", "name": "NomClient", "autoWidth": true }
-                , { "data": "TelPortable", "name": "TelPortable", "autoWidth": true }
-                , { "data": "TelFixe", "name": "TelFixe", "autoWidth": true }
-                , { "data": "SoldeDebiteur", "name": "SoldeDebiteur", "autoWidth": true }
-                , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }
-                , { "data": "Adresse", "name": "Adresse", "autoWidth": true }
-                , { "data": "Type", "name": "Type", "autoWidth": true }
-                , { "data": "Numero", "name": "Numero", "autoWidth": true }
-            ]
-        });
     }
 
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-
-
-</script>
+@Html.PagedListPager(Model, page => Url.Action("ConsulterClients",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

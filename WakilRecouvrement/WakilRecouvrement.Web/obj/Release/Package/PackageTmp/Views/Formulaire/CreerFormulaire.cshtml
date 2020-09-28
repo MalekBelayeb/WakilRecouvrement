@@ -3,11 +3,7 @@
 @{
     ViewBag.Title = "";
 }
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
-<link rel="stylesheet" href="~/Content/zoomImage.css" />
+
 
 <h2>Client a traité </h2>
 <br />
@@ -161,7 +157,7 @@
 
             </div>
             <br />
-            <img id="blah" width="200" height="150" src="#" alt="your image" />
+            <img id="blah" width="200" height="150" src="#" alt="" />
 
         </div>
     </div>
@@ -342,32 +338,30 @@
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                $('#blah').attr('src', e.target.result);
+                document.getElementById("blah").setAttribute('src', e.target.result)
             }
 
             reader.readAsDataURL(input.files[0]); // convert to base64 string
         }
     }
 
+    function hideAll() {
+        document.getElementById("autre").style.display= "none"
+        document.getElementById("datetimePickerRDVReporte").style.display= "none"
+        document.getElementById("datetimePickerRDV").style.display= "none"
+        document.getElementById("montant").style.display= "none"
+        document.getElementById("datetimePickerRappel").style.display= "none"
+        document.getElementById("recu").style.display= "none"
+
+    }
+
+    hideAll()
+
+    document.getElementById("customFileLang").onchange = function () {
+        readURL(this);
+    }
 
 
-    $(document).ready(function () {
-
-        function hideAll() {
-
-            $("#autre").hide();
-            $("#datetimePickerRDVReporte").hide();
-            $("#datetimePickerRDV").hide();
-            $("#montant").hide();
-            $("#datetimePickerRappel").hide();
-            $("#recu").hide();
-
-        }
-        hideAll()
-
-        $("#customFileLang").change(function () {
-            readURL(this);
-        });
 
         dropdown.onchange = function () {
 
@@ -386,19 +380,14 @@
                     break;
                 case "RDV":
                     hideAll();
-                    $("#datetimePickerRDV").show();
-
+                    document.getElementById("datetimePickerRDV").style.display = "block"
                     break;
-                case "RDV_REPORTE":
-                    hideAll();
-                    $("#datetimePickerRDVReporte").show();
-
-                    break;
+             
                 case "SOLDE":
                     hideAll();
 
-                    $("#montant").show();
-                    $("#recu").show();
+                       document.getElementById("montant").style.display = "block"
+                    document.getElementById("recu").style.display = "block"
 
                     document.getElementById("textLabel").innerHTML = "Versement en TND:";
                     document.getElementById("exampleInputAmount").max = "any";
@@ -413,17 +402,12 @@
                 case "A_VERIFIE":
 
                     hideAll();
-                   /* $("#montant").show();
-                    document.getElementById("textLabel").innerHTML = "Montant declaré en TND:";
-                    document.getElementById("exampleInputAmount").max =  "any";
-                    document.getElementById("exampleInputAmount").value = "1.000";
-                    document.getElementById("exampleInputAmount").min =0 +"";
-                    */
+                 
 
                     break;
                 case "RAPPEL":
                     hideAll();
-                    $("#datetimePickerRappel").show();
+                    document.getElementById("datetimePickerRappel").style.display = "block"
 
                     break;
                 case "RACCROCHE":
@@ -433,8 +417,8 @@
                 case "SOLDE_TRANCHE":
                     hideAll();
 
-                    $("#montant").show();
-                    $("#recu").show();
+                    document.getElementById("montant").style.display = "block"
+                    document.getElementById("recu").style.display = "block"
 
                     document.getElementById("textLabel").innerHTML = "Tranche en TND:";
 
@@ -445,20 +429,12 @@
                     break;
                 case "AUTRE":
                     hideAll();
-                    $("#autre").show();
+                    document.getElementById("autre").style.display = "block"
 
                     break;
             }
 
         }
-
-
-    })
-
-
-
-
-
 
 
 </script>

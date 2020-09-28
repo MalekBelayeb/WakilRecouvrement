@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.SqlServer.Server;
 using Microsoft.Ajax.Utilities;
+using WakilRecouvrement.Web.Models.ViewModel;
+using PagedList;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -25,6 +27,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         EmployeService EmpService;
         LotService LotService;
+        AffectationService AffectationService;
         public int x = 0;
         public int dup = 0;
         public int up = 0;
@@ -34,6 +37,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
             EmpService = new EmployeService();
             LotService = new LotService();
+            AffectationService = new AffectationService();
         }
 
         public ActionResult ImportLot()
@@ -46,9 +50,14 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult UploadExcel(HttpPostedFileBase PostedFile)
         {
+
+
+            string filename="";
             //Nthabtou li fichier mahouch feragh makenesh nabaathou erreur lel client
             if (PostedFile != null )
             {
+
+                filename = PostedFile.FileName;
                 //nsobou l fichier aana fel serveur
                 string filePath = string.Empty;
                 string path = Server.MapPath("~/Uploads/");
@@ -60,9 +69,10 @@ namespace WakilRecouvrement.Web.Controllers
                 filePath = path + Path.GetFileName(PostedFile.FileName);
                 string extension = Path.GetExtension(PostedFile.FileName);
                 string conString = string.Empty;
-                
+
                 //nekhdhou num mtaa lot men esm l fichier ex: Lot 11 => 11 
-                string numLot = string.Join(string.Empty, Regex.Matches(PostedFile.FileName, @"\d+").OfType<Match>().Select(m => m.Value));
+                //string numLot = string.Join(string.Empty, Regex.Matches(PostedFile.FileName, @"\d+").OfType<Match>().Select(m => m.Value));
+                string numLot = filename.Split('_')[1];
 
                 //Nthaabtou eli l client selectiona fichier excel moush haja okhra makanesh nabaathoulou erreur
                 if (PostedFile.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" )
@@ -312,14 +322,17 @@ namespace WakilRecouvrement.Web.Controllers
                                             ViewData["noDup"] = "1";
                                         }
                                         LotService.Add(Lot);
+                                        LotService.Commit();
+                                        AffecterClient(Lot, filename);
+
 
                                     }
+
 
                                 }
 
                                 ViewData["nbTotal"] = dt.Rows.Count;
                                 ViewData["finished"] = "1";
-                                LotService.Commit();
 
                             }
                         }
@@ -343,11 +356,109 @@ namespace WakilRecouvrement.Web.Controllers
 
 
         
-        public ActionResult ConsulterClients()
+        public ActionResult ConsulterClients(string SearchString,string numLot,string currentFilter, string sortOrder,int? page)
         {
 
+
+            ViewBag.CurrentSort = sortOrder;
+ 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            return View();
+            ViewData["sortOrder"] = new SelectList(SortOrdrForDropDown(), "Value", "Text");
+
+            List<SuiviAffectationViewModel> JoinedList = new List<SuiviAffectationViewModel>();
+            if (SearchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                SearchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = SearchString;
+
+
+            JoinedList = (from a in LotService.GetAll()
+
+                          select new SuiviAffectationViewModel
+                          {
+                              Adresse = a.Adresse
+                             ,
+                              Compte = a.Compte
+                             ,
+                              DescIndustry = a.DescIndustry
+                             ,
+                              Fax = a.Fax
+                             ,
+                              IDClient = a.IDClient
+
+                             ,
+                              NomClient = a.NomClient
+                             ,
+                              Numero = a.Numero
+                             ,
+                              NumLot = a.NumLot
+                             ,
+                              PostCode = a.PostCode
+                             ,
+                              SoldeDebiteur = a.SoldeDebiteur
+                             ,
+                              TelFixe = a.TelFixe
+                             ,
+                              TelPortable = a.TelPortable
+                             ,
+                              Type = a.Type
+
+                          }).ToList();
+
+            if (!String.IsNullOrEmpty(numLot))
+            {
+                if(numLot.Equals("0")== false)
+                JoinedList = JoinedList.Where(j => j.NumLot.Equals(numLot)).ToList();
+
+            }
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                JoinedList = JoinedList.Where(s => s.Adresse.ToLower().Contains(SearchString.ToLower())
+                                       || s.Compte.ToLower().Contains(SearchString.ToLower())
+                                       || s.DescIndustry.ToLower().Contains(SearchString.ToLower())
+                                       || s.IDClient.ToLower().Contains(SearchString.ToLower())
+                                       || s.NomClient.ToLower().Contains(SearchString.ToLower())
+                                       || s.Numero.ToLower().Contains(SearchString.ToLower())
+                                       || s.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
+                                       || s.TelFixe.ToLower().Contains(SearchString.ToLower())
+                                       || s.TelPortable.ToLower().Contains(SearchString.ToLower())
+                                                               
+                                       ).ToList();
+            }
+
+
+            switch (sortOrder)
+            {
+                case "0":
+                    JoinedList = JoinedList.OrderBy(s => s.NomClient).ToList();
+                    break;
+               case "1":
+                    JoinedList = JoinedList.OrderByDescending(s => s.SoldeDebiteur).ToList();
+                    break;
+             
+                case "2":
+                    JoinedList = JoinedList.OrderBy(s => s.SoldeDebiteur).ToList();
+                    break;
+             
+                default:
+              
+                    
+                    break;
+            }
+
+
+
+            ViewBag.total = JoinedList.Count();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(JoinedList.ToPagedList(pageNumber,pageSize));
         }
 
 
@@ -366,171 +477,48 @@ namespace WakilRecouvrement.Web.Controllers
             return listItems;
         }
 
-        [HttpPost]
-        public ActionResult LoadData(string numLot)
+
+        public IEnumerable<SelectListItem> SortOrdrForDropDown()
         {
 
-            List<Lot> Lots = new List<Lot>();
+            List<Lot> Lots = LotService.GetAll().ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
 
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            listItems.Add(new SelectListItem { Selected = true, Text = "Nom (A-Z)", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. decroissant)", Value = "1" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. croissant)", Value = "2" });
 
-            if(numLot == "0")
+
+            return listItems;
+        }
+
+        public void AffecterClient(Lot lot, string filename)
+        {
+            string agent = filename.Split('_')[2].Split('.')[0];
+            string numlot = filename.Split('_')[1];
+
+            Employe emp = EmpService.GetEmployeByUername(agent);
+
+            Affectation affectation = new Affectation
             {
-                Lots = LotService.GetAll().ToList();
-            }
-            else
-            {
-                Lots = LotService.GetAll().ToList().Where(l => l.NumLot.Equals(numLot)).ToList();
-            } 
+                AffectePar = "",
+                EmployeId = emp.EmployeId,
+                LotId = lot.LotId
+            };
 
-            JsonResult result = new JsonResult();
-
-            try
-            {
-
-                string search = Request.Form.GetValues("search[value]")[0];
-                string draw = Request.Form.GetValues("draw")[0];
-                string order = Request.Form.GetValues("order[0][column]")[0];
-                string orderDir = Request.Form.GetValues("order[0][dir]")[0];
-                int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
-                int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
-               
-
-
-                int totalRecords = Lots.Count;
-                
-                if (!string.IsNullOrEmpty(search) &&
-                    !string.IsNullOrWhiteSpace(search))
-                {
-                    Lots = Lots.Where(l =>
-
-                        l.Numero.ToString().Contains(search)
-                    ||  l.Adresse.ToString().ToLower().Contains(search.ToLower())
-                    ||  l.TelFixe.ToString().Contains(search)
-                    ||  l.TelPortable.ToString().Contains(search)
-                    ||  l.IDClient.ToString().Contains(search)
-                    ||  l.Compte.ToString().Contains(search)
-                    ||  l.LotId.ToString().Contains(search)  
-                    ||  l.NomClient.ToString().ToLower().Contains(search.ToLower()) 
-                    ||  l.DescIndustry.ToString().ToLower().Contains(search.ToLower()) 
-                  
-                        ).ToList();
-                }
-
-
-                Lots = SortTableData(order, orderDir, Lots);
-               
-                int recFilter = Lots.Count;
-
-                Lots = Lots.Skip(startRec).Take(pageSize).ToList();
-                var modifiedData = Lots.Select(l =>
-                   new
-                   {
-                       l.LotId,
-                       l.NumLot,
-                       l.Compte,
-                       l.IDClient,
-                       l.NomClient,
-                       l.TelPortable,
-                       l.TelFixe,
-                       l.SoldeDebiteur,
-                       l.DescIndustry,
-                       l.Adresse,
-                       l.Type,
-                       l.Numero
-                   }
-                   );
-                result = this.Json(new
-                {
-                    draw = Convert.ToInt32(draw),
-                    recordsTotal = totalRecords,
-                    recordsFiltered = recFilter,
-                    data = modifiedData
-                }, JsonRequestBehavior.AllowGet);
-
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex);
-            }
-
-            return result;
+            AffectationService.Add(affectation);
+            AffectationService.Commit();
+            
 
         }
 
-        private List<Lot> SortTableData(string order, string orderDir, List<Lot> data)
-        {
-            List<Lot> lst = new List<Lot>();
-            try
-            {
-                switch (order)
-                {
-                    case "0":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.LotId).ToList()
-                                                                                                 : data.OrderBy(l => l.LotId).ToList();
-                        break;
 
-                    case "1":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l =>long.Parse(l.NumLot)).ToList()
-                                                                                                 : data.OrderBy(l => long.Parse(l.NumLot)).ToList();
-                        break;
-                    case "2":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Compte).ToList()
-                                                                                                 : data.OrderBy(l => l.Compte).ToList();
-                        break;
-                    case "3":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => long.Parse(l.IDClient)).ToList()
-                                                                                                 : data.OrderBy(l => long.Parse(l.IDClient)).ToList();
-                        break;
-                    case "4":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.NomClient).ToList()
-                                                                                                 : data.OrderBy(l => l.NomClient).ToList();
-                        break;
-                    case "5":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.TelPortable).ToList()
-                                                                                                   : data.OrderBy(l => l.TelPortable).ToList();
-                        break;
-                    case "6":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.TelFixe).ToList()
-                                                                                                   : data.OrderBy(l => l.TelFixe).ToList();
-                        break;
-                    case "7":
-                       
-                            lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => Double.Parse(l.SoldeDebiteur)).ToList()
-                                                                                                  : data.OrderBy(l => Double.Parse(l.SoldeDebiteur)).ToList();
 
-                        break;
-                    case "8":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.DescIndustry).ToList()
-                                                                                                   : data.OrderBy(l => l.DescIndustry).ToList();
-                        break;
-                    case "9":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Adresse).ToList()
-                                                                                                   : data.OrderBy(l => l.Adresse).ToList();
-                        break;
-                    case "10":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Type).ToList()
-                                                                                                   : data.OrderBy(l => l.Type).ToList();
-                        break;
 
-                    case "11":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.Numero).ToList()
-                                                                                                   : data.OrderBy(l => l.Numero).ToList();
-                        break;
 
-                    default:
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(l => l.LotId).ToList()
-                                                                                                 : data.OrderBy(l => l.LotId).ToList();
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex);
-            }
-            return lst;
-        }
     }
+
+
 
 
 }

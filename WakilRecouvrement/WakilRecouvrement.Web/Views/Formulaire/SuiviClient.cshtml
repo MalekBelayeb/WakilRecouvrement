@@ -1,4 +1,8 @@
-﻿@model WakilRecouvrement.Domain.Entities.Formulaire
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "";
@@ -6,249 +10,242 @@
 
 <h2>Suivi des clients affectés</h2>
 
-<script src="~/Scripts/jQuery/jquery.min.js"></script>
-<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-<link href="~/Content/cdns/dataTables.bootstrap.min.css" rel="stylesheet" />
-<link href="~/Content/cdns/responsive.bootstrap.min.css" rel="stylesheet" />
-<script src="~/Scripts/jQuery/jquery.dataTables.min.js"></script>
-<script src="~/Scripts/jQuery/dataTables.bootstrap4.min.js">
-</script>
+
+@using (Html.BeginForm("SuiviClient", "Formulaire", FormMethod.Get))
+{
+   
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <br />
+
+
+            <div class="row">
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("traite","Etat:",new { @class = "control-label" })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+
+            </div>
 
 
 
-<br />
+            <br />
 
-<div class="row">
-    <div class="col-xs-3">
 
-        @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
+            <div class="row">
+
+                <div class="col-xs-3 ">
+
+
+                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+
+                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+
+            </div>
+
+            <br />
+
+        </div>
+
+        <div class="card-body">
+
+            @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+
+            <br />
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+
+                    <p>
+                        <input type="submit" class="btn btn-default" value="Search" />
+                    </p>
+
+                </div>
+
+                <div class="col-xs-4">
+
+                    <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+                </div>
+
+            </div>
+
+
+        </div>
 
     </div>
-    <div class="col-xs-3 col-md-5">
+
+}
 
 
-        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+<table class="table">
+    <tr>
 
-    </div>
-    <div class="col-xs-3">
+        <th>
 
-        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+            Hist.
 
-    </div>
-</div>
-<br />
-<span>
-    Total:
-</span>
-<span><strong id="nbTotal"></strong></span>
-<br />
-<br />
+        </th>
 
-<table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
-    <thead>
-        <tr>
-            <th>Etat Client</th>
-            <th>Affecté Le</th>
-            <th>Affecté Pour</th>
+        <th>
+            Num Lot
+        </th>
+        <th>
+            Etat
+        </th>
+        <th>
+            Date affectation
+        </th>
+        <th>
+            Agent
+        </th>
 
-            <th>NumClient</th>
-            <th>NumLot</th>
-            <th>Compte</th>
-            <th>IDClient</th>
-            <th>NomClient</th>
-            <th>TelPortable</th>
-            <th>TelFixe</th>
-            <th>Solde debiteur</th>
-            <th>Agence</th>
-            <th>Adresse</th>
-            <th>Type</th>
-            <th>Numero</th>
-            <th>AffId</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+        <th>
+            Compte
+        </th>
+        <th>
+            IDClient
+        </th>
+        <th>
+            Nom Client
+        </th>
+        <th>
+            Solde Debiteur
+        </th>
 
-<tr data-child-name="test1" data-child-value="10">
-</tr>
+        <th>
+            Tel Portable
+        </th>
 
-<script>
+        <th>
+            Tel Fixe
+        </th>
+        <th>
+            Agence
+        </th>
+        <th>
+            Adresse
+        </th>
+        <th>
+            Numero
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
 
 
+        string classStyle = "";
 
-    $(document).ready(function () {
-        $.noConflict();
+        if (item.Formulaire != null)
+        {
 
-        var Table = DemoDatatable();
+            if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
+            {
+                classStyle = "p-3 mb-2 bg-success text-white";
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.FAUX_NUM || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.REFUS_PAIEMENT)
+            {
+                classStyle = "p-3 mb-2 bg-danger text-white";
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            {
+                classStyle = "p-3 mb-2 bg-warning text-dark";
+            }
+            else
+            {
+                classStyle = "p-3 mb-2 bg-white text-dark";
+            }
 
-        function format(d) {
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><thead><tr><th>Etat Client</th><th>RDV Date </th><th>RDV Reporte Date </th><th>Montant declaré/versé </th><th>Montant deb. MAJ </th><th>Montant deb. initial </th><th>Description autre </th><th> Verification </th><th>Traite le </th></tr></thead><tbody>  ' +
-
-                d
-
-                + '</tbody></table>';
+        }
+        else
+        {
+            classStyle = "p-3 mb-2 bg-white text-dark";
         }
 
+        <tr class="@classStyle">
 
-        $('#demodata tbody').on('click', 'td', function () {
-            var tr = $(this).closest('tr');
-            var row = Table.row(tr);
+            <td>
 
-            if (row.child.isShown()) {
-                // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            }
-            else {
-                // Open this row
+                @Html.ActionLink("Historique", "HistoriqueClient", new { id = item.Affectation.AffectationId})
 
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GetFormulaires", "Formulaire")',
-                    dataType: 'json',
-                    data: { id: row.data()["AffectationId"] },
-                    success: function (data) {
-                        var x = '';
-                        for (var i = 0; i < data["list"].length; i++) {
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.NumLot)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Affectation.DateAffectation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Affectation.Employe.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Compte)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.IDClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.NomClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Adresse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Numero)
+            </td>
 
-                            var desc = data["list"][i]["desc"]
-                            var d1 = data["list"][i]["d1"]
-                            var d2 = data["list"][i]["d2"]
-                            var tranche = data["list"][i]["tranche"]
-                            var traitele = data["list"][i]["traitele"]
-                            var verif = data["list"][i]["verif"]
-                            var montantDebInitial = data["list"][i]["montantDebInitial"]
-                            var montantDebMaj = data["list"][i]["montantDebMaj"]
-
-                            if (d1 == "01/01/0001 00:00:00") {
-                                d1 = ""
-                            }
-                            if (d2 == "01/01/0001 00:00:00") {
-                                d2 = ""
-                            }
-                            if (traitele == "01/01/0001 00:00:00") {
-                                traitele = ""
-                            }
-                            if (desc == null) {
-                                desc = ""
-                            }
-                            if (tranche == 0) {
-                                tranche = ""
-                            }
-
-                            if (montantDebInitial == 0) {
-                                montantDebInitial = ""
-                            }
-
-                            if (montantDebMaj == 0) {
-                                montantDebMaj = "Soldé"
-                            }
-
-                            if (verif == "NON_VERIFIE") {
-                                verif = "Non vérifié"
-                            } else if (verif == "VERIFIE") {
-                                verif = "Vérifié"
-                            } else if (verif == "EN_COURS") {
-                                verif = "En attente..."
-                            }
-
-                            x += '<tr>' +
-
-                                '<td>' + data["list"][i]["etat"] + '</td>' +
-                                '<td>' + d1 + '</td>' +
-                                '<td>' + d2 + '</td>' +
-                                '<td>' + tranche + '</td>' +
-                                '<td>' + montantDebMaj + '</td>' +
-                                '<td>' + montantDebInitial + '</td>' +
-                                '<td>' + desc + '</td>' +
-                                '<td>' + verif + '</td>' +
-                                '<td>' + traitele + '</td>' +
-
-                                '</tr>';
-
-                        }
-
-                        // console.log(x)
-                        row.child(format(x)).show();
-
-                        tr.addClass('shown');
-
-                    }
-                });
-
-
-
-            }
-        });
-
-
-
-
-        $("#numLot").change(function () {
-
-            Table = DemoDatatable();
-
-        })
-
-        $("#traite").change(function () {
-
-            Table = DemoDatatable();
-
-        })
-
-        $("#agent").change(function () {
-
-            Table = DemoDatatable();
-
-        })
-
-    });
-
-
-    function DemoDatatable() {
-        var table = $("#demodata").DataTable({
-            "processing": true,
-            "serverSide": true,
-            "filter": true,
-            "orderMulti": false,
-            "destroy": true,
-            "ordering": true,
-            "ajax": {
-                "url": '@Url.Action("LoadData", "Formulaire")',
-                "type": "POST",
-                "datatype": "json",
-                "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
-
-            },
-            "columns": [
-
-                { "data": "Etat", "name": "Etat", "autoWidth": true }
-                , { "data": "DateAff", "name": "DateAff", "autoWidth": true }
-                , { "data": "Username", "name": "Username", "autoWidth": true }
-                , { "data": "LotId", "name": "LotId", "autoWidth": true }
-                , { "data": "NumLot", "name": "NumLot", "autoWidth": true }
-                , { "data": "Compte", "Name": "Compte", "autoWidth": true }
-                , { "data": "IDClient", "name": "IDClient", "autoWidth": true }
-                , { "data": "NomClient", "name": "NomClient", "autoWidth": true }
-                , { "data": "TelPortable", "name": "TelPortable", "autoWidth": true }
-                , { "data": "TelFixe", "name": "TelFixe", "autoWidth": true }
-                , { "data": "SoldeDebiteur", "name": "SoldeDebiteur", "autoWidth": true }
-                , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }
-                , { "data": "Adresse", "name": "Adresse", "autoWidth": true }
-                , { "data": "Type", "name": "Type", "autoWidth": true }
-                , { "data": "Numero", "name": "Numero", "autoWidth": true }
-                , { "data": "AffectationId", "name": "AffectationId", "autoWidth": true }
-
-            ]
-        });
-        table.columns([13]).visible(false)
-
-        table.on('xhr.dt',
-            function (e, settings, data, xhr) {
-                console.log(data["info"])
-                document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
-            });
-        return table;
+        </tr>
     }
 
-</script>
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("SuiviClient",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+

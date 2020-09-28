@@ -17,8 +17,6 @@ namespace WakilRecouvrement.Domain.Entities
         NRP,
         [Display(Name ="Rendez-vous")]
         RDV,
-        [Display(Name = "Rendez-vous Reporté")]
-        RDV_REPORTE,
         [Display(Name = "Soldé")]
         SOLDE,
         [Display(Name = "Soldé partiellement")]

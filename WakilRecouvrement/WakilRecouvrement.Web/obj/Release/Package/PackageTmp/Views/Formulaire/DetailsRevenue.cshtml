@@ -1,0 +1,127 @@
+﻿@model IEnumerable<WakilRecouvrement.Web.Models.ViewModel.RentabiliteViewModel>
+
+@{
+    ViewBag.Title = "";
+}
+
+<h2>Details Revenu</h2>
+
+
+<table class="table">
+    <tr>
+
+
+        <th>
+            Total Revenu Par Client (DT)
+        </th>
+
+    </tr>
+
+
+    <tr class="p-3 mb-2 bg-white text-dark">
+
+
+        <td>
+            @ViewBag.RevenueTotal
+        </td>
+
+    </tr>
+
+
+</table>
+<br />
+<br />
+<table class="table">
+
+    <tr>
+
+        <th>
+            NumLot
+        </th>
+
+        <th>
+            Agent
+        </th>
+
+        <th>
+            Versement
+        </th>
+        <th>
+            Verifié le
+        </th>
+        <th>
+            Solde debiteur initial
+        </th>
+
+        <th>
+            Compte
+        </th>
+
+        <th>
+            IDClient
+        </th>
+
+        <th>
+            Nom Client
+        </th>
+
+
+        <th>
+            @Html.DisplayNameFor(model => model.Revenue)
+        </th>
+
+
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NumLot)
+
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Affectation.Employe.Username)
+
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Formulaire.MontantVerseDeclare)
+
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Formulaire.VerifieLe)
+
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Lot.Compte)
+
+    </td>
+
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Lot.IDClient)
+
+    </td>
+    <td>
+
+        @Html.DisplayFor(modelItem => item.Lot.NomClient)
+
+    </td>
+
+
+    <td>
+        @Html.DisplayFor(modelItem => item.Revenue)
+    </td>
+
+</tr>
+}
+
+</table>

@@ -29,5 +29,9 @@ namespace WakilRecouvrement.Service
         {
             return GetMany(f => f.AffectationId == AffectationId).OrderByDescending(f => f.TraiteLe).ToList();
         }
+
+
+
+
     }
 }

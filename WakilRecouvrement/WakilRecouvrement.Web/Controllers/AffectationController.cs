@@ -1,4 +1,5 @@
 ﻿using Microsoft.Ajax.Utilities;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -141,19 +142,202 @@ namespace WakilRecouvrement.Web.Controllers
             return Json(new { totalClientParLotUpdated = totalClientParLotUpdated, nbClientsNonAffecteParLots = nbClientsNonAffecteParLotsUpdated, pourcentageAffectationParLotUpdated = pourcentageAffectationParLotUpdated, totalAffectationParLotUpdated = totalAffectationParLotUpdated });
 
         }
-
-        public ActionResult AffectationList()
+        public IEnumerable<SelectListItem> SortOrderSuiviClientForDropDown()
         {
-            if(Session["username"]==null || Session["username"].ToString().Length<1)
-                return RedirectToAction("Login","Authentification");
 
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            listItems.Add(new SelectListItem { Selected = true, Text = "Nom (A-Z)", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. decroissant)", Value = "1" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. croissant)", Value = "2" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date affectation (o. decroissant)", Value = "3" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date affectation (o. croissant)", Value = "4" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. decroissant)", Value = "5" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. croissant)", Value = "6" });
+
+
+            return listItems;
+        }
+
+
+        public ActionResult AffectationList(string numLot, string SearchString, string traite,  string currentFilter, string sortOrder, int? page)
+        {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
+            ViewBag.CurrentSort = sortOrder;
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
+            ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
+
+            if (SearchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                SearchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = SearchString;
+
+            Employe emp = EmpService.GetEmployeByUername(Session["username"]+"");
+
+            if (!String.IsNullOrEmpty(traite))
+            {
+                if (traite == "ALL")
+                {
+                    JoinedList = (from a in AffectationService.GetMany(a=>a.EmployeId == emp.EmployeId)
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  select new ClientAffecteViewModel
+                                  {
+                                      Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
+                                      //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
+
+                                      Affectation = a,
+                                      Lot = l,
 
 
-            return View();
+                                  }).DistinctBy(a => a.Affectation.AffectationId).ToList();
+
+                }
+                else if (traite == "SAUF")
+                {
+
+                    JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient + "" != "SOLDE" && f.EtatClient + "" != "FAUX_NUM").OrderByDescending(o => o.TraiteLe)
+                                  join a in AffectationService.GetMany(a=> a.EmployeId== emp.EmployeId) on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId                                  
+
+                                  select new ClientAffecteViewModel
+                                  {
+
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
+
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+                }
+                else
+                {
+
+                    JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient + "" == traite).OrderByDescending(o => o.TraiteLe)
+                                  join a in AffectationService.GetMany(a=>a.EmployeId == emp.EmployeId) on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                   
+
+                                  select new ClientAffecteViewModel
+                                  {
+
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
+
+
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+                }
+
+            }
+            else
+            {
+                JoinedList = (from a in AffectationService.GetMany(a => a.EmployeId== emp.EmployeId)
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              select new ClientAffecteViewModel
+                              {
+                                  Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
+                                  //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
+
+                                  Affectation = a,
+                                  Lot = l,
+
+
+                              }).DistinctBy(a => a.Affectation.AffectationId).ToList();
+            }
+
+
+            if (!String.IsNullOrEmpty(numLot))
+            {
+                if (numLot.Equals("0") == false)
+                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+
+            }
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                JoinedList = JoinedList.Where(s => s.Lot.Adresse.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Compte.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.DescIndustry.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.IDClient.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.NomClient.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Numero.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelFixe.ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelPortable.ToLower().Contains(SearchString.ToLower())
+
+                                       ).ToList();
+            }
+
+
+            switch (sortOrder)
+            {
+                case "0":
+                    JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
+                    break;
+                case "1":
+                    try
+                    {
+                        JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    break;
+
+                case "2":
+                    
+                    try
+                    {
+                        JoinedList = JoinedList.OrderBy(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+
+                    break;
+                case "3":
+                    JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "4":
+                    JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "5":
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
+                    break;
+                case "6":
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+                    break;
+
+
+                default:
+
+
+                    break;
+            }
+
+
+            ViewBag.total = JoinedList.Count();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(JoinedList.ToPagedList(pageNumber, pageSize));
         }
 
         public IEnumerable<SelectListItem> TraiteListForDropDown()
