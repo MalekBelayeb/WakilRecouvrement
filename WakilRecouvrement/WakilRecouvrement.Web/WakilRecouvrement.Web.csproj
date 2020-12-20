@@ -365,6 +365,7 @@
     <Content Include="adminlte\css\alt\adminlte.pages.min.css" />
     <Content Include="adminlte\css\alt\adminlte.plugins.css" />
     <Content Include="adminlte\css\alt\adminlte.plugins.min.css" />
+    <Content Include="adminlte\css\treeViewJs.css" />
     <Content Include="adminlte\img\AdminLTELogo.png" />
     <Content Include="adminlte\img\avatar.png" />
     <Content Include="adminlte\img\avatar04.png" />
@@ -406,6 +407,7 @@
     <Content Include="adminlte\js\pages\dashboard.js" />
     <Content Include="adminlte\js\pages\dashboard2.js" />
     <Content Include="adminlte\js\pages\dashboard3.js" />
+    <Content Include="adminlte\js\treeViewJs.js" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.min.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\brands.css" />
@@ -537,6 +539,7 @@
     <None Include="Properties\PublishProfiles\IISProfile11.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile12.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile13.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile14.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile2.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile3.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile4.pubxml" />

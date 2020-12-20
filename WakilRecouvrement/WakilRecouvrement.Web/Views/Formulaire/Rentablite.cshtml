@@ -6,7 +6,6 @@
     ViewBag.Title = "";
 }
 
-<h2>Rentabilité</h2>
 
 
 @using (Html.BeginForm("Rentablite", "Formulaire", FormMethod.Get))
@@ -15,8 +14,11 @@
     <div class="card">
         <div class="card-header" id="headingTwo">
 
-            <br />
+            <h2>Rentabilité</h2>
 
+        </div>
+
+        <div class="card-body">
 
             <div class="row">
 
@@ -83,11 +85,6 @@
 
             </div>
             <br />
-            <br />
-
-        </div>
-
-        <div class="card-body">
 
             @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
 

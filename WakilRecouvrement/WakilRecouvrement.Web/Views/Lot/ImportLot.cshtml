@@ -4,7 +4,6 @@
     ViewBag.Title = "";
 }
 
-<h2>Importer un lot</h2>
 
 @using (Html.BeginForm("UploadExcel", "Lot", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "ShowLoader()" }))
 {
@@ -13,35 +12,55 @@
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="custom-file">
-        <input type="file" name="postedFile" class="custom-file-input" id="customFileLang" lang="es">
-        <label class="custom-file-label" for="customFileLang">Sélectionner votre lot</label>
-    </div>
-
-    <br />
-    <br />
 
 
-    <div class="row row-list">
-        <div class="col-xs-3">
+    <div class="card">
+        <div class="card-header" id="headingTwo">
 
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input id="sbmit" type="submit" value="Importer" class="btn btn-default" />
+            <h2>Importer un lot</h2>
+
+
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="custom-file">
+                <input type="file" name="postedFile" class="custom-file-input" id="customFileLang" lang="es">
+                <label class="custom-file-label" for="customFileLang">Sélectionner votre lot</label>
+            </div>
+
+            <br />
+            <br />
+
+
+            <div class="row row-list">
+                <div class="col-xs-3">
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input id="sbmit" type="submit" value="Importer" class="btn btn-default" />
+                        </div>
+                    </div>
+                    <span id="fileLoad"></span>
                 </div>
-            </div>
-            <span id="fileLoad"></span>
-        </div>
-        <div class="col-xs-2 container-img">
+                <div class="col-xs-2 container-img">
 
-            <div style="display:none" id="loader" class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
+                    <div style="display:none" id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+
+                </div>
+                @Html.ValidationMessage("Importer", "", new { @class = "text-danger" })
+
             </div>
 
+
         </div>
-        @Html.ValidationMessage("Importer", "", new { @class = "text-danger" })
 
     </div>
+
+
 
 
     if (ViewData["finished"] == "1")

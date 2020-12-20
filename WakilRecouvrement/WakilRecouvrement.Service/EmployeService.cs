@@ -11,6 +11,7 @@ namespace WakilRecouvrement.Service
 {
     public class EmployeService:Service<Employe>, IEmployeService
     {
+
         static IDatabaseFactory Factory = new DatabaseFactory();
         static IUnitOfWork UOW = new UnitOfWork(Factory);
 

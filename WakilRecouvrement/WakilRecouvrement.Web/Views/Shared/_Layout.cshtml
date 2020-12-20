@@ -108,129 +108,199 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                 <nav class="mt-2">
 
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <ul id="myUL" class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                         @if (Session["role"] != null)
                         {
                             if (Session["role"].Equals("admin"))
                             {
 
+                                <ul id="myUL">
+                                    <li>
 
+                                        <span class="box">
 
+                                            <a class="nav-link">
+                                                <p>
+                                                    Lots
+                                                </p>
+                                            </a>
 
+                                        </span>
 
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
-                                        @*<i class="fas fa-upload mr-4"></i>*@
-                                        <p>Importer un lot</p>
-                                    </a>
-                                </li>
+                                        <ul class="nested">
 
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                        @*<i class="fas fa-book mr-4"></i>*@
-                                        <p>Consulter les clients</p>
-                                    </a>
-                                </li>
+                                            <li class="nav-item">
+                                                <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
+                                                    @*<i class="fas fa-upload mr-4"></i>*@
+                                                    <p>Importer</p>
+                                                </a>
+                                            </li>
 
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                        @*<i class="fas fa-gavel mr-4"></i>*@
-                                        <p>Affecter aux agents</p>
-                                    </a>
-                                </li>
+                                            <li class="nav-item">
+                                                <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
+                                                    @*<i class="fas fa-book mr-4"></i>*@
+                                                    <p>Consulter</p>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
+                                                    @*<i class="fas fa-gavel mr-4"></i>*@
+                                                    <p>Affecter</p>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
                                 <!-- Sidebar Menu
 
-                                <li class="nav-item has-treeview">
-                                    <a href="#" class="nav-link active">
-                                        <i class="fa fa-address-book mr-2"></i>
-                                        <p>
-                                            Gestion des lots
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
-                                                <i class="fas fa-upload mr-4"></i>
-                                                <p>Importer un lot</p>
-                                            </a>
-                                        </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link active">
+                    <i class="fa fa-address-book mr-2"></i>
+                    <p>
+                        Gestion des lots
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
+                            <i class="fas fa-upload mr-4"></i>
+                            <p>Importer un lot</p>
+                        </a>
+                    </li>
 
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                                <i class="fas fa-book mr-4"></i>
-                                                <p>Consulter les clients</p>
-                                            </a>
-                                        </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
+                            <i class="fas fa-book mr-4"></i>
+                            <p>Consulter les clients</p>
+                        </a>
+                    </li>
 
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                                <i class="fas fa-gavel mr-4"></i>
-                                                <p>Affecter aux agents</p>
-                                            </a>
-                                        </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
+                            <i class="fas fa-gavel mr-4"></i>
+                            <p>Affecter aux agents</p>
+                        </a>
+                    </li>
 
-                                                </ul>
-
-                                                    </li>
-
-                                                        -->
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
-
-                                        @*<i class="fas fa-check mr-3"></i>*@
-
-                                        <p>Validation des traitements</p>
-
-                                    </a>
+                            </ul>
 
                                 </li>
 
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
-
-                                        @*<i class="fas fa-archive mr-3"></i>*@
-
-                                        <p>Historique des traitements</p>
-
-                                    </a>
-
-                                </li>
+                                    -->
 
 
-                                <li class="nav-item">
 
-                                    <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
+                                <ul id="myUL">
+                                    <li>
 
-                                        @*<i class="fas fa-archive mr-3"></i>*@
+                                        <span class="box">
 
-                                        <p>Informer la banque</p>
+                                            <a class="nav-link ">
+                                                <p>
+                                                    Traitements
+                                                </p>
+                                            </a>
+                                        </span>
 
-                                    </a>
+                                        <ul class="nested">
 
-                                </li>
+                                            <li class="nav-item">
+
+                                                <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
+
+                                                    @*<i class="fas fa-check mr-3"></i>*@
+
+                                                    <p>Valider </p>
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <li class="nav-item">
+
+                                                <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
+
+                                                    @*<i class="fas fa-archive mr-3"></i>*@
+
+                                                    <p>Historique</p>
+
+                                                </a>
+
+                                            </li>
+
+
+                                        </ul>
+                                    </li>
+                                </ul>
+
+
+                                <ul id="myUL">
+                                    <li>
+
+                                        <span class="box">
+
+                                            <a class="nav-link ">
+                                                <p>
+                                                    Banque et rentabilité
+                                                </p>
+                                            </a>
+
+                                        </span>
+
+                                        <ul class="nested">
+
+
+                                            <li class="nav-item">
+
+                                                <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
+
+
+                                                    <p>Mail</p>
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <li class="nav-item">
+
+                                                <a href="@Url.Action("Rentablite","Formulaire")" class="nav-link">
+                                                    <p>Rentabilité</p>
+                                                </a>
+
+                                            </li>
+
+
+                                        </ul>
+                                    </li>
+                                </ul>
+
+
+
+
+
 
 
 
                                 @*<li class="nav-item has-treeview">
-                                        <a href="#" class="nav-link active">
-                                            <i class="fas fa-list-ul mr-2"></i>
-                                            <p>
-                                                Gestion des traitements
-                                                <i class="right fas fa-angle-left"></i>
-                                            </p>
-                                        </a>
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-list-ul mr-2"></i>
+                        <p>
+                            Gestion des traitements
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
 
-                                        <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview">
 
 
-                                        </ul>
-                                    </li>*@
+                    </ul>
+                </li>*@
 
 
 
@@ -284,14 +354,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             {
 
 
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("Rentablite","Formulaire")" class="nav-link">
-                                        @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
-                                        <p>Rentabilité</p>
-                                    </a>
-
-                                </li>
+                                
 
 
                                 <li class="nav-item">
@@ -409,6 +472,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     @RenderSection("scripts", required: false)
 
+
+    <link href="~/adminlte/css/treeViewJs.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" src="~/Scripts/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">
 
@@ -416,6 +482,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="/WakilRecouvrement/signalr/Hubs"></script>
+    <script type="text/javascript" src="~/adminlte/js/treeViewJs.js"></script>
 
 
 

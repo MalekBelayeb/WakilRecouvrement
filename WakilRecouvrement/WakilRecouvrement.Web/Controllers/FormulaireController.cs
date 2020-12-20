@@ -7,17 +7,12 @@ using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
-using System.EnterpriseServices.Internal;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using WakilRecouvrement.Domain.Entities;
 using WakilRecouvrement.Service;
@@ -382,7 +377,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les lots", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
             Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                 listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
@@ -401,7 +396,7 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Text = "RDV pour demain", Value = "RDV_DEMAIN" });
             listItems.Add(new SelectListItem { Text = "RDV pour les prochains jours", Value = "RDV_JOURS_PROCHAINE" });
             listItems.Add(new SelectListItem { Text = "RDV pour la semaine prochaine", Value = "RDV_SEMAINE_PROCHAINE" });
-            listItems.Add(new SelectListItem { Text = "Touts les RDV", Value = "ALL" });
+            listItems.Add(new SelectListItem { Text = "Tous les RDV", Value = "ALL" });
 
 
             return listItems;
@@ -414,7 +409,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les agents", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
 
             agents.ForEach(l => {
                 listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
@@ -425,8 +420,8 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> TraiteListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts clients traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients affectés", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous clients traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {
@@ -937,7 +932,7 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> TraiteValidationListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les traitements non validés", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les traitements non validés", Value = "ALL" });
             listItems.Add(new SelectListItem { Text = "Soldé", Value = "SOLDE" });
             listItems.Add(new SelectListItem { Text = "Tranche", Value = "SOLDE_TRANCHE" });
             listItems.Add(new SelectListItem { Text = "A verifié", Value = "A_VERIFIE" });
@@ -960,7 +955,7 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> TraiteValidationValideListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les traitements validés", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les traitements validés", Value = "ALL" });
             listItems.Add(new SelectListItem { Text = "Soldé", Value = "SOLDE" });
             listItems.Add(new SelectListItem { Text = "Tranche", Value = "SOLDE_TRANCHE" });
             listItems.Add(new SelectListItem { Text = "A verifié", Value = "A_VERIFIE" });

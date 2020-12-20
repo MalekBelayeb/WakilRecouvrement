@@ -30,6 +30,21 @@ namespace WakilRecouvrement.Web.Controllers
             return View("InscriptionCompte");
         }
 
+
+        public bool IsValid(Employe emp)
+        {
+
+         
+                if (emp.Password.Equals(emp.ConfirmPassword) && emp.RoleId !=0 )
+                {
+                    return true;
+                }
+
+            return false;
+
+        }
+
+
         [HttpPost]
         public ActionResult Login(Compte compte)
         {

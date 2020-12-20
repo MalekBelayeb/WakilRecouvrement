@@ -8,14 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using WakilRecouvrement.Service;
 using WakilRecouvrement.Domain.Entities;
-using System.Net;
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Microsoft.SqlServer.Server;
 using Microsoft.Ajax.Utilities;
 using WakilRecouvrement.Web.Models.ViewModel;
 using PagedList;
@@ -470,7 +465,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les lots", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
             Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                 listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
@@ -511,8 +506,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             AffectationService.Add(affectation);
             AffectationService.Commit();
-            
-
         }
 
 

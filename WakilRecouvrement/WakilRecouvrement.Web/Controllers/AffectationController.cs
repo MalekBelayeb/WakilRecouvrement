@@ -2,10 +2,8 @@
 using PagedList;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic;
-using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -343,12 +341,12 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> TraiteListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les clients affectés", Value = "ALL" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Tout les traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients affectés", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {
-
+                
                 listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
 
             }
@@ -376,7 +374,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les lots", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
             Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                 listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
@@ -391,7 +389,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<Employe> agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Touts les agents", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
 
             agents.ForEach(l => {
                 listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });

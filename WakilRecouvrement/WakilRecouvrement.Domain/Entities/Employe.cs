@@ -19,7 +19,6 @@ namespace WakilRecouvrement.Domain.Entities
         public string Username { get; set; }
 
 
-
         [Required(ErrorMessage = "Champ obligatoire")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -37,7 +36,6 @@ namespace WakilRecouvrement.Domain.Entities
 
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }
-
 
         [Display(Name = "Verifié")]
         //[ScaffoldColumn(false)]
