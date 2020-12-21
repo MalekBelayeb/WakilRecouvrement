@@ -1124,7 +1124,7 @@ namespace WakilRecouvrement.Web.Controllers
             Formulaire Formulaire = JoinedLot.ToList().FirstOrDefault().Formulaire;
 
             double DebMaJ = GetFormulaire(Formulaire.AffectationId).MontantDebMAJ;
-
+            Debug.WriteLine(montant);
             if (valid == false)
             {
                 DeleteFromulaire(Formulaire);
@@ -1920,6 +1920,11 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void VerifyClient(string idclient, string montant)
         {
+            if(montant == "")
+            {
+                montant = "0";
+            }
+
             var formulaireAtraite = (from f in FormulaireService.GetAll()
                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                      join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -2130,8 +2135,6 @@ namespace WakilRecouvrement.Web.Controllers
             return username.FirstOrDefault().Username;
         }
 
-
-       
 
         [HttpPost]
         public ActionResult SuiviRDVNB()
