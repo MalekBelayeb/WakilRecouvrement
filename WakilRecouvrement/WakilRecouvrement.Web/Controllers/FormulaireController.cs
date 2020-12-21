@@ -1612,10 +1612,10 @@ namespace WakilRecouvrement.Web.Controllers
 
                 foreach (var j in JoinedList)
                 {
-
+                
                     j.Formulaire.NotifieBanque = true;
                     FormulaireService.Update(j.Formulaire);
-
+                
                 }
                 FormulaireService.Commit();
 

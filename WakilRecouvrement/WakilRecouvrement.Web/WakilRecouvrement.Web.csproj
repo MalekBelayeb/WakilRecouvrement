@@ -540,6 +540,7 @@
     <None Include="Properties\PublishProfiles\IISProfile12.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile13.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile14.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile15.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile2.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile3.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile4.pubxml" />

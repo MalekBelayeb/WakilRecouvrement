@@ -8,7 +8,6 @@
     ViewBag.Title = "";
 }
 
-<h2>Suivi des clients affectés</h2>
 
 
 @using (Html.BeginForm("SuiviClient", "Formulaire", FormMethod.Get))
@@ -18,13 +17,19 @@
     <div class="card">
         <div class="card-header" id="headingTwo">
 
+            <h2>Suivi des clients affectés</h2>
+
+        </div>
+
+        <div class="card-body">
+
             <br />
 
 
             <div class="row">
                 <div class="col-xs-3  col-md-3">
 
-                    @Html.Label("traite","Etat:",new { @class = "control-label" })
+                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
 
                     @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
@@ -67,10 +72,6 @@
             </div>
 
             <br />
-
-        </div>
-
-        <div class="card-body">
 
             @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
 
