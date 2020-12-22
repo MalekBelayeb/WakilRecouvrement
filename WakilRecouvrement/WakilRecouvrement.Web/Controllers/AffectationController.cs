@@ -30,12 +30,12 @@ namespace WakilRecouvrement.Web.Controllers
             FormulaireService = new FormulaireService();
 
         }
-
+        
         public ActionResult ChoisirLot()
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
-
+           
             List<Lot> Lots = LotService.GetAll().ToList();
 
             return View(Lots.DistinctBy(l => l.NumLot));

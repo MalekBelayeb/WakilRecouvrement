@@ -141,14 +141,7 @@
                 <div id="datetimePickerRDV" class="form-group row">
                     <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
                     <div class="col-8">
-                        <input class="form-control" name="RDVDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-                    </div>
-                </div>
-
-                <div id="datetimePickerRDVReporte" class="form-group row">
-                    <label for="example-datetime-local-input" class="col-2 col-form-label">RDV reporté pour le:</label>
-                    <div class="col-8">
-                        <input class="form-control" name="RDVReporteDateTime" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+                        <input class="form-control" name="RDVDateTime" type="datetime-local" id="RDVDate">
                     </div>
                 </div>
 
@@ -388,7 +381,6 @@
 
     function hideAll() {
         document.getElementById("autre").style.display= "none"
-        document.getElementById("datetimePickerRDVReporte").style.display= "none"
         document.getElementById("datetimePickerRDV").style.display= "none"
         document.getElementById("montant").style.display= "none"
         document.getElementById("datetimePickerRappel").style.display= "none"
@@ -421,6 +413,13 @@
                     break;
                 case "RDV":
                     hideAll();
+
+
+                    var now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    document.getElementById('RDVDate').value = now.toISOString().slice(0, 16);
+
+
                     document.getElementById("datetimePickerRDV").style.display = "block"
                     break;
 
