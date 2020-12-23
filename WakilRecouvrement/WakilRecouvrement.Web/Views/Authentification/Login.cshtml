@@ -5,7 +5,7 @@
 }
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Login", "Authentification", FormMethod.Post, new { onsubmit = "showLoading()" }))
 {
 
     @Html.AntiForgeryToken()
@@ -18,7 +18,6 @@
         </div>
 
         <div class="card-body">
-
 
             <div class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -45,7 +44,15 @@
                         <div class="col-xs-3 ">
 
                             <div class="col-md-offset-2 col-md-10">
-                                <input type="submit" value="Connect" class="btn btn-default" />
+                                <input id="submitBtn" type="submit" value="Se connecter" class="btn btn-primary" />
+
+
+                                <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    <span class="sr-only">Loading...</span>
+                                </button>
+
+
                                 @Html.ValidationMessage("Connect", "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -71,5 +78,15 @@
 
 
 }
+
+<script>
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+</script>
 
 

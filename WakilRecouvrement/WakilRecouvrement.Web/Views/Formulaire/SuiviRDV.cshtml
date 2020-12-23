@@ -8,94 +8,103 @@
     ViewBag.Title = "";
 }
 
-<h2>Suivi des RDV</h2>
 
 
 
-@using (Html.BeginForm("SuiviRDV", "Formulaire", FormMethod.Get))
+@using (Html.BeginForm("SuiviRDV", "Formulaire", FormMethod.Post, new { onsubmit = "showLoading()" }))
 {
 
 
-    <div class="card">
-        <div class="card-header" id="headingTwo">
+<div class="card">
+    <div class="card-header" id="headingTwo">
 
-            <br />
+        <h2>Suivi des RDV</h2>
 
+    </div>
 
-            <div class="row">
-                <div class="col-xs-3  col-md-3">
-
-                    @Html.Label("RDVType", "Type:", new { @class = "control-label" })
-
-                    @Html.DropDownList("RDVType", ViewBag.RDVList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
-
-                <div class="col-xs-3  col-md-3">
+    <div class="card-body">
 
 
-                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+        <div class="row">
+            <div class="col-xs-3  col-md-3">
 
-                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.Label("RDVType", "Type:", new { @class = "control-label" })
 
-                </div>
+                @Html.DropDownList("RDVType", ViewBag.RDVList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
             </div>
 
+            <div class="col-xs-3  col-md-3">
 
 
-            <br />
+                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-
-            <div class="row">
-
-                <div class="col-xs-3 ">
-
-
-                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
-
-                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
             </div>
-
-            <br />
 
         </div>
 
-        <div class="card-body">
-
-            <br />
-            <div class="row">
-
-                <div class="col-xs-3  col-md-10">
 
 
-                    <p>
-                        <input type="submit" class="btn btn-default" value="Search" />
-                    </p>
+        <br />
 
-                </div>
 
-                <div class="col-xs-4">
+        <div class="row">
 
-                    <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+            <div class="col-xs-3 col-md-6">
 
-                </div>
+                @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+
+                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
             </div>
 
+        </div>
+
+        <br />
+        <div class="row">
+
+            <div class="col-xs-3  col-md-10">
+
+
+                <p>
+                    <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+                
+                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
+                </p>
+
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+
+
+    <div class="card-footer text-muted">
+
+
+        <div class="col-xs-4">
+
+            <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
 
         </div>
 
     </div>
 
+</div>
+
 }
 
 
 
-<table class="table">
+<table class="table table-bordered table-condensed table-responsive" style="display:table">
     <tr>
 
         <th>
@@ -189,6 +198,20 @@
     }
 
 </table>
+
+
+<script>
+
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+</script>
+
 
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
