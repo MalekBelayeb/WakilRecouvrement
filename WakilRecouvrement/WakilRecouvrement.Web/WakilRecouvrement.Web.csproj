@@ -333,6 +333,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LotController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
+    <Compile Include="Controllers\StatistiqueController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -698,6 +699,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\NotificationUser\" />
+    <Folder Include="Views\Statistique\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1521,7 +1521,6 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-
         [HttpPost]
         public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string objet, string email, bool send, string to)
         {
@@ -2190,9 +2189,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewBag.CurrentFilter = SearchString;
             ViewBag.pourcentage = poucentage;
-
-
-
 
 
             if (!String.IsNullOrEmpty(traite))

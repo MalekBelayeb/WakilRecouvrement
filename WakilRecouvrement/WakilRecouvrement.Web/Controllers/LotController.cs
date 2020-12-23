@@ -322,7 +322,6 @@ namespace WakilRecouvrement.Web.Controllers
                                         LotService.Commit();
                                         AffecterClient(Lot, filename);
 
-
                                     }
 
 
@@ -351,8 +350,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-
-        
         public ActionResult ConsulterClients(string SearchString,string numLot,string currentFilter, string sortOrder,int? page)
         {
 
@@ -491,7 +488,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void AffecterClient(Lot lot, string filename)
         {
-            string agent = filename.Split('_')[2].Split('.')[0];
+            string agent = "POSTE4";
             string numlot = filename.Split('_')[1];
 
             Employe emp = EmpService.GetEmployeByUername(agent);
@@ -507,10 +504,6 @@ namespace WakilRecouvrement.Web.Controllers
             AffectationService.Add(affectation);
             AffectationService.Commit();
         }
-
-
-
-
 
     }
 

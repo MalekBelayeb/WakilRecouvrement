@@ -6,7 +6,6 @@
 
 }
 
-<h2>Valider les Traitements</h2>
 <script src="~/Scripts/jquery.min.js"></script>
 
 <script type="text/javascript" src="~/Scripts/notify.js"></script>
@@ -20,32 +19,52 @@
 </script>
 
 
-<div class="row">
-    <div class="col-xs-3">
 
-        @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
+<div class="card">
+    <div class="card-header" id="headingTwo">
 
-    </div>
-    <div class="col-xs-3 col-md-5">
-
-
-        @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+        <h2>Valider Les Traitements</h2>
 
     </div>
 
-    <div class="col-xs-3">
+    <div class="card-body">
 
-        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+        <div class="row">
+            <div class="col-xs-3">
+
+                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
+
+            </div>
+            <div class="col-xs-3 col-md-5">
+
+                @Html.Label("traite", "Etat:", new { @class = "control-label " })
+
+                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+
+            </div>
+
+            <div class="col-xs-3">
+                @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+            </div>
+        </div>
 
     </div>
+    <div class="card-footer text-muted">
+        <span>
+            Total:
+        </span>
+        <span><strong id="nbTotal"></strong></span>
+
+    </div>
+
 </div>
-<br />
-<span>
-    Total:
-</span>
-<span><strong id="nbTotal"></strong></span>
-<br />
-<br />
+
+
 @using (Html.BeginForm("UploadVerifier", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "ShowLoader()" }))
 {
     @Html.AntiForgeryToken()
@@ -207,8 +226,8 @@
 
                 validerTraitement(data_row["FormulaireId"], false)
 
-            } 
-          
+            }
+
         });
 
 

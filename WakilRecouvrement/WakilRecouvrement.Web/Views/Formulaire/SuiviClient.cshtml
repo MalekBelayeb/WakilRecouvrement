@@ -10,102 +10,115 @@
 
 
 
-@using (Html.BeginForm("SuiviClient", "Formulaire", FormMethod.Get))
+@using (Html.BeginForm("SuiviClient", "Formulaire", FormMethod.Post, new { onsubmit = "showLoading()" }))
 {
    
 
-    <div class="card">
-        <div class="card-header" id="headingTwo">
+<div class="card">
+    <div class="card-header" id="headingTwo">
 
-            <h2>Suivi des clients affectés</h2>
-
-        </div>
-
-        <div class="card-body">
-
-            <br />
-
-
-            <div class="row">
-                <div class="col-xs-3  col-md-3">
-
-                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
-
-                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
-
-                <div class="col-xs-3  col-md-3">
-
-
-                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
-
-                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
-                <div class="col-xs-3  col-md-3">
-
-                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
-
-                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
-
-            </div>
-
-
-
-            <br />
-
-
-            <div class="row">
-
-                <div class="col-xs-3 ">
-
-
-                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
-
-                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-                </div>
-
-            </div>
-
-            <br />
-
-            @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
-
-            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
-
-            <br />
-            <div class="row">
-
-                <div class="col-xs-3  col-md-10">
-
-
-                    <p>
-                        <input type="submit" class="btn btn-default" value="Search" />
-                    </p>
-
-                </div>
-
-                <div class="col-xs-4">
-
-                    <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
-
-                </div>
-
-            </div>
-
-
-        </div>
+        <h2>Suivi des clients affectés</h2>
 
     </div>
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-xs-3  col-md-3">
+
+                @Html.Label("traite", "Etat:", new { @class = "control-label" })
+
+                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+            </div>
+
+            <div class="col-xs-3  col-md-3">
+
+
+                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+            </div>
+            <div class="col-xs-3  col-md-3">
+
+                @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+            </div>
+
+        </div>
+
+
+
+        <br />
+
+
+        <div class="row">
+
+            <div class="col-xs-3 col-md-3">
+
+
+                @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+
+                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+            </div>
+
+            <div class="col-xs-3 col-md-6">
+
+                @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+
+            </div>
+
+
+        </div>
+
+        <br />
+
+        <br />
+        <div class="row">
+
+            <div class="col-xs-3  col-md-10">
+
+
+                <p>
+                    <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div class="card-footer text-muted">
+
+        
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+            </div>
+
+    </div>
+
+</div>
 
 }
 
 
-<table class="table">
+<table class="table table-bordered table-condensed table-responsive" style="display:table">
     <tr>
 
         <th>
@@ -243,6 +256,17 @@
     }
 
 </table>
+<script>
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+</script>
+
 
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
