@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Scripts/jquery.min.js"></script>
+
+<h2>Statistiques</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+
+                <div class="row">
+
+                    <div class="col-xs-3  col-md-3">
+
+                        @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                        @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                    </div>
+                    <div class="col-xs-3  col-md-3">
+
+                        @Html.Label("typeStat", "Type:", new { @class = "control-label " })
+
+                        @Html.DropDownList("typeStat", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                    </div>
+                    <div class="col-xs-3  col-md-3">
+
+                        <div style="display:none" id="dateStat" class="form-group row">
+                            <label for="RDVDateTime">Date:</label>
+                            <input class="form-control" name="RDVDateTime" type="date" id="statDate">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+
+
+
+                    <!-- /.col -->
+                    <div class="col-md-4">
+                        <p class="text-center">
+                            <strong>Stats. par lot</strong>
+                        </p>
+
+                        <div class="progress-group">
+                            RDV
+                            <span class="float-right"><b>160</b>/200</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-primary" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <!-- /.progress-group -->
+
+                        <div class="progress-group">
+                            Faux numero
+                            <span class="float-right"><b>310</b>/400</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-danger" style="width: 75%"></div>
+                            </div>
+                        </div>
+
+                        <!-- /.progress-group -->
+                        <div class="progress-group">
+                            <span class="progress-text">Versement</span>
+                            <span class="float-right"><b>480</b>/800</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-success" style="width: 60%"></div>
+                            </div>
+                        </div>
+
+                        <!-- /.progress-group -->
+                        <div class="progress-group">
+                            En cours de traitement
+                            <span class="float-right"><b>250</b>/500</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-warning" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <!-- /.progress-group -->
+                    </div>
+
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- ./card-body -->
+            <div class="card-footer">
+
+                <!-- /.row -->
+            </div>
+            <!-- /.card-footer -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+
+
+
+<script>
+
+    
+    $(document).ready(function () {
+
+
+        
+        var lot = document.getElementById("numLot")
+        var type = document.getElementById("typeStat")
+        var date = document.getElementById("dateStat")
+
+        var dateVal = document.getElementById("statDate")
+        lot.onchange = function () {
+            sendRequest()
+        }
+
+        type.onchange = function () {
+            var x = document.getElementById("typeStat").value
+
+            if (x == 1) {
+                document.getElementById("dateStat").style.display = "none"
+
+            } else if (x == 2) {
+                document.getElementById('statDate').valueAsDate = new Date()
+                document.getElementById("dateStat").style.display = "block"
+
+            }
+            sendRequest()
+        }
+
+        date.onchange = function () {
+            sendRequest()
+        }
+
+
+        function sendRequest() {
+            alert(dateVal.value)
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("StatLot", "Statistique")',
+                dataType: 'json',
+                data: { lot: lot.value, type: type.value, date: dateVal.value },
+                success: function (data) {
+                    console.log(data)
+                    //alert(data)
+                }
+
+            })
+        }
+
+
+    })
+
+
+
+</script>

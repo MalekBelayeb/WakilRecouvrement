@@ -777,7 +777,6 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult ValiderTraitement(bool IsValid, string numLot, string traite, string agent)
         {
-
             string status = "";
             if (IsValid == true)
                 status = "VERIFIE";
@@ -801,14 +800,14 @@ namespace WakilRecouvrement.Web.Controllers
                 JoinedList = (from f in FormulaireService.GetAll()
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
-
+                              orderby f.TraiteLe descending
                               select new ClientAffecteViewModel
                               {
                                   Formulaire = f,
                                   Lot = l,
                                   Affectation = a
 
-                              }).ToList().Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
+                              }).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
 
             }
             else
@@ -816,14 +815,14 @@ namespace WakilRecouvrement.Web.Controllers
                 JoinedList = (from f in FormulaireService.GetAll()
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
-
+                              orderby f.TraiteLe descending
                               select new ClientAffecteViewModel
                               {
                                   Formulaire = f,
                                   Lot = l,
                                   Affectation = a
 
-                              }).ToList().Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+                              }).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
             }
 
             if (numLot != "0")
@@ -1534,7 +1533,7 @@ namespace WakilRecouvrement.Web.Controllers
             JoinedList = (from f in FormulaireService.GetAll()
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                           join l in LotService.GetAll() on a.LotId equals l.LotId
-
+                            
                           select new ClientAffecteViewModel
                           {
 

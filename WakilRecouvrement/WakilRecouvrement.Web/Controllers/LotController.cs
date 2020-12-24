@@ -475,7 +475,6 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> SortOrdrForDropDown()
         {
 
-            List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
             listItems.Add(new SelectListItem { Selected = true, Text = "Nom (A-Z)", Value = "0" });

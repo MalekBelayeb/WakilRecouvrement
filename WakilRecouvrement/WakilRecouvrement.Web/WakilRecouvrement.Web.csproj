@@ -409,6 +409,22 @@
     <Content Include="adminlte\js\pages\dashboard2.js" />
     <Content Include="adminlte\js\pages\dashboard3.js" />
     <Content Include="adminlte\js\treeViewJs.js" />
+    <Content Include="adminlte\plugins\daterangepicker\daterangepicker.css" />
+    <Content Include="adminlte\plugins\daterangepicker\daterangepicker.js" />
+    <Content Include="adminlte\plugins\daterangepicker\drp.png" />
+    <Content Include="adminlte\plugins\daterangepicker\example\amd\index.html" />
+    <Content Include="adminlte\plugins\daterangepicker\example\amd\main.js" />
+    <Content Include="adminlte\plugins\daterangepicker\example\amd\require.js" />
+    <Content Include="adminlte\plugins\daterangepicker\example\browserify\bundle.js" />
+    <Content Include="adminlte\plugins\daterangepicker\example\browserify\index.html" />
+    <Content Include="adminlte\plugins\daterangepicker\example\browserify\main.js" />
+    <Content Include="adminlte\plugins\daterangepicker\moment.min.js" />
+    <Content Include="adminlte\plugins\daterangepicker\package.js" />
+    <Content Include="adminlte\plugins\daterangepicker\website.css" />
+    <Content Include="adminlte\plugins\daterangepicker\website.js" />
+    <Content Include="adminlte\plugins\daterangepicker\website\index.html" />
+    <Content Include="adminlte\plugins\daterangepicker\website\website.css" />
+    <Content Include="adminlte\plugins\daterangepicker\website\website.js" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.min.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\brands.css" />
@@ -534,6 +550,8 @@
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff2" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
+    <Content Include="adminlte\plugins\daterangepicker\bower.json" />
+    <Content Include="adminlte\plugins\daterangepicker\example\browserify\README.md" />
     <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile10.pubxml" />
@@ -695,11 +713,11 @@
     <Content Include="Views\Formulaire\HistoriqueClient.cshtml" />
     <Content Include="Views\Formulaire\Rentablite.cshtml" />
     <Content Include="Views\Formulaire\DetailsRevenue.cshtml" />
+    <Content Include="Views\Statistique\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\NotificationUser\" />
-    <Folder Include="Views\Statistique\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
