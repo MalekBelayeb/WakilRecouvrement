@@ -618,7 +618,7 @@ namespace WakilRecouvrement.Web.Controllers
                              where f.FormulaireId == Formulaire.FormulaireId
                              select new Lot
                              {
-
+                                 NumLot = l.NumLot,
                                  SoldeDebiteur = l.SoldeDebiteur
 
                              }).FirstOrDefault();
@@ -694,7 +694,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
-            return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = "0", sortOrder = "5" });
+            return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5" });
         }
 
         [HttpPost]
@@ -937,7 +937,7 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Text = "A verifié", Value = "A_VERIFIE" });
 
             return listItems;
-        }
+        } 
 
 
         public IEnumerable<SelectListItem> EnvoyerTraiteListForDropDown()
