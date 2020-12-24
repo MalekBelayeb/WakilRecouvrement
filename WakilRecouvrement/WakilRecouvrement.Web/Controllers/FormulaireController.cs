@@ -697,6 +697,16 @@ namespace WakilRecouvrement.Web.Controllers
             return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5" });
         }
 
+        public ActionResult deleteHist(int idHist,int id,string msgError)
+        {
+
+            FormulaireService.Delete(FormulaireService.GetById(idHist));
+            FormulaireService.Commit();
+
+            return RedirectToAction("CreerFormulaire","Formulaire", new { id = id, msgError = msgError});
+        }
+
+
         [HttpPost]
         public ActionResult GetFormulaires(int id)
         {
