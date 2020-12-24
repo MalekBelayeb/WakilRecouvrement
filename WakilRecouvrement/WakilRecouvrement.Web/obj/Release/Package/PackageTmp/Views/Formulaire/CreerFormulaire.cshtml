@@ -216,7 +216,9 @@
 
                 <table class="table table-bordered table-condensed table-responsive" style="display:table">
                     <tr>
+                        <th>
 
+                        </th>
                         <th>
                             @Html.DisplayNameFor(model => model.EtatClient)
                         </th>
@@ -260,6 +262,30 @@
                     @foreach (var item in Model)
                     {
                         <tr class="p-3 mb-2 bg-white text-dark">
+
+                            <td>
+                                
+                                @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
+                                {
+                                    
+                                    if (item.Status.ToString().Equals("EN_COURS"))
+                                    {
+
+                                        <button onclick="supprimerHist(\'' + @item.FormulaireId + '\')" type="button" class="btn btn-danger">x</button>
+                                    }
+                                    else
+                                    {
+                                        <button disabled type="button" class="btn btn-danger">x</button>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <button  onclick="supprimerHist(\'' + @item.FormulaireId + '\')" type="button" class="btn btn-danger">x</button>
+                                }
+
+
+                            </td>
                             <td>
 
                                 @Html.DisplayFor(modelItem => item.EtatClient)
@@ -481,7 +507,7 @@
 
                     document.getElementById("textLabel").innerHTML = "Tranche en TND:";
 
-                    document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";
+                    //document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";
                     document.getElementById("exampleInputAmount").value = "1.000";
                     document.getElementById("exampleInputAmount").min =0 +"";
 
@@ -495,6 +521,19 @@
 
         }
 
+
+
+            function supprimerHist(id) {
+
+
+                if (confirm("Ceci implique la suppression de l'operation, êtes vous sur de vouloir continuer ?  ")) {
+
+                    alert(id)
+
+                }
+
+
+            }
 
         </script>
 
