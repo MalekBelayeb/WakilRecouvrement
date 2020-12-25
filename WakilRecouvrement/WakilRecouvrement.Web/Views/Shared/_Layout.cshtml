@@ -330,7 +330,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     <a href="@Url.Action("SuiviRDV","Formulaire",new {RDVType="RDV_J", numLot="0",sortOrder="0" })" class="nav-link">
 
-                                        <p>Suivi des RDV </p>
+                                        <p>Suivi des RDV ( <span id="nbSuivi">0</span> ) </p>
 
                                     </a>
 
@@ -796,7 +796,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 data: {  },
                 success: function (data) {
 
-                   // document.getElementById("nbSuivi").innerHTML = data["nb"]
+                   document.getElementById("nbSuivi").innerHTML = data["nb"]
                 }
 
             })

@@ -340,6 +340,7 @@
     <Compile Include="Hubs\UserHub.cs" />
     <Compile Include="Models\EmailConstants.cs" />
     <Compile Include="Models\FormulaireExportable.cs" />
+    <Compile Include="Models\TelFN.cs" />
     <Compile Include="Models\ViewModel\RentabiliteViewModel.cs" />
     <Compile Include="Models\ViewModel\SuiviAffectationViewModel.cs" />
     <Compile Include="Scheduler\JobScheduler.cs" />
@@ -714,6 +715,8 @@
     <Content Include="Views\Formulaire\Rentablite.cshtml" />
     <Content Include="Views\Formulaire\DetailsRevenue.cshtml" />
     <Content Include="Views\Statistique\Index.cshtml" />
+    <Content Include="Views\Lot\updateLot.cshtml" />
+    <Content Include="Views\Lot\addLot.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

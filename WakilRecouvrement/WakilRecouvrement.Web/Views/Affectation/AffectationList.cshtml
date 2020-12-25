@@ -196,6 +196,31 @@
             classStyle = "p-3 mb-2 bg-white text-dark";
         }
 
+
+        string TelPortableFnClassStyle = "";
+        string TelFixeFnClassStyle = "";
+
+        if (item.Lot.TelPortableFN)
+        {
+            TelPortableFnClassStyle = "bg-secondary";
+        }
+        else
+        {
+            TelPortableFnClassStyle = "";
+
+        }
+
+        if (item.Lot.TelFixeFN)
+        {
+            TelFixeFnClassStyle = "bg-secondary";
+            
+        }
+        else
+        {
+            TelFixeFnClassStyle = "";
+
+        }
+
      <tr class="@classStyle">
 
             <td>
@@ -223,10 +248,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
             </td>
-            <td>
+            <td class="@TelPortableFnClassStyle">
                 @Html.DisplayFor(modelItem => item.Lot.TelPortable)
             </td>
-            <td>
+            <td class="@TelFixeFnClassStyle">
                 @Html.DisplayFor(modelItem => item.Lot.TelFixe)
             </td>
             <td>

@@ -65,12 +65,36 @@
                             @ViewBag.affectation.Lot.NomClient
                         </td>
 
-                        <td>
-                            @ViewBag.affectation.Lot.TelPortable
-                        </td>
-                        <td>
-                            @ViewBag.affectation.Lot.TelFixe
-                        </td>
+                        @if (ViewBag.TelFN.TelPortableFN)
+                        {
+                            <td class="bg-secondary">
+                                @ViewBag.affectation.Lot.TelPortable
+                            </td>
+
+                        }
+                        else
+                        {
+                            <td>
+                                @ViewBag.affectation.Lot.TelPortable
+                            </td>
+                        }
+
+                        @if (ViewBag.TelFN.TelFixeFN)
+                        {
+                            <td class="bg-secondary">
+                                @ViewBag.affectation.Lot.TelFixe
+                            </td>
+                        }
+                        else
+                        {
+                            <td >
+                                @ViewBag.affectation.Lot.TelFixe
+                            </td>
+                        }
+
+
+
+
                         <td>
                             @ViewBag.affectation.Lot.SoldeDebiteur
                         </td>
@@ -108,6 +132,101 @@
             </div>
 
             <div class="card-body">
+
+
+                @using (Html.BeginForm("UpdateTelFN", "Formulaire", FormMethod.Post, new { onsubmit = "showFNLoading()" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+
+                        @if (ViewBag.affectation.Lot.TelPortable != "")
+                        {
+
+                            <div class="col-6">
+                                <label for="telOne">Faux Num 1</label>
+
+                                <div class="input-group">
+
+                                    <div class="input-group-prepend">
+
+                                        <span class="bg-gradient-danger input-group-text">
+
+                                            @if (ViewBag.TelFN.TelPortableFN)
+                                            {
+                                                <input id="TelPortableid" checked name="TelPortable" type="checkbox">
+
+                                            }
+                                            else
+                                            {
+                                                <input id="TelPortableid" name="TelPortable" type="checkbox">
+
+                                            }
+
+
+                                        </span>
+                                    </div>
+                                    <input type="text" disabled value="@Html.Raw(ViewBag.affectation.Lot.TelPortable)" class="form-control">
+                                </div>
+                            </div>
+                        }
+
+                        @if (ViewBag.affectation.Lot.TelFixe != "")
+                        {
+                            <div class="col-6">
+                                <label for="telOne">Faux num 2</label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="bg-gradient-danger input-group-text">
+
+                                            @if (ViewBag.TelFN.TelFixeFN)
+                                            {
+                                                <input id="TelFixeid" checked name="TelFixe" type="checkbox">
+
+                                            }
+                                            else
+                                            {
+                                                <input id="TelFixeid" name="TelFixe" type="checkbox">
+
+                                            }
+
+                                        </span>
+                                    </div>
+                                    <input type="text" disabled value="@Html.Raw(ViewBag.affectation.Lot.TelFixe)" class="form-control">
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                    <br />
+
+                    <input hidden type="text" name="lotId"  value="@Html.Raw(ViewBag.affectation.Lot.LotId)" class="form-control">
+                    <input hidden type="text" name="affectationId"  value="@Html.Raw(ViewBag.affectation.AffectationId)" class="form-control">
+
+                    if (ViewBag.affectation.Lot.TelFixe != "" || ViewBag.affectation.Lot.TelPortable != "")
+                    {
+
+                        <div class="form-group">
+
+                            <div class="col-md-offset-2 col-md-10">
+                                <input id="submitFN" type="submit" value="Confirmer" class="btn btn-primary" />
+
+                                <button style="display:none" id="submitFNLoading" class="btn btn-primary" type="button" disabled>
+                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                    <span class="sr-only">Loading...</span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    }
+
+
+                }
+
 
 
                 @using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "showLoading()" }))
@@ -277,6 +396,7 @@
                                     else
                                     {
 
+
                                          //@Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');", @disabled = "disabled" })
 
 
@@ -407,9 +527,14 @@
 
             }
 
+            
 
+            function showFNLoading() {
 
+                document.getElementById("submitFNLoading").style.display = "block";
+                document.getElementById("submitFN").style.display = "none";
 
+            }
 
 
     var datetimePicker = document.getElementById("datetimePicker")

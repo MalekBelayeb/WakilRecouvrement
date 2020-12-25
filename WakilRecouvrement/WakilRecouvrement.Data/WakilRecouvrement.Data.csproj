@@ -159,6 +159,14 @@
     <Compile Include="Migrations\202009240929067_poeis.designer.cs">
       <DependentUpon>202009240929067_poeis.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012242122126_miggr.cs" />
+    <Compile Include="Migrations\202012242122126_miggr.designer.cs">
+      <DependentUpon>202012242122126_miggr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012250045508_miggrxx.cs" />
+    <Compile Include="Migrations\202012250045508_miggrxx.designer.cs">
+      <DependentUpon>202012250045508_miggrxx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -249,6 +257,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009240929067_poeis.resx">
       <DependentUpon>202009240929067_poeis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012242122126_miggr.resx">
+      <DependentUpon>202012242122126_miggr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012250045508_miggrxx.resx">
+      <DependentUpon>202012250045508_miggrxx.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
