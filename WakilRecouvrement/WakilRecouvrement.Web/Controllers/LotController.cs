@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Microsoft.Ajax.Utilities;
 using WakilRecouvrement.Web.Models.ViewModel;
 using PagedList;
+using WakilRecouvrement.Web.Models;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -356,7 +357,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewBag.CurrentSort = sortOrder;
  
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewData["list"] = new SelectList(NumLotAllListForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(SortOrdrForDropDown(), "Value", "Text");
 
             List<SuiviAffectationViewModel> JoinedList = new List<SuiviAffectationViewModel>();
@@ -376,6 +377,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                           select new SuiviAffectationViewModel
                           {
+                              LotId = a.LotId
+                              ,
                               Adresse = a.Adresse
                              ,
                               Compte = a.Compte
@@ -414,15 +417,15 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                JoinedList = JoinedList.Where(s => s.Adresse.ToLower().Contains(SearchString.ToLower())
-                                       || s.Compte.ToLower().Contains(SearchString.ToLower())
-                                       || s.DescIndustry.ToLower().Contains(SearchString.ToLower())
-                                       || s.IDClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.NomClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.Numero.ToLower().Contains(SearchString.ToLower())
-                                       || s.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
-                                       || s.TelFixe.ToLower().Contains(SearchString.ToLower())
-                                       || s.TelPortable.ToLower().Contains(SearchString.ToLower())
+                JoinedList = JoinedList.Where(s => s.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
                                                                
                                        ).ToList();
             }
@@ -462,7 +465,6 @@ namespace WakilRecouvrement.Web.Controllers
             List<Lot> Lots = LotService.GetAll().ToList();
             List<SelectListItem> listItems = new List<SelectListItem>();
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
             Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                 listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
@@ -504,8 +506,142 @@ namespace WakilRecouvrement.Web.Controllers
             AffectationService.Commit();
         }
 
-    }
 
+        public ActionResult updateLot(int id)
+        {
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewData["agent"] = new SelectList(AgentListForDropDown(), "Value", "Text");
+
+            //Lot lot = LotService.GetById(id);
+            ClientAffecteViewModel cavm = new ClientAffecteViewModel();
+             cavm = (from a in AffectationService.GetAll()
+                                       join l in LotService.GetAll() on a.LotId equals l.LotId
+                                       where l.LotId == id
+                                       select new ClientAffecteViewModel
+                                       {
+                                           Affectation = a,
+                                           Lot = l
+                                       }).FirstOrDefault();
+
+            if(cavm == null)
+            {
+                cavm = new ClientAffecteViewModel();
+                Lot lot = LotService.GetById(id);
+                cavm.Lot = lot;
+            }
+            
+            return View(cavm);
+        }
+
+
+        [HttpPost]
+        public ActionResult updateLot(ClientAffecteViewModel cavm)
+        {
+
+            Lot newlot = LotService.GetById(cavm.Lot.LotId);
+            newlot.Adresse = cavm.Lot.Adresse;
+            newlot.Compte = cavm.Lot.Compte;
+            newlot.DescIndustry = cavm.Lot.DescIndustry;
+            newlot.Fax = cavm.Lot.Fax;
+            newlot.IDClient = cavm.Lot.IDClient;
+            newlot.NomClient = cavm.Lot.NomClient;
+            newlot.NumLot = cavm.Lot.NumLot;
+            newlot.PostCode = cavm.Lot.PostCode;
+            newlot.SoldeDebiteur = cavm.Lot.SoldeDebiteur;
+            newlot.TelFixe = cavm.Lot.TelFixe;
+            newlot.TelPortable = cavm.Lot.TelPortable;
+            newlot.Type = cavm.Lot.Type;
+            
+            LotService.Update(newlot);
+            LotService.Commit();
+
+
+            Affectation affectation = AffectationService.GetById(cavm.Affectation.AffectationId);
+            Debug.WriteLine(cavm.Affectation.EmployeId);
+            
+            if(affectation == null)
+            {
+                Affectation aff = new Affectation
+                {
+                    EmployeId = cavm.Affectation.EmployeId,
+                    LotId = cavm.Lot.LotId,
+                    DateAffectation = DateTime.Now
+
+                };
+
+                AffectationService.Add(aff);
+                AffectationService.Commit();
+            
+            
+            }else
+            {
+
+                affectation.EmployeId = cavm.Affectation.EmployeId;
+                affectation.LotId = cavm.Lot.LotId;
+                affectation.DateAffectation = DateTime.Now;
+                AffectationService.Update(affectation);
+                AffectationService.Commit();
+
+                }
+
+
+                return RedirectToAction("ConsulterClients", new { numLot = 0, sortOrder = 0 });
+        }
+
+
+        public ActionResult addLot()
+        {
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult addLot(Lot lot,int agent)
+        {
+            LotService.Add(lot);
+            LotService.Commit();
+
+            Affectation affectation = new Affectation {
+                DateAffectation = DateTime.Now,
+                LotId = lot.LotId,
+                EmployeId = agent
+                };
+
+            AffectationService.Add(affectation);
+            AffectationService.Commit();
+
+            return RedirectToAction("ConsulterClients", new { numLot = 0, sortOrder = 0 });
+        }
+
+        public IEnumerable<SelectListItem> AgentListForDropDown()
+        {
+
+            List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            agents.ForEach(l => {
+                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
+            });
+
+            return listItems;
+        }
+        public IEnumerable<SelectListItem> NumLotAllListForDropDown()
+        {
+
+            List<Lot> Lots = LotService.GetAll().ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
+
+            Lots.DistinctBy(l => l.NumLot).ForEach(l => {
+                listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
+            });
+
+            return listItems;
+        }
+    }
 
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -22,8 +23,16 @@ namespace WakilRecouvrement.Domain.Entities
         public string NomClient { get; set; }
         
         public string TelPortable { get; set; }
+        
+        [DefaultValue(false)]
+        [ScaffoldColumn(false)]
+        public bool TelPortableFN { get; set; }
 
         public string TelFixe { get; set; }
+
+        [DefaultValue(false)]
+        [ScaffoldColumn(false)]
+        public bool TelFixeFN { get; set; }
 
         public string Fax { get; set; }
 

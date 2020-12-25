@@ -57,6 +57,16 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.affectation = AffectationService.GetById(long.Parse(id));
             ViewBag.errormsg = msgError;
 
+            ViewBag.TelFN = (from a in AffectationService.GetAll()
+                                     join l in LotService.GetAll() on a.LotId equals l.LotId
+                                     where a.AffectationId == long.Parse(id)
+                                     select new TelFN
+                                     {
+                                         TelPortableFN = l.TelPortableFN,
+                                         TelFixeFN = l.TelFixeFN
+                                     
+                                     }).FirstOrDefault();
+
             string soldeDeb = (from a in AffectationService.GetAll()
                               join l in LotService.GetAll() on a.LotId equals l.LotId
                               where a.AffectationId == long.Parse(id)
@@ -294,15 +304,15 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                JoinedList = JoinedList.Where(s => s.Lot.Adresse.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.Compte.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.DescIndustry.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.IDClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.NomClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.Numero.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.TelFixe.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.TelPortable.ToLower().Contains(SearchString.ToLower())
+                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
 
                                        ).ToList();
             }
@@ -2152,7 +2162,7 @@ namespace WakilRecouvrement.Web.Controllers
             nb = (from f in FormulaireService.GetAll()
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                           join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where a.Employe.Username.Equals(Session["username"]) && f.DateRDV.Date == DateTime.Today.Date
+                          where a.Employe.Username.Equals(Session["username"])
                           orderby f.TraiteLe descending
                           select new ClientAffecteViewModel
                           {
@@ -2161,13 +2171,39 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Lot = l,
 
-                          }).ToList().DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).ToList().Count();
+                          }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.Date).Count();
 
 
 
             return Json(new { nb = nb });
         }
 
+        [HttpPost]
+        public ActionResult UpdateTelFN(int lotId,int affectationId)
+        {
+            bool TelFixe = false;
+            bool TelPortable = false;
+            Lot lot = LotService.GetById(lotId);
+
+            if (Request.Form["TelPortable"] == "on")
+            {
+                TelPortable = true;
+            }
+            if (Request.Form["TelFixe"] == "on")
+            {
+                TelFixe = true;
+            }
+
+            lot.TelFixeFN = TelFixe;
+            lot.TelPortableFN = TelPortable;
+
+
+            LotService.Update(lot);
+            LotService.Commit();
+
+
+            return RedirectToAction("CreerFormulaire", "Formulaire", new { id = affectationId, msgError = "" });
+        }
 
         public ActionResult Rentablite(string rentabilite,string numLot, string SearchString, string traite, string agent, string currentFilter, string sortOrder, int? page,string poucentage)
         {

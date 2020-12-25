@@ -266,15 +266,15 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                JoinedList = JoinedList.Where(s => s.Lot.Adresse.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.Compte.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.DescIndustry.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.IDClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.NomClient.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.Numero.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.TelFixe.ToLower().Contains(SearchString.ToLower())
-                                       || s.Lot.TelPortable.ToLower().Contains(SearchString.ToLower())
+                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
 
                                        ).ToList();
             }

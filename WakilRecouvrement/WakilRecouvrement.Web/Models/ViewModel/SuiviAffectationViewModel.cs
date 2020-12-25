@@ -7,6 +7,7 @@ namespace WakilRecouvrement.Web.Models.ViewModel
 {
     public class SuiviAffectationViewModel
     {
+        public int LotId { get; set; }
         public string NumLot { get; set; }
 
         public string Compte { get; set; }
