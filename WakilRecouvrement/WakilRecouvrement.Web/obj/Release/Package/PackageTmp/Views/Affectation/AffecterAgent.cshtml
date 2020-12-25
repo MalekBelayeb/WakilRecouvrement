@@ -4,8 +4,7 @@
     ViewBag.Title = "";
 }
 
-<h2>Affecter des Agents</h2>
-<h4>Lot @ViewData["numLot"] </h4>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 
@@ -19,6 +18,13 @@
 
 <div class="card">
     <div class="card-header" id="headingTwo">
+
+        <h2>Affecter des Agents</h2>
+        <h4>Lot @ViewData["numLot"] </h4>
+
+    </div>
+
+    <div class="card-body">
 
         <div class="form-group">
 
@@ -45,9 +51,7 @@
 
         </div>
 
-    </div>
-
-    <div class="card-body">
+        <br />
 
         <div class="slidecontainer">
             <input type="range" min="0" value="0" class="slider" id="myRange">
