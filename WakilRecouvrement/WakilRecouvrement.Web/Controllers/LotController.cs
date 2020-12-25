@@ -354,7 +354,6 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult ConsulterClients(string SearchString,string numLot,string currentFilter, string sortOrder,int? page)
         {
 
-
             ViewBag.CurrentSort = sortOrder;
  
             ViewData["list"] = new SelectList(NumLotAllListForDropDown(), "Value", "Text");

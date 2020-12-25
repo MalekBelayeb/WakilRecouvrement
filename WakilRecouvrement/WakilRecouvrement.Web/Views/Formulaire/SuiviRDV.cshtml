@@ -34,6 +34,13 @@
 
             </div>
 
+
+            <div id="rdvDate" class="col-xs-3 col-md-3">
+                <label for="RdvDate">Date:</label>
+                <input class="form-control" name="RdvDate" type="datetime-local" id="rappelDate">
+            </div>
+
+
             <div class="col-xs-3  col-md-3">
 
 
@@ -43,48 +50,52 @@
 
             </div>
 
+
+
+
+
         </div>
 
 
 
-        <br />
+            <br />
 
 
-        <div class="row">
+            <div class="row">
 
-            <div class="col-xs-3 col-md-6">
+                <div class="col-xs-3 col-md-6">
 
-                @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
 
-                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
 
             </div>
 
-        </div>
+            <br />
+            <div class="row">
 
-        <br />
-        <div class="row">
-
-            <div class="col-xs-3  col-md-10">
+                <div class="col-xs-3  col-md-10">
 
 
-                <p>
-                    <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
-                
-                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
-                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                        <span class="sr-only">Loading...</span>
-                    </button>
-                </p>
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
 
             </div>
 
 
-
         </div>
-
-
-    </div>
 
 
     <div class="card-footer text-muted">
@@ -202,6 +213,10 @@
 
 <script>
 
+    
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('rappelDate').value = now.toISOString().slice(0, 16);
 
     function showLoading() {
 
@@ -209,6 +224,24 @@
         document.getElementById("submitBtn").style.display = "none";
 
     }
+
+    document.getElementById("rdvDate").style.display = "none";
+
+    document.getElementById("RDVType").onchange = function () {
+
+        if (this.value == "RDVDate") {
+
+            document.getElementById("rdvDate").style.display = "block";
+
+        } else {
+
+            document.getElementById("rdvDate").style.display = "none";
+
+        }
+
+    }
+
+
 
 </script>
 

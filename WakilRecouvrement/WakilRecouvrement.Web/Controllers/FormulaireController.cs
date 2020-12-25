@@ -406,10 +406,11 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
 
             listItems.Add(new SelectListItem { Selected = true, Text = "RDV du jour", Value = "RDV_J" });
-            listItems.Add(new SelectListItem { Text = "RDV pour demain", Value = "RDV_DEMAIN" });
-            listItems.Add(new SelectListItem { Text = "RDV pour les prochains jours", Value = "RDV_JOURS_PROCHAINE" });
-            listItems.Add(new SelectListItem { Text = "RDV pour la semaine prochaine", Value = "RDV_SEMAINE_PROCHAINE" });
-            listItems.Add(new SelectListItem { Text = "Tous les RDV", Value = "ALL" });
+            listItems.Add(new SelectListItem { Text = "Mes RDV pour demain", Value = "RDV_DEMAIN" });
+            listItems.Add(new SelectListItem { Text = "Mes RDV pour les prochains jours", Value = "RDV_JOURS_PROCHAINE" });
+            listItems.Add(new SelectListItem { Text = "Mes RDV pour la semaine prochaine", Value = "RDV_SEMAINE_PROCHAINE" });
+            listItems.Add(new SelectListItem { Text = "Tous mes RDV du:", Value = "RDVDate" });
+            listItems.Add(new SelectListItem { Text = "Tous mes RDV", Value = "ALL" });
 
 
             return listItems;
@@ -478,7 +479,7 @@ namespace WakilRecouvrement.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RDVReporteDateTime, string soldetranche, HttpPostedFileBase PostedFile)
+        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
 
@@ -575,7 +576,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.TraiteLe = DateTime.Now;
                     Formulaire.Status = Status.VERIFIE;
-
+                    Formulaire.RappelLe = DateTime.Parse(RappelDateTime);
                     Formulaire.EtatClient = Note.RAPPEL;
 
                     break;
@@ -2008,7 +2009,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public ActionResult SuiviRDV(string numLot, string RDVType, string sortOrder, int? page)
+        public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, int? page)
         {
 
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
@@ -2024,8 +2025,7 @@ namespace WakilRecouvrement.Web.Controllers
             ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
 
 
-
-            JoinedList = (from f in FormulaireService.GetAll()
+            JoinedList = (from f in FormulaireService.GetMany(f=>f.EtatClient == Note.RDV)
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                           join l in LotService.GetAll() on a.LotId equals l.LotId
                           where a.Employe.Username.Equals(Session["username"])
@@ -2037,17 +2037,14 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Lot = l,
 
-                          }).ToList().DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).ToList();
-
-
-
+                          }).ToList();
 
 
             if (!String.IsNullOrEmpty(numLot))
             {
                 if (numLot != "0")
                 {
-                    JoinedList = JoinedList.ToList().Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
                 }
             }
 
@@ -2055,25 +2052,30 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 if (RDVType == "RDV_J")
                 {
-                    JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.Date).ToList();
+                    JoinedList = JoinedList.Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.Date).ToList();
 
                 }
                 else if (RDVType == "RDV_DEMAIN")
                 {
 
-                    JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.AddDays(1).Date).ToList();
+                    JoinedList = JoinedList.Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.AddDays(1).Date).ToList();
 
                 }
                 else if (RDVType == "RDV_JOURS_PROCHAINE")
                 {
 
-                    JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date >= DateTime.Today.AddDays(2).Date && j.Formulaire.DateRDV.Date < DateTime.Today.AddDays(7).Date).ToList();
+                    JoinedList = JoinedList.Where(j => j.Formulaire.DateRDV.Date >= DateTime.Today.AddDays(2).Date && j.Formulaire.DateRDV.Date < DateTime.Today.AddDays(7).Date).ToList();
 
                 }
                 else if (RDVType == "RDV_SEMAINE_PROCHAINE")
                 {
 
-                    JoinedList = JoinedList.ToList().Where(j => j.Formulaire.DateRDV.Date >= DateTime.Today.AddDays(7).Date && j.Formulaire.DateRDV.Date < DateTime.Today.AddDays(14).Date).ToList();
+                    JoinedList = JoinedList.Where(j => j.Formulaire.DateRDV.Date >= DateTime.Today.AddDays(7).Date && j.Formulaire.DateRDV.Date < DateTime.Today.AddDays(14).Date).ToList();
+
+                }
+                else if (RDVType == "RDVDate")
+                {
+                    JoinedList = JoinedList.Where(j => j.Formulaire.DateRDV.Date == DateTime.Parse(RdvDate).Date).ToList();
 
                 }
             }
@@ -2169,24 +2171,42 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult SuiviRDVNB()
         {
             int nb=0;
+            int rappelNB = 0;
 
-            nb = (from f in FormulaireService.GetAll()
+
+            nb = (from f in FormulaireService.GetMany(f => f.EtatClient == Note.RDV)
+                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                  where a.Employe.Username.Equals(Session["username"]) && f.DateRDV.Date == DateTime.Now.Date
+                  orderby f.TraiteLe descending
+                  select new ClientAffecteViewModel
+                  {
+
+                      Formulaire = f,
+                      Affectation = a,
+                      Lot = l,
+
+                  }).Count();
+
+
+
+            rappelNB = (from f in FormulaireService.GetAll()
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                           join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where a.Employe.Username.Equals(Session["username"])
-                          orderby f.TraiteLe descending
+                          where a.Employe.Username.Equals(Session["username"]) && f.RappelLe.Date == DateTime.Now.Date
+
                           select new ClientAffecteViewModel
                           {
-
-                              Formulaire = f,
-                              Affectation = a,
                               Lot = l,
+                              Affectation = a,
+                              Formulaire = f
 
-                          }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "RDV")).Where(j => j.Formulaire.DateRDV.Date == DateTime.Today.Date).Count();
+                          }).Count();
 
 
 
-            return Json(new { nb = nb });
+
+            return Json(new { nb = nb, rappelNB= rappelNB });
         }
 
         [HttpPost]
@@ -2426,7 +2446,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-
         public double CalculeRevenue(float tauxPoucentage, int affId)
         {
             double tot = 0;
@@ -2456,6 +2475,113 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.RevenueTotal = total;
 
             return View(joinedList.ToList());
+        }
+
+
+        public ActionResult MesRappels(string numLot, string RappelDate, string sortOrder, int? page)
+        {
+
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
+            ViewBag.CurrentSort = sortOrder;
+
+
+
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
+          
+            
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where a.Employe.Username.Equals(Session["username"]) && f.RappelLe.Date == DateTime.Parse(RappelDate).Date
+
+                          select new ClientAffecteViewModel
+                          {
+                              Lot = l,
+                              Affectation = a,
+                              Formulaire = f
+
+                          }).ToList();
+
+            if (!String.IsNullOrEmpty(numLot))
+            {
+                if (numLot != "0")
+                {
+                    JoinedList = JoinedList.ToList().Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+                }
+            }
+
+            switch (sortOrder)
+            {
+                case "0":
+                    JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
+                    break;
+                case "1":
+                    try
+                    {
+                        JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    break;
+
+                case "2":
+
+                    try
+                    {
+                        JoinedList = JoinedList.OrderBy(s => s.Lot.SoldeDebiteur).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+
+                    break;
+                case "3":
+                    JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "4":
+                    JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "5":
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.DateRDV).ToList();
+
+                    break;
+                case "6":
+
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.DateRDV).ToList();
+
+                    break;
+                case "7":
+
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
+
+                    break;
+                case "8":
+
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+
+                    break;
+                default:
+
+
+                    break;
+            }
+
+            ViewBag.total = JoinedList.Count();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(JoinedList.ToPagedList(pageNumber, pageSize));
         }
          
 

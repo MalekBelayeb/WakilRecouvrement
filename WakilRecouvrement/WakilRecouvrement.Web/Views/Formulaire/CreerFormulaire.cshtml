@@ -266,7 +266,7 @@
                         <div id="datetimePickerRappel" class="form-group row">
                             <label for="example-datetime-local-input" class="col-2 col-form-label">Rappel pour le:</label>
                             <div class="col-8">
-                                <input class="form-control" name="datetimePickerRappel" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+                                <input class="form-control" name="RappelDateTime" type="datetime-local"  id="rappelDate">
                             </div>
                         </div>
 
@@ -622,8 +622,14 @@
                     break;
                 case "RAPPEL":
                     hideAll();
-                    document.getElementById("datetimePickerRappel").style.display = "block"
 
+                    var now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    document.getElementById('rappelDate').value = now.toISOString().slice(0, 16);
+
+
+                    document.getElementById("datetimePickerRappel").style.display = "block"
+                    
                     break;
                 case "RACCROCHE":
                     hideAll();
