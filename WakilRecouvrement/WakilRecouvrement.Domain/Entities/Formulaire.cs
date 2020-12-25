@@ -40,6 +40,11 @@ namespace WakilRecouvrement.Domain.Entities
         [DataType(DataType.DateTime)]
         public DateTime VerifieLe { get; set; }
 
+        [DataType(DataType.DateTime)]
+        [Display(Name = "Rappel pour le")]
+
+        public DateTime RappelLe { get; set; }
+
         [Display(Name ="Montant declaré/versé en TND")]
         public double MontantVerseDeclare { get; set; }
 

@@ -3,16 +3,16 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class mg9 : DbMigration
+    public partial class eemiggrr : DbMigration
     {
         public override void Up()
         {
-            DropColumn("dbo.Affectations", "AffecteA");
+            AddColumn("dbo.Formulaires", "RappelLe", c => c.DateTime(nullable: false, precision: 7, storeType: "datetime2"));
         }
         
         public override void Down()
         {
-            AddColumn("dbo.Affectations", "AffecteA", c => c.String());
+            DropColumn("dbo.Formulaires", "RappelLe");
         }
     }
 }

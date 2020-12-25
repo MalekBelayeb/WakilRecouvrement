@@ -450,8 +450,6 @@ namespace WakilRecouvrement.Web.Controllers
                     break;
             }
 
-
-
             ViewBag.total = JoinedList.Count();
             int pageSize = 10;
             int pageNumber = (page ?? 1);
@@ -567,7 +565,7 @@ namespace WakilRecouvrement.Web.Controllers
                     LotId = cavm.Lot.LotId,
                     DateAffectation = DateTime.Now
 
-                };
+                };                          
 
                 AffectationService.Add(aff);
                 AffectationService.Commit();

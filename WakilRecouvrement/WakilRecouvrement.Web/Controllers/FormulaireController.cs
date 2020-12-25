@@ -113,6 +113,9 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Selected = true, Text = "Date affectation (o. croissant)", Value = "4" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date RDV (o. decroissant)", Value = "5" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date RDV (o. croissant)", Value = "6" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date Traitement (o. decroissant)", Value = "7" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Date Traitement (o. croissant)", Value = "8" });
+
 
             return listItems;
         }
@@ -2121,8 +2124,16 @@ namespace WakilRecouvrement.Web.Controllers
                     JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.DateRDV).ToList();
 
                     break;
+                case "7":
 
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
 
+                    break;
+                case "8":
+
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+
+                    break;
                 default:
 
 
