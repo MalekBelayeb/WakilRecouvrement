@@ -264,24 +264,29 @@
                         <tr class="p-3 mb-2 bg-white text-dark">
 
                             <td>
-                                
+
                                 @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
                                 {
-                                    
+
                                     if (item.Status.ToString().Equals("EN_COURS"))
                                     {
 
-                                        <button onclick="supprimerHist(\'' + @item.FormulaireId + '\')" type="button" class="btn btn-danger">x</button>
+                                        @Html.ActionLink("Supp", "deleteHist", "Formulaire", new { id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?')" })
+
                                     }
                                     else
                                     {
-                                        <button disabled type="button" class="btn btn-danger">x</button>
 
-                                    }
+                                         //@Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');", @disabled = "disabled" })
+
+
+                                      }
                                 }
                                 else
                                 {
-                                    <button  onclick="supprimerHist(\'' + @item.FormulaireId + '\')" type="button" class="btn btn-danger">x</button>
+
+                                    @Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" })
+
                                 }
 
 
@@ -523,12 +528,12 @@
 
 
 
-            function supprimerHist(id) {
+            function supprimerHist(btn) {
 
 
                 if (confirm("Ceci implique la suppression de l'operation, êtes vous sur de vouloir continuer ?  ")) {
 
-                    alert(id)
+                    alert(btn)
 
                 }
 
