@@ -49,7 +49,9 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
 
             listItems.Add(new SelectListItem { Selected = true, Text = "Lot complet", Value = "1" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Par Date", Value = "2" });
+            listItems.Add(new SelectListItem {  Text = "Par Date", Value = "2" });
+            listItems.Add(new SelectListItem {  Text = "Par Agent", Value = "3" });
+            listItems.Add(new SelectListItem {  Text = "Par Date et agent", Value = "4" });
 
 
             return listItems;
@@ -62,6 +64,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(TypeStatForDropDown(), "Value", "Text");
+            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
 
             StatLot statLot = new StatLot()
             {
@@ -81,13 +84,12 @@ namespace WakilRecouvrement.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult StatLot(int numLot, string typeStat, string dateStat)
+        public ActionResult StatLot(int numLot, string typeStat, string dateStat,string agent)
         {
-            Debug.WriteLine(numLot);
-            Debug.WriteLine(typeStat);
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(TypeStatForDropDown(), "Value", "Text");
+            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
 
             int nb = 0;
             int rdv = 0;
@@ -198,13 +200,45 @@ namespace WakilRecouvrement.Web.Controllers
             else if (typeStat == "2")
             {
 
-                
-
                 rdv = rdvCAVm.Where(f => f.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
                 fn = fnCAVm.Where(f => f.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
                 versement = versCAVm.Where(f => f.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
                 encours = encoursCAVm.Where(f => f.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
                 
+                nb = rdv + fn + versement + encours;
+
+                avgRdv = String.Format("{0:0.00}", ((float)rdv / (float)nb) * 100);
+                avgFn = String.Format("{0:0.00}", ((float)fn / (float)nb) * 100);
+                avgVers = String.Format("{0:0.00}", ((float)versement / (float)nb) * 100);
+                avgencours = String.Format("{0:0.00}", ((float)encours / (float)nb) * 100);
+            }
+            else if (typeStat == "3")
+            {
+
+
+
+                rdv = rdvCAVm.Where(a=>a.Affectation.EmployeId+"" == agent).Count();
+                fn = fnCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
+                versement = versCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
+                encours = encoursCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
+
+                nb = rdv + fn + versement + encours;
+
+                avgRdv = String.Format("{0:0.00}", ((float)rdv / (float)nb) * 100);
+                avgFn = String.Format("{0:0.00}", ((float)fn / (float)nb) * 100);
+                avgVers = String.Format("{0:0.00}", ((float)versement / (float)nb) * 100);
+                avgencours = String.Format("{0:0.00}", ((float)encours / (float)nb) * 100);
+            }
+            else if (typeStat == "4")
+            {
+
+
+
+                rdv = rdvCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
+                fn = fnCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
+                versement = versCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
+                encours = encoursCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
+
                 nb = rdv + fn + versement + encours;
 
                 avgRdv = String.Format("{0:0.00}", ((float)rdv / (float)nb) * 100);
@@ -229,7 +263,22 @@ namespace WakilRecouvrement.Web.Controllers
             return View("Index", statLot);
         }
 
+
+        public IEnumerable<SelectListItem> AgentListForDropDown()
+        {
+
+            List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+
+            agents.ForEach(l => {
+                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
+            });
+
+            return listItems;
+        }
+
         // GET: Statistique/Details/5
-        
+
     }
 }
