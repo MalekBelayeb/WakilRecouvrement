@@ -341,7 +341,9 @@
     <Compile Include="Models\EmailConstants.cs" />
     <Compile Include="Models\FormulaireExportable.cs" />
     <Compile Include="Models\TelFN.cs" />
+    <Compile Include="Models\ViewModel\HomeViewModel.cs" />
     <Compile Include="Models\ViewModel\RentabiliteViewModel.cs" />
+    <Compile Include="Models\ViewModel\StatLot.cs" />
     <Compile Include="Models\ViewModel\SuiviAffectationViewModel.cs" />
     <Compile Include="Scheduler\JobScheduler.cs" />
     <Compile Include="Scheduler\MyJob.cs" />

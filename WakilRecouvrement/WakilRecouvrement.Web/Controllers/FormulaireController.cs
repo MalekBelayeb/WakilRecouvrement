@@ -76,8 +76,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                               }).FirstOrDefault().SoldeDeb;
 
-
-            ViewBag.soldeDeb = soldeDeb.Replace(',', '.');
+                ViewBag.soldeDeb = soldeDeb.IfNullOrWhiteSpace("0").Replace(',', '.');
+            
 
             return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
         }
@@ -241,7 +241,7 @@ namespace WakilRecouvrement.Web.Controllers
                 else if (traite == "SAUF")
                 {
 
-                    JoinedList = (from f in FormulaireService.GetMany(f=>f.EtatClient+"" != "SOLDE" && f.EtatClient+"" !=  "FAUX_NUM").OrderByDescending(o => o.TraiteLe)
+                    JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
                                   join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                   join l in LotService.GetAll() on a.LotId equals l.LotId
                                   select new ClientAffecteViewModel
@@ -251,22 +251,22 @@ namespace WakilRecouvrement.Web.Controllers
                                       Affectation = a,
                                       Lot = l,
 
-                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f=> f.Formulaire.EtatClient + "" != "SOLDE" && f.Formulaire.EtatClient + "" != "FAUX_NUM").ToList();
                 }
                 else
                 {
-
-                    JoinedList =(from f in FormulaireService.GetMany(f => f.EtatClient+"" == traite ).OrderByDescending(o => o.TraiteLe)
+                    JoinedList =(from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
                                   join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                   join l in LotService.GetAll() on a.LotId equals l.LotId
-                                  select new ClientAffecteViewModel
+                                    
+                                 select new ClientAffecteViewModel
                                   {
 
                                       Formulaire = f,
                                       Affectation = a,
                                       Lot = l,
 
-                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" == traite).ToList();
                 }
 
             }
@@ -638,9 +638,13 @@ namespace WakilRecouvrement.Web.Controllers
                              }).FirstOrDefault();
 
 
+
+            if(Joinedlot.SoldeDebiteur=="" || Joinedlot.SoldeDebiteur==null)
+            {
+                Joinedlot.SoldeDebiteur = "0";
+            }
+
             Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
-
-
 
             if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
             {
@@ -658,6 +662,7 @@ namespace WakilRecouvrement.Web.Controllers
                                             {
                                                 Formulaire = f,
                                                 Affectation = a
+
                                             }).FirstOrDefault().Formulaire.MontantDebMAJ;
             }
 

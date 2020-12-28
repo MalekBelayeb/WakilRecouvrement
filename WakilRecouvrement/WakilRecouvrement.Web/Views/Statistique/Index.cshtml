@@ -1,164 +1,154 @@
-﻿
+﻿@model WakilRecouvrement.Web.Models.ViewModel.StatLot
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "";
 }
 <script src="~/Scripts/jquery.min.js"></script>
 
 <h2>Statistiques</h2>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
 
-                <div class="row">
 
-                    <div class="col-xs-3  col-md-3">
 
-                        @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                        @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    @using (Html.BeginForm("StatLot", "Statistique", FormMethod.Post, new { onsubmit = "showLoading()" }))
+                    {
+                        <div class="row">
 
-                    </div>
-                    <div class="col-xs-3  col-md-3">
+                            <div class="col-xs-3  col-md-3">
 
-                        @Html.Label("typeStat", "Type:", new { @class = "control-label " })
+                                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                        @Html.DropDownList("typeStat", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
-                    </div>
-                    <div class="col-xs-3  col-md-3">
+                            </div>
 
-                        <div style="display:none" id="dateStat" class="form-group row">
-                            <label for="RDVDateTime">Date:</label>
-                            <input class="form-control" name="RDVDateTime" type="date" id="statDate">
+                            <div class="col-xs-3  col-md-3">
+
+                                @Html.Label("typeStat", "Type:", new { @class = "control-label " })
+
+                                @Html.DropDownList("typeStat", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                            </div>
+
+
+                            <div class="col-xs-3  col-md-3">
+
+                                <div style="display:none" id="dateStat" class="form-group row">
+                                    <label for="RDVDateTime">Date:</label>
+                                    <input class="form-control" name="dateStat" type="date" id="statDate">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-xs-3  col-md-10">
+
+                                <p>
+                                    <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                        <span class="sr-only">Loading...</span>
+                                    </button>
+                                </p>
+
+                            </div>
                         </div>
+                    }
                     </div>
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="row">
+                        <!-- /.col -->
+                        <div class="col-md-4">
+                            <p class="text-center">
+                                <strong>Stats. par lot</strong>
+                            </p>
+
+                            <div class="progress-group">
+                                RDV (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgRdv) %</small></span>)
+                                <span class="float-right"><b id="rdvNb">@Html.DisplayFor(modelItem => Model.rdv)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-primary" id="avgRdvprogress" style="width: @Html.DisplayFor(modelItem => Model.avgRdv)%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+
+                            <div class="progress-group">
+                                Faux numero (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgFn) %</small></span>)
+                                <span class="float-right"><b id="FNNB">@Html.DisplayFor(modelItem => Model.fn)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-danger" id="avgFnprogress" style="width: @Html.DisplayFor(modelItem => Model.avgFn)%"></div>
+                                </div>
+                            </div>
+
+                            <!-- /.progress-group -->
+                            <div class="progress-group">
+                                <span class="progress-text">Versement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgVers) %</small></span>) </span>
+                                <span class="float-right"><b id="versement">@Html.DisplayFor(modelItem => Model.versement)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-success" id="avgVersprogress" style="width: @Html.DisplayFor(modelItem => Model.avgVers)%"></div>
+                                </div>
+                            </div>
+
+                            <!-- /.progress-group -->
+                            <div class="progress-group">
+                                En cours de traitement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgencours) %</small></span>)
+                                <span class="float-right"><b id="encours">@Html.DisplayFor(modelItem => Model.encours)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-warning" id="avgEncoursprogress" style="width: @Html.DisplayFor(modelItem => Model.avgencours)%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                        </div>
+
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
                 </div>
-
+                <!-- /.card-footer -->
             </div>
-
-
-            <!-- /.card-header -->
-            <div class="card-body">
-                <div class="row">
-
-
-
-                    <!-- /.col -->
-                    <div class="col-md-4">
-                        <p class="text-center">
-                            <strong>Stats. par lot</strong>
-                        </p>
-
-                        <div class="progress-group">
-                            RDV
-                            <span class="float-right"><b>160</b>/200</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-primary" style="width: 80%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-
-                        <div class="progress-group">
-                            Faux numero
-                            <span class="float-right"><b>310</b>/400</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-danger" style="width: 75%"></div>
-                            </div>
-                        </div>
-
-                        <!-- /.progress-group -->
-                        <div class="progress-group">
-                            <span class="progress-text">Versement</span>
-                            <span class="float-right"><b>480</b>/800</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-success" style="width: 60%"></div>
-                            </div>
-                        </div>
-
-                        <!-- /.progress-group -->
-                        <div class="progress-group">
-                            En cours de traitement
-                            <span class="float-right"><b>250</b>/500</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-warning" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-                    </div>
-
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- ./card-body -->
-            <div class="card-footer">
-
-                <!-- /.row -->
-            </div>
-            <!-- /.card-footer -->
+            <!-- /.card -->
         </div>
-        <!-- /.card -->
+        <!-- /.col -->
     </div>
-    <!-- /.col -->
-</div>
 
 
+    <script>
 
-<script>
+        function showLoading() {
 
-    
-    $(document).ready(function () {
+            document.getElementById("submitLoading").style.display = "block";
+            document.getElementById("submitBtn").style.display = "none";
+
+        }
 
 
-        
         var lot = document.getElementById("numLot")
         var type = document.getElementById("typeStat")
         var date = document.getElementById("dateStat")
-
         var dateVal = document.getElementById("statDate")
-        lot.onchange = function () {
-            sendRequest()
-        }
+        dateVal.valueAsDate = new Date();
 
         type.onchange = function () {
+
             var x = document.getElementById("typeStat").value
 
             if (x == 1) {
                 document.getElementById("dateStat").style.display = "none"
 
             } else if (x == 2) {
-                document.getElementById('statDate').valueAsDate = new Date()
                 document.getElementById("dateStat").style.display = "block"
 
             }
-            sendRequest()
-        }
-
-        date.onchange = function () {
-            sendRequest()
         }
 
 
-        function sendRequest() {
-            alert(dateVal.value)
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("StatLot", "Statistique")',
-                dataType: 'json',
-                data: { lot: lot.value, type: type.value, date: dateVal.value },
-                success: function (data) {
-                    console.log(data)
-                    //alert(data)
-                }
-
-            })
-        }
-
-
-    })
 
 
 
-</script>
+    </script>

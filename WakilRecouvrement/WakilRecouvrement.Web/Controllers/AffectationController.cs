@@ -205,7 +205,7 @@ namespace WakilRecouvrement.Web.Controllers
                 else if (traite == "SAUF")
                 {
 
-                    JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient + "" != "SOLDE" && f.EtatClient + "" != "FAUX_NUM").OrderByDescending(o => o.TraiteLe)
+                    JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
                                   join a in AffectationService.GetMany(a=> a.EmployeId== emp.EmployeId) on f.AffectationId equals a.AffectationId
                                   join l in LotService.GetAll() on a.LotId equals l.LotId                                  
 
@@ -216,13 +216,13 @@ namespace WakilRecouvrement.Web.Controllers
                                       Affectation = a,
                                       Lot = l,
 
-                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f=>  f.Formulaire.EtatClient + "" != "SOLDE" && f.Formulaire.EtatClient + "" != "FAUX_NUM").ToList();
 
                 }
                 else
                 {
 
-                    JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient + "" == traite).OrderByDescending(o => o.TraiteLe)
+                    JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
                                   join a in AffectationService.GetMany(a=>a.EmployeId == emp.EmployeId) on f.AffectationId equals a.AffectationId
                                   join l in LotService.GetAll() on a.LotId equals l.LotId
                                    
@@ -235,7 +235,7 @@ namespace WakilRecouvrement.Web.Controllers
                                       Lot = l,
 
 
-                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" == traite).ToList();
 
                 }
 
@@ -437,7 +437,7 @@ namespace WakilRecouvrement.Web.Controllers
                                   Affectation = a,
                                   Lot = l,
 
-                              }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
+                              }).OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
 
             }
             else
@@ -453,7 +453,7 @@ namespace WakilRecouvrement.Web.Controllers
                                   Affectation = a,
                                   Lot = l,
 
-                              }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList(); ;
+                              }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList() ;
 
             }
 

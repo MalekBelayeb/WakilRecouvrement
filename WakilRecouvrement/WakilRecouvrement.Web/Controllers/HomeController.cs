@@ -1,6 +1,13 @@
-﻿using System.Web.Mvc;
+﻿using Microsoft.Ajax.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Web.Mvc;
 using WakilRecouvrement.Domain.Entities;
 using WakilRecouvrement.Service;
+using WakilRecouvrement.Web.Models;
+using WakilRecouvrement.Web.Models.ViewModel;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -10,10 +17,20 @@ namespace WakilRecouvrement.Web.Controllers
         EmployeService EmpService;
         RoleService RoleService;
 
+        AffectationService AffectationService;
+        LotService LotService;
+        FormulaireService FormulaireService;
+
         public HomeController()
         {
             EmpService = new EmployeService();
             RoleService = new RoleService();
+          
+            AffectationService = new AffectationService();
+            LotService = new LotService();
+            EmpService = new EmployeService();
+            FormulaireService = new FormulaireService();
+
         }
 
 
@@ -81,61 +98,79 @@ namespace WakilRecouvrement.Web.Controllers
             return View();
         }
 
-        // GET: Home
+        
         public ActionResult Index()
         {
-            return View();
-        }
 
-        // GET: Home/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+            List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
+            
+            List<HomeViewModel> result = new List<HomeViewModel>();
+            List<Lot> lots = new List<Lot>();
+            string[] lotsLst = { };
 
-        // GET: Home/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+            lots = LotService.GetAll().ToList();
+            lotsLst = lots.DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
 
-        // POST: Home/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            List<Affectation> Affectations = new List<Affectation>();
+            List<Formulaire> Formulaires = new List<Formulaire>();
+            string[] agents = { };
+
+            Affectations = AffectationService.GetAll().ToList();
+            Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
+
+            foreach (string numlot in lotsLst)
             {
-                // TODO: Add insert logic here
+               
+                lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
+                
+                traiteList = (from f in Formulaires
+                              join a in Affectations on f.AffectationId equals a.AffectationId
+                              join l in lots on a.LotId equals l.LotId
+                              select new ClientAffecteViewModel
+                              {
 
-                return RedirectToAction("Index");
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+                var agentLinq = (from a in Affectations
+                                 join l in lots on a.LotId equals l.LotId
+                                 select new ClientAffecteViewModel
+                                 {
+
+                                     Affectation = a
+
+                                 });
+
+
+                agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
+
+                string agentsStr = string.Join(", ", agents);
+
+                float nbAffTotal = agentLinq.Count();
+                float nbTraite = traiteList.Count();
+                string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
+
+
+                HomeViewModel homeViewModel = new HomeViewModel
+                {
+                    agents = agentsStr,
+                    nbAffTotal = nbAffTotal + "",
+                    nbTraite = nbTraite + "",
+                    numLot = numlot,
+                    avancement = avgLot.Replace(",",".")
+                };
+                result.Add(homeViewModel);
+
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(result);
         }
 
-
-        // GET: Home/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Home/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+ 
+        
+      
     }
 }
