@@ -132,11 +132,21 @@
                 {
                     @Html.AntiForgeryToken()
 
-                    <div class="row">
 
-                            <div class="col-6">
-                                <label for="telOne">Num 1</label>
+                <div class="card">
+                    <div class="card-header" id="headingOne">
 
+                        <h2>Faux Num</h2>
+
+                    </div>
+
+                    <div class="card-body">
+
+
+                        <div class="col-md-12">
+
+                            <label for="telOne">Num 1</label>
+                            <div class="form-group">
                                 <div class="input-group">
 
                                     <div class="input-group-prepend">
@@ -160,40 +170,43 @@
                                     <input type="text" name="portable" value="@Html.Raw(ViewBag.TelFN.TelPortable)" class="form-control">
                                 </div>
                             </div>
-                        
-                            <div class="col-6">
-                                <label for="telOne">num 2</label>
+                                
+                            </div>
+                            <div class="col-md-12">
 
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="bg-gradient-danger input-group-text">
+                                <label for="telOne">Num 2</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="bg-gradient-danger input-group-text">
 
-                                            @if (ViewBag.TelFN.TelFixeFN)
-                                            {
-                                                <input id="TelFixeid" checked name="TelFixe" type="checkbox">
+                                                @if (ViewBag.TelFN.TelFixeFN)
+                                                {
+                                                    <input id="TelFixeid" checked name="TelFixe" type="checkbox">
 
-                                            }
-                                            else
-                                            {
-                                                <input id="TelFixeid" name="TelFixe" type="checkbox">
+                                                }
+                                                else
+                                                {
+                                                    <input id="TelFixeid" name="TelFixe" type="checkbox">
 
-                                            }
+                                                }
 
-                                        </span>
+                                            </span>
+                                        </div>
+                                        <input type="text" name="fixe" value="@Html.Raw(ViewBag.TelFN.TelFixe)" class="form-control">
                                     </div>
-                                    <input type="text" name="fixe" value="@Html.Raw(ViewBag.TelFN.TelFixe)" class="form-control">
                                 </div>
 
+
                             </div>
-                        
 
-                    </div>
-                    <br />
-
-                    <input hidden type="text" name="lotId"  value="@Html.Raw(ViewBag.affectation.Lot.LotId)" class="form-control">
-                    <input hidden type="text" name="affectationId"  value="@Html.Raw(ViewBag.affectation.AffectationId)" class="form-control">
+                            <input hidden type="text" name="lotId" value="@Html.Raw(ViewBag.affectation.Lot.LotId)" class="form-control">
+                            <input hidden type="text" name="affectationId" value="@Html.Raw(ViewBag.affectation.AffectationId)" class="form-control">
 
 
+                        </div>
+                    <div class="col-6 col-md-12">
+                    
                         <div class="form-group">
 
                             <div class="col-md-offset-2 col-md-10">
@@ -207,304 +220,351 @@
                             </div>
 
                         </div>
-
                     
+                    </div>
 
 
-                }
+                        
 
 
 
-                @using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "showLoading()" }))
-                {
-                    @Html.AntiForgeryToken()
 
-                    <div class="form-horizontal">
-                        <hr />
-
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                        <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
-
-                        <div class="form-group">
-                            @Html.Label("EtatClient", "Note client", htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
-
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="autre">
-                            @Html.Label("DescriptionAutre", "Description", htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                @Html.Editor("DescriptionAutre", new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
-                        </div>
-
-
-                        <div id="datetimePickerRDV" class="form-group row">
-                            <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
-                            <div class="col-8">
-                                <input class="form-control" name="RDVDateTime" type="datetime-local" id="RDVDate">
-                            </div>
-                        </div>
-
-                        <div id="datetimePickerRappel" class="form-group row">
-                            <label for="example-datetime-local-input" class="col-2 col-form-label">Rappel pour le:</label>
-                            <div class="col-8">
-                                <input class="form-control" name="RappelDateTime" type="datetime-local"  id="rappelDate">
-                            </div>
-                        </div>
-
-                        <div id="montant" class="form-group row">
-                            <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
-                            <div class="col-8">
-
-                                <input name="soldetranche" type="number" step="0.001" id="exampleInputAmount" class="form-control">
-
-                            </div>
-                        </div>
-
-                        <div id="recu" class="form-group row">
-                            <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
-                            <div class="col-8">
-
-                                <div class="custom-file">
-                                    <input type="file" name="postedFile" class="custom-file-input" id="customFileLang" lang="es">
-                                    <label class="custom-file-label" for="customFileLang">Importer recu</label>
-
-
-                                </div>
-                                <br />
-                                <img id="blah" width="200" height="150" src="#" alt="" />
-
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <div class="col-md-offset-2 col-md-10">
-                                <input id="submitBtn" type="submit" value="Confirmer" class="btn btn-primary" />
-
-                                <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
-                                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                    <span class="sr-only">Loading...</span>
-                                </button>
-
-
-                                <span class="text-danger">@ViewBag.errormsg</span>
-
-                            </div>
-
-                        </div>
 
                     </div>
-                }
+
+                    }
+                    <br />
 
 
-            </div>
 
-        </div>
-
-        <br />
-
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-
-                <h2>Historique Client</h2>
-
-            </div>
-
-            <div class="card-body">
-
-
-                <table class="table table-bordered table-condensed table-responsive" style="display:table">
-                    <tr>
-                        <th>
-
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.EtatClient)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.DateRDV)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.DateRDVReporte)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.MontantDebInitial)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.MontantDebMAJ)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.MontantVerseDeclare)
-                        </th>
-
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.DescriptionAutre)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.TraiteLe)
-                        </th>
-
-                        <th>
-                            @Html.DisplayNameFor(model => model.VerifieLe)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Status)
-                        </th>
-                    </tr>
-
-                    @foreach (var item in Model)
+                    @using (Html.BeginForm("CreerFormulaireNote", "Formulaire", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "showLoading()" }))
                     {
-                        <tr class="p-3 mb-2 bg-white text-dark">
+                        @Html.AntiForgeryToken()
 
-                            <td>
 
-                                @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+
+                                <h2>Etat Client</h2>
+
+                            </div>
+
+                            <div class="card-body">
+
+
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <input name="id" type="text" value="@ViewBag.id" style="visibility:hidden">
+
+                                <div class="form-group">
+                                    @Html.Label("EtatClient", "Etat:", htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.DropDownList("EtatClient", ViewBag.TraiteList as SelectList, new { @class = "form-control", id = "dropdown" })
+
+                                    </div>
+                                </div>
+
+                                <div id="datetimePickerRDV" class="form-group row">
+                                    <label for="example-datetime-local-input" class="col-2 col-form-label">RDV pour le:</label>
+                                    <div class="col-8">
+                                        <input class="form-control" name="RDVDateTime" type="datetime-local" id="RDVDate">
+                                    </div>
+                                </div>
+
+                                <div id="datetimePickerRappel" class="form-group row">
+                                    <label for="example-datetime-local-input" class="col-2 col-form-label">Rappel pour le:</label>
+                                    <div class="col-8">
+                                        <input class="form-control" name="RappelDateTime" type="datetime-local" id="rappelDate">
+                                    </div>
+                                </div>
+
+                                <div id="montant" class="form-group row">
+                                    <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
+                                    <div class="col-8">
+
+                                        <input name="soldetranche" type="number" step="0.001" id="exampleInputAmount" class="form-control">
+
+                                    </div>
+                                </div>
+
+                                <div id="recu" class="form-group row">
+                                    <label id="textLabel" for="example-datetime-local-input" class="col-2 col-form-label"></label>
+                                    <div class="col-8">
+
+                                        <div class="custom-file">
+                                            <input type="file" name="postedFile" class="custom-file-input" id="customFileLang" lang="es">
+                                            <label class="custom-file-label" for="customFileLang">Importer recu</label>
+
+
+                                        </div>
+                                        <br />
+                                        <img id="blah" width="200" height="150" src="#" alt="" />
+
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input id="submitBtn" type="submit" value="Confirmer" class="btn btn-primary" />
+
+                                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                            <span class="sr-only">Loading...</span>
+                                        </button>
+
+
+                                        <span class="text-danger">@ViewBag.errormsg</span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <br />
+
+                        <div class="card">
+                            <div class="card-header" id="headingThree">
+
+                                <h2>Note Client</h2>
+
+                            </div>
+
+                            <div class="card-body">
+
+
+                                <div class="form-group">
+                                    @Html.Label("DescriptionAutre", "Note:", htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.TextArea("DescriptionAutre", htmlAttributes: new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    }
+
+
+                </div>
+
+                    </div>
+
+             
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+
+                            <h2>Historique Client</h2>
+
+                        </div>
+
+                        <div class="card-body">
+
+
+                            <table class="table table-bordered table-condensed table-responsive" style="display:table">
+                                <tr>
+                                    <th>
+
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EtatClient)
+                                    </th>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Note
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TraiteLe)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.MontantDebInitial)
+                                    </th>
+
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.MontantDebMAJ)
+                                    </th>
+
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.MontantVerseDeclare)
+                                    </th>
+
+
+
+
+
+
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.VerifieLe)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                </tr>
+
+                                @foreach (var item in Model)
                                 {
+                            <tr class="p-3 mb-2 bg-white text-dark">
 
-                                    if (item.Status.ToString().Equals("EN_COURS") || item.Status.ToString().Equals("NON_VERIFIE"))
+                                <td>
+
+                                    @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
                                     {
 
-                                        @Html.ActionLink("Supp", "deleteHist", "Formulaire", new { id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?')" })
+                                        if (item.Status.ToString().Equals("EN_COURS") || item.Status.ToString().Equals("NON_VERIFIE"))
+                                        {
 
+                                            @Html.ActionLink("Supp", "deleteHist", "Formulaire", new { id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?')" })
+
+                                        }
+                                        else
+                                        {
+
+
+                                            //@Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');", @disabled = "disabled" })
+
+
+                                        }
                                     }
                                     else
                                     {
 
+                                        @Html.ActionLink("Supp", "deleteHist", "Formulaire", new { id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" })
 
-                                         //@Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');", @disabled = "disabled" })
+                                    }
 
 
-                                      }
+                                </td>
+                                <td>
+
+                                    @Html.DisplayFor(modelItem => item.EtatClient)
+
+                                </td>
+                                
+
+
+                                <td>
+                                    @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV)
+                                    {
+                                        if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                                        {
+                                            <text></text>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(modelItem => item.DateRDV)
+                                        }
+                                    }
+                                    else if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL)
+                                    {
+                                        if (item.RappelLe.ToString().Equals("01/01/0001 00:00:00"))
+                                        {
+                                            <text></text>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(modelItem => item.RappelLe)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text></text>
+                                    }
+
+
+                                </td>
+                              
+                                <td>
+
+                                    @Html.DisplayFor(modelItem => item.DescriptionAutre)
+
+                                </td>
+                                <td>
+                                    @if (item.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+                                    {
+                                        <text></text>
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => item.TraiteLe)
+                                    }
+
+                                </td>
+
+
+
+
+                                <td>
+
+
+                                    @Html.DisplayFor(modelItem => item.MontantDebInitial)
+
+
+                                </td>
+
+                                <td>
+
+                                    @Html.DisplayFor(modelItem => item.MontantDebMAJ)
+
+                                </td>
+
+                                <td>
+
+                                    @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
+
+                                </td>
+
+                                <td>
+                                    @if (item.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
+                                    {
+                                        <text></text>
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => item.VerifieLe)
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Status.ToString().Equals("NON_VERIFIE"))
+                                    {
+                                        <text>Non verifié</text>
+                                    }
+                                    else if (item.Status.ToString().Equals("VERIFIE"))
+                                    {
+
+                                        <text>Verifié</text>
+
+                                    }
+                                    else if (item.Status.ToString().Equals("EN_COURS"))
+                                    {
+                                        <text>En attente...</text>
+                                    }
+                                </td>
+
+                            </tr>
                                 }
-                                else
-                                {
 
-                                    @Html.ActionLink("Supp", "deleteHist", "Formulaire", new {  id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" })
-
-                                }
+                            </table>
 
 
-                            </td>
-                            <td>
+                        </div>
 
-                                @Html.DisplayFor(modelItem => item.EtatClient)
-
-                            </td>
-
-                            <td>
-
-
-                                @if (item.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
-                                {
-                                    <text></text>
-                                }
-                                else
-                                {
-                                    @Html.DisplayFor(modelItem => item.DateRDV)
-                                }
-
-
-                            </td>
-                            <td>
-
-                                @if (item.DateRDVReporte.ToString().Equals("01/01/0001 00:00:00"))
-                                {
-                                    <text></text>
-                                }
-                                else
-                                {
-                                    @Html.DisplayFor(modelItem => item.DateRDVReporte)
-                                }
-                            </td>
-
-                            <td>
-
-
-                                @Html.DisplayFor(modelItem => item.MontantDebInitial)
-
-
-                            </td>
-
-                            <td>
-
-                                @Html.DisplayFor(modelItem => item.MontantDebMAJ)
-
-                            </td>
-
-                            <td>
-
-                                @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
-
-                            </td>
-                            <td>
-
-                                @Html.DisplayFor(modelItem => item.DescriptionAutre)
-
-                            </td>
-                            <td>
-                                @if (item.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
-                                {
-                                    <text></text>
-                                }
-                                else
-                                {
-                                    @Html.DisplayFor(modelItem => item.TraiteLe)
-                                }
-
-                            </td>
-                            <td>
-                                @if (item.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
-                                {
-                                    <text></text>
-                                }
-                                else
-                                {
-                                    @Html.DisplayFor(modelItem => item.VerifieLe)
-                                }
-                            </td>
-                            <td>
-                                @if (item.Status.ToString().Equals("NON_VERIFIE"))
-                                {
-                                    <text>Non verifié</text>
-                                }
-                                else if (item.Status.ToString().Equals("VERIFIE"))
-                                {
-                                    <text>Verifié</text>
-
-                                }
-                                else if (item.Status.ToString().Equals("EN_COURS"))
-                                {
-                                    <text>En attente...</text>
-                                }
-                            </td>
-
-                        </tr>
-                    }
-
-                </table>
-
-
-            </div>
-
-        </div>
+                    </div>
 
 
 
-        <script>
-
-
+            <script>
 
             function showLoading() {
 
@@ -512,8 +572,6 @@
                 document.getElementById("submitBtn").style.display = "none";
 
             }
-
-            
 
             function showFNLoading() {
 
@@ -541,7 +599,7 @@
     }
 
     function hideAll() {
-        document.getElementById("autre").style.display= "none"
+        //document.getElementById("autre").style.display= "none"
         document.getElementById("datetimePickerRDV").style.display= "none"
         document.getElementById("montant").style.display= "none"
         document.getElementById("datetimePickerRappel").style.display= "none"
@@ -587,7 +645,7 @@
                 case "SOLDE":
                     hideAll();
 
-                       document.getElementById("montant").style.display = "block"
+                    document.getElementById("montant").style.display = "block"
                     document.getElementById("recu").style.display = "block"
 
                     document.getElementById("textLabel").innerHTML = "Versement en TND:";
@@ -615,7 +673,7 @@
 
 
                     document.getElementById("datetimePickerRappel").style.display = "block"
-                    
+
                     break;
                 case "RACCROCHE":
                     hideAll();
@@ -636,7 +694,7 @@
                     break;
                 case "AUTRE":
                     hideAll();
-                    document.getElementById("autre").style.display = "block"
+                    //document.getElementById("autre").style.display = "block"
 
                     break;
             }
@@ -657,9 +715,9 @@
 
             }
 
-        </script>
+                    </script>
 
 
-        @section Scripts {
-            @Scripts.Render("~/bundles/jqueryval")
-        }
+                    @section Scripts {
+                        @Scripts.Render("~/bundles/jqueryval")
+                    }

@@ -496,6 +496,7 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
+            
 
             Formulaire Formulaire = new Formulaire();
             ViewBag.errormsg = "";
@@ -581,9 +582,6 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire.AffectationId = int.Parse(id);
                     Formulaire.EtatClient = Note.AUTRE;
                     Formulaire.TraiteLe = DateTime.Now;
-
-                    Formulaire.DescriptionAutre = DescriptionAutre;
-
                     break;
                 case Note.RAPPEL:
 
@@ -611,6 +609,7 @@ namespace WakilRecouvrement.Web.Controllers
                     break;
             }
 
+            Formulaire.DescriptionAutre = DescriptionAutre;
 
             Formulaire.NotifieBanque = false;
 
