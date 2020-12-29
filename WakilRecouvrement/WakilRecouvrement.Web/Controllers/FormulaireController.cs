@@ -63,8 +63,10 @@ namespace WakilRecouvrement.Web.Controllers
                                      select new TelFN
                                      {
                                          TelPortableFN = l.TelPortableFN,
-                                         TelFixeFN = l.TelFixeFN
-                                     
+                                         TelFixeFN = l.TelFixeFN,
+                                         TelPortable = l.TelPortable,
+                                         TelFixe = l.TelFixe
+                                                                             
                                      }).FirstOrDefault();
 
             string soldeDeb = (from a in AffectationService.GetAll()
@@ -296,8 +298,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
-        
-
             if (!String.IsNullOrEmpty(numLot))
             {
                 if (numLot.Equals("0") == false)
@@ -447,7 +447,21 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+        public IEnumerable<SelectListItem> TraiteListSuiviTraitForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients traités", Value = "ALL" });
 
+            foreach (var n in Enum.GetValues(typeof(Note)))
+            {
+
+                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
+
+            }
+
+
+            return listItems;
+        }
         public IEnumerable<SelectListItem> TraiteListRentabiliteForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -624,8 +638,6 @@ namespace WakilRecouvrement.Web.Controllers
             FormulaireService.Add(Formulaire);
             FormulaireService.Commit();
 
-
-
             Lot Joinedlot = (from f in FormulaireService.GetAll()
                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                              join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -637,11 +649,14 @@ namespace WakilRecouvrement.Web.Controllers
 
                              }).FirstOrDefault();
 
-
-
             if(Joinedlot.SoldeDebiteur=="" || Joinedlot.SoldeDebiteur==null)
             {
                 Joinedlot.SoldeDebiteur = "0";
+            }
+
+            if (Joinedlot.SoldeDebiteur.IndexOf('.') != -1)
+            {
+                Joinedlot.SoldeDebiteur = Joinedlot.SoldeDebiteur.Replace('.', ',');
             }
 
             Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
@@ -2008,8 +2023,8 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void DeleteFromulaire(Formulaire formulaire)
         {
-
-            FormulaireService.Delete(formulaire);
+            formulaire.Status = Status.NON_VERIFIE;
+            FormulaireService.Update(formulaire);
             FormulaireService.Commit();
 
         }
@@ -2177,6 +2192,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
             int nb=0;
             int rappelNB = 0;
+            int rejetes = 0;
 
 
             nb = (from f in FormulaireService.GetMany(f => f.EtatClient == Note.RDV)
@@ -2209,17 +2225,32 @@ namespace WakilRecouvrement.Web.Controllers
                           }).Count();
 
 
+            rejetes = (from f in FormulaireService.GetAll()
+                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                       join l in LotService.GetAll() on a.LotId equals l.LotId
+                       where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
+
+                       select new ClientAffecteViewModel
+                       {
+                           Lot = l,
+                           Affectation = a,
+                           Formulaire = f
+
+                       }).Count();
 
 
-            return Json(new { nb = nb, rappelNB= rappelNB });
+
+
+            return Json(new { nb = nb, rappelNB= rappelNB, rejetes= rejetes });
         }
 
         [HttpPost]
-        public ActionResult UpdateTelFN(int lotId,int affectationId)
+        public ActionResult UpdateTelFN(int lotId,int affectationId,string portable,string fixe)
         {
             bool TelFixe = false;
             bool TelPortable = false;
             Lot lot = LotService.GetById(lotId);
+            
 
             if (Request.Form["TelPortable"] == "on")
             {
@@ -2230,6 +2261,9 @@ namespace WakilRecouvrement.Web.Controllers
                 TelFixe = true;
             }
 
+            lot.TelFixe = fixe;
+            lot.TelPortable = portable;
+            
             lot.TelFixeFN = TelFixe;
             lot.TelPortableFN = TelPortable;
 
@@ -2590,6 +2624,239 @@ namespace WakilRecouvrement.Web.Controllers
         }
          
 
+        public ActionResult TraitementRejetes(string SearchString, string currentFilter, string sortOrder, int? page)
+        {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
+            ViewBag.CurrentSort = sortOrder;
+            
+            if (SearchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                SearchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = SearchString;
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+            
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
+
+                          select new ClientAffecteViewModel
+                          {
+                              Lot = l,
+                              Affectation = a,
+                              Formulaire = f
+
+                          }).ToList();
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+
+                                       ).ToList();
+            }
+
+
+            ViewBag.total = JoinedList.Count();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+        }
+
+
+        public ActionResult SuiviTraiement(string numLot, string SearchString, string traite, string agent, string currentFilter, string sortOrder, int? page)
+        {
+            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                return RedirectToAction("Login", "Authentification");
+
+            ViewBag.CurrentSort = sortOrder;
+
+            List<ClientAffecteViewModel> JoinedList;
+
+            if (SearchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                SearchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = SearchString;
+
+
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitForDropDown(), "Value", "Text");
+
+
+            if (!String.IsNullOrEmpty(traite))
+            {
+
+                if (traite == "ALL")
+                {
+
+                    JoinedList = (from f in FormulaireService.GetAll()
+                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  select new ClientAffecteViewModel
+                                  {
+
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
+
+                                  }).OrderByDescending(f=>f.Formulaire.TraiteLe).ToList();
+
+                }
+
+                else
+                {
+                    JoinedList = (from f in FormulaireService.GetAll()
+                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                  select new ClientAffecteViewModel
+                                  {
+
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
+
+                                  }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f=>f.Formulaire.TraiteLe).ToList();
+                }
+
+            }
+            else
+            {
+
+                JoinedList = (from f in FormulaireService.GetAll()
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              select new ClientAffecteViewModel
+                              {
+
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+            }
+
+
+            if (!String.IsNullOrEmpty(agent))
+            {
+                if (int.Parse(agent) != 0)
+                {
+                    JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+                }
+
+            }
+
+            if (!String.IsNullOrEmpty(numLot))
+            {
+                if (numLot.Equals("0") == false)
+                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+
+            }
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+
+                                       ).ToList();
+            }
+
+
+
+
+
+            switch (sortOrder)
+            {
+                case "0":
+                    JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
+                    break;
+                case "1":
+                    try
+                    {
+                        JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    break;
+
+                case "2":
+
+                    try
+                    {
+                        JoinedList = JoinedList.OrderBy(s => s.Lot.SoldeDebiteur).ToList();
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+
+
+                    break;
+                case "3":
+                    JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "4":
+                    JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
+                    break;
+                case "5":
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
+                    break;
+                case "6":
+                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+                    break;
+
+
+                default:
+
+
+                    break;
+            }
+
+
+            ViewBag.total = JoinedList.Count();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+        }
 
 
 

@@ -3,20 +3,20 @@
 @{
     ViewBag.Title = "";
 }
+
 <script src="~/Scripts/jquery.min.js"></script>
+<script src="~/adminlte/plugins/chart.js/Chart.min.js"></script>
+
 
 <h2>Statistiques</h2>
 
 
-
-
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    @using (Html.BeginForm("StatLot", "Statistique", FormMethod.Post, new { onsubmit = "showLoading()" }))
-                    {
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                @using (Html.BeginForm("StatLot", "Statistique", FormMethod.Post, new { onsubmit = "showLoading()" }))
+                {
                     <div class="row">
 
                         <div class="col-xs-3  col-md-3">
@@ -39,7 +39,7 @@
 
                             @Html.Label("agent", "Agent:", new { @class = "control-label " })
 
-                            @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control",currentFilter = ViewBag.CurrentFilter })
+                            @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
                         </div>
 
@@ -64,117 +64,556 @@
 
                         </div>
                     </div>
-                    }
-                    </div>
+                }
+            </div>
 
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="row">
-                        <!-- /.col -->
-                        <div class="col-md-4">
-                            <p class="text-center">
-                                <strong>Stats. par lot</strong>
-                            </p>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-md-4">
+                        <p class="text-center">
+                            <strong>Stats. par lot</strong>
+                        </p>
 
-                            <div class="progress-group">
-                                RDV (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgRdv) %</small></span>)
-                                <span class="float-right"><b id="rdvNb">@Html.DisplayFor(modelItem => Model.rdv)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar bg-primary" id="avgRdvprogress" style="width: @Html.DisplayFor(modelItem => Model.avgRdv)%"></div>
-                                </div>
+                        <div class="progress-group">
+                            RDV (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgRdv) %</small></span>)
+                            <span class="float-right"><b id="rdvNb">@Html.DisplayFor(modelItem => Model.rdv)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-primary" id="avgRdvprogress" style="width: @Html.DisplayFor(modelItem => Model.avgRdv)%"></div>
                             </div>
-                            <!-- /.progress-group -->
+                        </div>
+                        <!-- /.progress-group -->
 
-                            <div class="progress-group">
-                                Faux numero (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgFn) %</small></span>)
-                                <span class="float-right"><b id="FNNB">@Html.DisplayFor(modelItem => Model.fn)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar bg-danger" id="avgFnprogress" style="width: @Html.DisplayFor(modelItem => Model.avgFn)%"></div>
-                                </div>
+                        <div class="progress-group">
+                            Faux numero (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgFn) %</small></span>)
+                            <span class="float-right"><b id="FNNB">@Html.DisplayFor(modelItem => Model.fn)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-danger" id="avgFnprogress" style="width: @Html.DisplayFor(modelItem => Model.avgFn)%"></div>
                             </div>
-
-                            <!-- /.progress-group -->
-                            <div class="progress-group">
-                                <span class="progress-text">Versement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgVers) %</small></span>) </span>
-                                <span class="float-right"><b id="versement">@Html.DisplayFor(modelItem => Model.versement)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar bg-success" id="avgVersprogress" style="width: @Html.DisplayFor(modelItem => Model.avgVers)%"></div>
-                                </div>
-                            </div>
-
-                            <!-- /.progress-group -->
-                            <div class="progress-group">
-                                En cours de traitement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgencours) %</small></span>)
-                                <span class="float-right"><b id="encours">@Html.DisplayFor(modelItem => Model.encours)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar bg-warning" id="avgEncoursprogress" style="width: @Html.DisplayFor(modelItem => Model.avgencours)%"></div>
-                                </div>
-                            </div>
-                            <!-- /.progress-group -->
                         </div>
 
-                        <!-- /.col -->
+                        <!-- /.progress-group -->
+                        <div class="progress-group">
+                            <span class="progress-text">Versement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgVers) %</small></span>) </span>
+                            <span class="float-right"><b id="versement">@Html.DisplayFor(modelItem => Model.versement)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-success" id="avgVersprogress" style="width: @Html.DisplayFor(modelItem => Model.avgVers)%"></div>
+                            </div>
+                        </div>
+
+                        <!-- /.progress-group -->
+                        <div class="progress-group">
+                            En cours de traitement (<span><small class="avg">@Html.DisplayFor(modelItem => Model.avgencours) %</small></span>)
+                            <span class="float-right"><b id="encours">@Html.DisplayFor(modelItem => Model.encours)</b>/<span class="affTot">@Html.DisplayFor(modelItem => Model.nb)</span></span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-warning" id="avgEncoursprogress" style="width: @Html.DisplayFor(modelItem => Model.avgencours)%"></div>
+                            </div>
+                        </div>
+                        <!-- /.progress-group -->
                     </div>
-                    <!-- /.row -->
+
+                    <!-- /.col -->
                 </div>
-                <!-- /.card-footer -->
+                <!-- /.row -->
             </div>
-            <!-- /.card -->
+            <!-- /.card-footer -->
         </div>
-        <!-- /.col -->
+        <!-- /.card -->
     </div>
+    <!-- /.col -->
+</div>
 
 
-    <script>
 
-        function showLoading() {
 
-            document.getElementById("submitLoading").style.display = "block";
-            document.getElementById("submitBtn").style.display = "none";
+<div class="row">
+    <div class="col-md-12">
+
+
+        <div class="card">
+            <div class="card-header border-0">
+              
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("years", "Année:", new { @class = "control-label " })
+
+                    @Html.DropDownList("years", ViewData["years"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Traitement Annuel</span>
+                        <span><small > <span id="annuelTot"> </span> </small></span>
+                    </p>
+
+                    
+
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="sales-chart" height="200"></canvas>
+                </div>
+
+                
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header border-0">
+                
+                <div class="row">
+                    <div class="col-xs-3  col-md-3">
+
+                        @Html.Label("yearsMensuel", "Année:", new { @class = "control-label " })
+
+                        @Html.DropDownList("yearsMensuel", ViewData["years"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                    </div>
+
+                    <div class="col-xs-3  col-md-3">
+
+                        @Html.Label("month", "Mois:", new { @class = "control-label " })
+
+                        @Html.DropDownList("month", ViewData["month"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                    </div>
+                </div>
+
+                    
+
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg">Traitement Mensuel</span>
+                            <span><small>  <span id="mensuelTot"> </span> </small></span>
+                        </p>
+
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="sales-mensuel" height="200"></canvas>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+
+
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header border-0">
+         
+
+
+                <div  id="dateTraiteStat" class="form-group row">
+                    <label for="RDVDateTime">Date:</label>
+                    <input class="form-control" name="dateStat" type="date" id="statTraiteDate">
+                </div>
+
+
+
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Traitement Quotidien</span>
+                        <span><small> <span id="quotidienTot"> </span> </small></span>
+                    </p>
+
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="sales-quotidien" height="200"></canvas>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+
+    var lot = document.getElementById("numLot")
+    var type = document.getElementById("typeStat")
+    var date = document.getElementById("dateStat")
+    var dateVal = document.getElementById("statDate")
+    var dateTraiteVal = document.getElementById("statTraiteDate")
+
+    dateVal.valueAsDate = new Date();
+    dateTraiteVal.valueAsDate = new Date();
+
+    type.onchange = function () {
+
+        var x = document.getElementById("typeStat").value
+
+        if (x == 1) {
+            document.getElementById("agenDrop").style.display = "none"
+            document.getElementById("dateStat").style.display = "none"
+
+        }
+        if (x == 2) {
+            document.getElementById("dateStat").style.display = "block"
+            document.getElementById("agenDrop").style.display = "none"
 
         }
 
+        if (x == 3) {
 
-        var lot = document.getElementById("numLot")
-        var type = document.getElementById("typeStat")
-        var date = document.getElementById("dateStat")
-        var dateVal = document.getElementById("statDate")
-        dateVal.valueAsDate = new Date();
-
-        type.onchange = function () {
-
-            var x = document.getElementById("typeStat").value
-
-            if (x == 1) {
-                document.getElementById("agenDrop").style.display = "none"
-                document.getElementById("dateStat").style.display = "none"
-
-            }
-            if (x == 2) {
-                document.getElementById("dateStat").style.display = "block"
-                document.getElementById("agenDrop").style.display = "none"
-
-            }
-
-            if (x == 3) {
-
-                document.getElementById("agenDrop").style.display = "block"
-                document.getElementById("dateStat").style.display = "none"
-
-            }
-
-            if (x == 4) {
-
-                document.getElementById("dateStat").style.display = "block"
-                document.getElementById("agenDrop").style.display = "block"
-
-            }
-
+            document.getElementById("agenDrop").style.display = "block"
+            document.getElementById("dateStat").style.display = "none"
 
         }
 
+        if (x == 4) {
+
+            document.getElementById("dateStat").style.display = "block"
+            document.getElementById("agenDrop").style.display = "block"
+
+        }
+    }
 
 
 
+    var ticksStyle = {
+        fontColor: '#495057',
+        fontStyle: 'bold'
+    }
 
-    </script>
+    var mode = 'index'
+    var intersect = true
+
+    var $salesChartAnnuel = $('#sales-chart')
+    var salesChartAnnuel = new Chart($salesChartAnnuel, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1','POSTE 2','POSTE 3','POSTE 4'],
+            datasets: [
+                {
+                    backgroundColor: '#20c997',
+                    borderColor: '#007bff',
+                    data: [1060,2000,2500,3000]
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+
+    var $salesChartMensuel = $('#sales-mensuel')
+    var salesChartMensuel = new Chart($salesChartMensuel, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
+            datasets: [
+
+                {
+                    backgroundColor: '#6f42c1',
+                    borderColor: '#007bff',
+                    data: [1060,2000,1500,1000]
+                }
+
+
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+
+    var $salesChartQutidien = $('#sales-quotidien')
+    var salesChartQutidien = new Chart($salesChartQutidien, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
+            datasets: [
+                {
+                    backgroundColor: '#007bff',
+                    borderColor: '#007bff',
+                    data: [1060, 2500, 400, 3000 ]
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+    document.getElementById("years").onchange = function () {
+
+        annuelStat()
+
+    }
+
+    document.getElementById("month").onchange = function () {
+
+        mensuelStat()
+
+    }
+    document.getElementById("yearsMensuel").onchange = function () {
+
+        mensuelStat()
+
+    }
+
+    document.getElementById("statTraiteDate").onchange = function () {
+
+        quotidienStat()
+
+    }
+
+
+
+    function annuelStat() {
+
+
+        $.ajax({
+                type: 'POST',
+                url: '@Url.Action("annuelStatTraite", "Statistique")',
+                dataType: 'json',
+            data: { year: document.getElementById("years").value },
+                success: function (data) {
+
+                    salesChartAnnuel.data.datasets[0].data[0] = data["annuelPoste1Tot"]
+                    salesChartAnnuel.data.datasets[0].data[1] = data["annuelPoste2Tot"]
+                    salesChartAnnuel.data.datasets[0].data[2] = data["annuelPoste3Tot"]
+                    salesChartAnnuel.data.datasets[0].data[3] = data["annuelPoste4Tot"]
+                    document.getElementById("annuelTot").innerHTML = data["tot"] + " Traitements En total"
+                    
+                    salesChartAnnuel.update();
+                }
+
+            })
+
+    }
+
+
+    function mensuelStat() {
+
+         $.ajax({
+                type: 'POST',
+                url: '@Url.Action("mensuelStatTraite", "Statistique")',
+                dataType: 'json',
+             data: { year: document.getElementById("yearsMensuel").value, month: document.getElementById("month").value  },
+             success: function (data) {
+
+
+                 salesChartMensuel.data.datasets[0].data[0] = data["mensuelPoste1Tot"]
+
+                 salesChartMensuel.data.datasets[0].data[1] = data["mensuelPoste2Tot"]
+
+                 salesChartMensuel.data.datasets[0].data[2] = data["mensuelPoste3Tot"]
+
+                 salesChartMensuel.data.datasets[0].data[3] = data["mensuelPoste4Tot"]
+
+                 document.getElementById("mensuelTot").innerHTML = data["tot"] + " Traitements En total"
+
+                 salesChartMensuel.update();
+
+                }
+
+            })
+
+    }
+
+
+    function quotidienStat() {
+
+         $.ajax({
+                type: 'POST',
+                url: '@Url.Action("quotidienStatTraite", "Statistique")',
+             dataType: 'json',
+             data: { date: document.getElementById("statTraiteDate").value },
+                success: function (data) {
+
+
+
+                    salesChartQutidien.data.datasets[0].data[0] = data["quotidienPoste1Tot"]
+
+                    salesChartQutidien.data.datasets[0].data[1] = data["quotidienPoste2Tot"]
+
+                    salesChartQutidien.data.datasets[0].data[2] = data["quotidienPoste3Tot"]
+
+                    salesChartQutidien.data.datasets[0].data[3] = data["quotidienPoste4Tot"]
+
+                    document.getElementById("quotidienTot").innerHTML = data["tot"] + " Traitements En total"
+
+                    salesChartQutidien.update();
+                }
+
+            })
+
+    }
+
+
+
+</script>

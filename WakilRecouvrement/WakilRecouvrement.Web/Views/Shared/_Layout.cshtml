@@ -150,6 +150,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <p>Affecter</p>
                                                 </a>
                                             </li>
+
+                                            <li class="nav-item">
+                                                <a href="@Url.Action("SuiviTraiement", "Formulaire")" class="nav-link">
+                                                    @*<i class="fas fa-gavel mr-4"></i>*@
+                                                    <p>Suivi</p>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -341,6 +348,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <a href="@Url.Action("MesRappels","Formulaire",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
 
                                         <p>Mes Rappels ( <span id="rappelNB">0</span> ) </p>
+
+                                    </a>
+
+                                </li>
+
+                                <li class="nav-item">
+
+                                    <a href="@Url.Action("TraitementRejetes","Formulaire",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
+
+                                        <p>Traitements rejetés ( <span id="rejetesNB">0</span> ) </p>
 
                                     </a>
 
@@ -806,8 +823,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 data: {  },
                 success: function (data) {
 
-                   document.getElementById("nbSuivi").innerHTML = data["nb"]
-                   document.getElementById("rappelNB").innerHTML = data["rappelNB"]
+                    document.getElementById("nbSuivi").innerHTML = data["nb"]
+                    document.getElementById("rappelNB").innerHTML = data["rappelNB"]
+                    document.getElementById("rejetesNB").innerHTML = data["rejetes"]
                 }
 
             })

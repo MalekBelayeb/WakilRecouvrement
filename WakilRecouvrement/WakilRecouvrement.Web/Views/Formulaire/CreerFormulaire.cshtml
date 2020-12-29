@@ -13,8 +13,6 @@
     </div>
 
     <div class="card-body">
-
-
                 <table class="table table-bordered table-condensed table-responsive" style="display:table">
                     <tr>
 
@@ -68,27 +66,27 @@
                         @if (ViewBag.TelFN.TelPortableFN)
                         {
                             <td class="bg-secondary">
-                                @ViewBag.affectation.Lot.TelPortable
+                                @ViewBag.TelFN.TelPortable
                             </td>
 
                         }
                         else
                         {
                             <td>
-                                @ViewBag.affectation.Lot.TelPortable
+                                @ViewBag.TelFN.TelPortable
                             </td>
                         }
 
                         @if (ViewBag.TelFN.TelFixeFN)
                         {
                             <td class="bg-secondary">
-                                @ViewBag.affectation.Lot.TelFixe
+                                @ViewBag.TelFN.TelFixe
                             </td>
                         }
                         else
                         {
                             <td >
-                                @ViewBag.affectation.Lot.TelFixe
+                                @ViewBag.TelFN.TelFixe
                             </td>
                         }
 
@@ -118,11 +116,7 @@
             </div>
                 </div>
 
-
-
-
         <br />
-
 
         <div class="card">
             <div class="card-header" id="headingTwo">
@@ -140,11 +134,8 @@
 
                     <div class="row">
 
-                        @if (ViewBag.affectation.Lot.TelPortable != "")
-                        {
-
                             <div class="col-6">
-                                <label for="telOne">Faux Num 1</label>
+                                <label for="telOne">Num 1</label>
 
                                 <div class="input-group">
 
@@ -166,15 +157,12 @@
 
                                         </span>
                                     </div>
-                                    <input type="text" disabled value="@Html.Raw(ViewBag.affectation.Lot.TelPortable)" class="form-control">
+                                    <input type="text" name="portable" value="@Html.Raw(ViewBag.TelFN.TelPortable)" class="form-control">
                                 </div>
                             </div>
-                        }
-
-                        @if (ViewBag.affectation.Lot.TelFixe != "")
-                        {
+                        
                             <div class="col-6">
-                                <label for="telOne">Faux num 2</label>
+                                <label for="telOne">num 2</label>
 
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -193,11 +181,11 @@
 
                                         </span>
                                     </div>
-                                    <input type="text" disabled value="@Html.Raw(ViewBag.affectation.Lot.TelFixe)" class="form-control">
+                                    <input type="text" name="fixe" value="@Html.Raw(ViewBag.TelFN.TelFixe)" class="form-control">
                                 </div>
 
                             </div>
-                        }
+                        
 
                     </div>
                     <br />
@@ -205,8 +193,6 @@
                     <input hidden type="text" name="lotId"  value="@Html.Raw(ViewBag.affectation.Lot.LotId)" class="form-control">
                     <input hidden type="text" name="affectationId"  value="@Html.Raw(ViewBag.affectation.AffectationId)" class="form-control">
 
-                    if (ViewBag.affectation.Lot.TelFixe != "" || ViewBag.affectation.Lot.TelPortable != "")
-                    {
 
                         <div class="form-group">
 
@@ -222,7 +208,7 @@
 
                         </div>
 
-                    }
+                    
 
 
                 }
@@ -387,7 +373,7 @@
                                 @if (item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
                                 {
 
-                                    if (item.Status.ToString().Equals("EN_COURS"))
+                                    if (item.Status.ToString().Equals("EN_COURS") || item.Status.ToString().Equals("NON_VERIFIE"))
                                     {
 
                                         @Html.ActionLink("Supp", "deleteHist", "Formulaire", new { id = item.AffectationId, idHist = item.FormulaireId, msgError = "" }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?')" })

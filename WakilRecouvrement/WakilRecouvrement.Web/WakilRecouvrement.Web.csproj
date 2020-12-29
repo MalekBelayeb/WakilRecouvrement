@@ -412,6 +412,12 @@
     <Content Include="adminlte\js\pages\dashboard2.js" />
     <Content Include="adminlte\js\pages\dashboard3.js" />
     <Content Include="adminlte\js\treeViewJs.js" />
+    <Content Include="adminlte\plugins\chart.js\Chart.bundle.js" />
+    <Content Include="adminlte\plugins\chart.js\Chart.bundle.min.js" />
+    <Content Include="adminlte\plugins\chart.js\Chart.css" />
+    <Content Include="adminlte\plugins\chart.js\Chart.js" />
+    <Content Include="adminlte\plugins\chart.js\Chart.min.css" />
+    <Content Include="adminlte\plugins\chart.js\Chart.min.js" />
     <Content Include="adminlte\plugins\daterangepicker\daterangepicker.css" />
     <Content Include="adminlte\plugins\daterangepicker\daterangepicker.js" />
     <Content Include="adminlte\plugins\daterangepicker\drp.png" />
@@ -721,6 +727,8 @@
     <Content Include="Views\Lot\updateLot.cshtml" />
     <Content Include="Views\Lot\addLot.cshtml" />
     <Content Include="Views\Formulaire\MesRappels.cshtml" />
+    <Content Include="Views\Formulaire\TraitementRejetes.cshtml" />
+    <Content Include="Views\Formulaire\SuiviTraiement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

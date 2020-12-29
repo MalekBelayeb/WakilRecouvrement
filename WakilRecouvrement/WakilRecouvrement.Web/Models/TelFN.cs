@@ -9,5 +9,9 @@ namespace WakilRecouvrement.Web.Models
     {
         public bool TelPortableFN { get; set; }
         public bool TelFixeFN { get; set; }
+
+        public string TelPortable { get; set; }
+        public string TelFixe { get; set; }
+
     }
 }
