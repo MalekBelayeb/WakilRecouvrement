@@ -489,9 +489,6 @@ namespace WakilRecouvrement.Web.Controllers
             return listItems;
         }
 
-
-
-
         [HttpPost]
         public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile)
         {
@@ -942,8 +939,8 @@ namespace WakilRecouvrement.Web.Controllers
                        Etat = GetEtat(j.Formulaire).ToString(),
                        FormulaireId = j.Formulaire.FormulaireId,
                        ContactBanque = j.Formulaire.ContacteBanque,
-                       Image = getImagePath(j.Formulaire)
-
+                       Image = getImagePath(j.Formulaire),
+                       descAutre = j.Formulaire.DescriptionAutre
                    }
                    );
                 int x = JoinedList.Count();
@@ -1751,25 +1748,39 @@ namespace WakilRecouvrement.Web.Controllers
 
             Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
-
             foreach (DataTable table in dataSet.Tables)
             {
                 //Add a new worksheet to workbook with the Datatable name
                 // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
                 Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+                
 
                 excelWorkSheet.Name = table.TableName;
+                
                 // add all the columns
                 for (int i = 1; i < table.Columns.Count + 1; i++)
                 {
                     excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+                    excelWorkSheet.Cells[1, i].Font.Bold = true;
+                    excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                    excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                    excelWorkSheet.Cells[1, i].Borders.Weight = 2;
+
                 }
                 // add all the rows
                 for (int j = 0; j < table.Rows.Count; j++)
                 {
                     for (int k = 0; k < table.Columns.Count; k++)
                     {
+                       
                         excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
+
                     }
                 }
             }
