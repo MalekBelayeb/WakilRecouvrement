@@ -158,12 +158,11 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public ActionResult AffectationList(string numLot, string SearchString, string traite,  string currentFilter, string sortOrder, int? page)
+        public ActionResult AffectationList(string numLot, string SearchString, string traite,  string currentFilter,string currentFilterNumLot,string currentFilterTraite,string CurrentSort, string sortOrder, int? page)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
 
-            ViewBag.CurrentSort = sortOrder;
 
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
@@ -171,9 +170,21 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
 
+            if (sortOrder != null)
+            {
+                ///page = 1;
+            }
+            else
+            {
+                sortOrder = CurrentSort;
+            }
+
+
+            ViewBag.CurrentSort = sortOrder;
+
             if (SearchString != null)
             {
-                page = 1;
+               // page = 1;
             }
             else
             {
@@ -181,6 +192,35 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
             ViewBag.CurrentFilter = SearchString;
+
+
+            if (numLot != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                numLot = currentFilterNumLot;
+            }
+
+            ViewBag.currentFilterNumLot = numLot;
+
+
+
+            if (traite != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                traite = currentFilterTraite;
+            }
+
+            ViewBag.currentFilterTraite = traite;
+            ViewBag.page = page;
+            // page = 8 & CurrentSort = 5 & currentFilterNumLot = 6 & currentFilterTraite = SAUF
+
+            
 
             Employe emp = EmpService.GetEmployeByUername(Session["username"]+"");
 

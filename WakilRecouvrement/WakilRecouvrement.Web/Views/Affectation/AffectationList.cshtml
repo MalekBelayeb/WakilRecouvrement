@@ -9,9 +9,6 @@
 }
 
 
-
-
-
 @using (Html.BeginForm("AffectationList", "Affectation", FormMethod.Post, new { onsubmit = "showLoading()" }))
 {
 
@@ -35,7 +32,7 @@
 
                 @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterNumLot })
 
             </div>
 
@@ -44,7 +41,7 @@
 
                 @Html.Label("traite", "Etat:", new { @class = "control-label" })
 
-                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterTraite })
 
             </div>
 
@@ -59,7 +56,7 @@
 
                 @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
 
-                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
 
             </div>
 
@@ -229,7 +226,7 @@
 <tr class="@classStyle">
 
     <td>
-        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "" }, null)
+        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }, null)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Lot.NumLot)
@@ -361,5 +358,5 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("AffectationList",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }))
 

@@ -242,6 +242,11 @@
                         @Html.AntiForgeryToken()
 
 
+                        <input hidden name="pageSave" value="@ViewBag.page" />
+                        <input hidden name="CurrentSortSave" value="@ViewBag.CurrentSort" />
+                        <input hidden name="currentFilterNumLotSave" value="@ViewBag.currentFilterNumLot" />
+                        <input hidden name="currentFilterTraiteSave"  value="@ViewBag.currentFilterTraite" />
+
                         <div class="card">
                             <div class="card-header" id="headingTwo">
 

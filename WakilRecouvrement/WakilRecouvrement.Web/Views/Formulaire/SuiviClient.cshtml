@@ -28,7 +28,7 @@
 
                 @Html.Label("traite", "Etat:", new { @class = "control-label" })
 
-                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterTraite })
 
             </div>
 
@@ -37,14 +37,14 @@
 
                 @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterNumLot })
 
             </div>
             <div class="col-xs-3  col-md-3">
 
                 @Html.Label("agent", "Agent:", new { @class = "control-label " })
 
-                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterAgent })
 
             </div>
 
@@ -62,7 +62,7 @@
 
                 @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
 
-                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
 
             </div>
 
@@ -348,5 +348,5 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("SuiviClient",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite, currentFilterAgent = ViewBag.currentFilterAgent }))
 

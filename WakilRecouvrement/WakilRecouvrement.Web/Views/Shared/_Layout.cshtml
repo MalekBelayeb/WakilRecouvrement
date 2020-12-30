@@ -511,23 +511,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     @RenderSection("scripts", required: false)
 
 
-    <link href="~/adminlte/css/treeViewJs.css" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript" src="~/Scripts/toastr.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">
-
-    <script type="text/javascript" src="~/Scripts/notify.js"></script>
-
-    <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/WakilRecouvrement/signalr/Hubs"></script>
-    <script type="text/javascript" src="~/adminlte/js/treeViewJs.js"></script>
+<script type="text/javascript">
 
 
 
+    $(document).ready(function () {
 
-    <script type="text/javascript">
-
-         if (@Html.Raw(Json.Encode(@role))== "agent") {
+            if (@Html.Raw(Json.Encode(@role))== "agent") {
 
             $.ajax({
                 type: 'POST',
@@ -544,6 +534,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             })
 
         }
+        }
+
+
 
 
 
@@ -848,7 +841,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 
-    </script>
+</script>
 
 
 

@@ -47,10 +47,18 @@ namespace WakilRecouvrement.Web.Controllers
 
 
 
-        public ActionResult CreerFormulaire(string id, string msgError)
+        public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
         {
+
+            
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
+
+            Debug.WriteLine(pageSave);
+            ViewBag.page = pageSave;
+            ViewBag.CurrentSort = currentSort;
+            ViewBag.currentFilterNumLot = currentFilterNumLot;
+            ViewBag.currentFilterTraite = currentFilterTraite;
 
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
             ViewBag.id = id;
@@ -193,7 +201,7 @@ namespace WakilRecouvrement.Web.Controllers
             return View(clientAffecteViewModels);
         }
 
-        public ActionResult SuiviClient(string numLot,string SearchString,string traite,string agent, string currentFilter, string sortOrder, int? page)
+        public ActionResult SuiviClient(string numLot,string SearchString,string traite,string agent,string currentFilterAgent, string currentFilter, string sortOrder,string CurrentSort,string currentFilterNumLot,string currentFilterTraite, int? page)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
@@ -207,6 +215,18 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
 
+            if (sortOrder != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                sortOrder = CurrentSort;
+            }
+
+
+            ViewBag.CurrentSort = sortOrder;
+
             if (SearchString != null)
             {
                 page = 1;
@@ -217,6 +237,42 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
             ViewBag.CurrentFilter = SearchString;
+
+            if (agent != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                agent = currentFilterAgent;
+            }
+
+            ViewBag.currentFilterAgent = agent;
+
+
+            if (numLot != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                numLot = currentFilterNumLot;
+            }
+
+            ViewBag.currentFilterNumLot = numLot;
+
+
+
+            if (traite != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                traite = currentFilterTraite;
+            }
+
+            ViewBag.currentFilterTraite = traite;
 
 
             if (!String.IsNullOrEmpty(traite))
@@ -490,7 +546,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile)
+        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile,string pageSave,string CurrentSortSave, string currentFilterNumLotSave,string currentFilterTraiteSave)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
             
@@ -724,7 +780,13 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
-            return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5" });
+            //return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5",page=5 });
+
+            Debug.WriteLine(currentFilterTraiteSave);
+            Debug.WriteLine(currentFilterNumLotSave);
+            Debug.WriteLine(pageSave);
+            Debug.WriteLine(CurrentSortSave);
+            return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page=pageSave });
         }
 
         public ActionResult deleteHist(int idHist,int id,string msgError)
@@ -2042,14 +2104,11 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, int? page)
+        public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)
         {
 
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
-
-            ViewBag.CurrentSort = sortOrder;
-
 
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
@@ -2057,6 +2116,43 @@ namespace WakilRecouvrement.Web.Controllers
             ViewBag.RDVList = new SelectList(RDVForDropDown(), "Value", "Text");
             ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
 
+
+            if (numLot != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                numLot = currentFilterNumLot;
+            }
+
+            ViewBag.currentFilterNumLot = numLot;
+
+
+            if (RDVType != null)
+            {
+               // page = 1;
+            }
+            else
+            {
+                RDVType = currentFilterRDVType;
+            }
+            ViewBag.currentFilterRDVType = RDVType;
+
+
+            if (sortOrder != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                sortOrder = CurrentSort;
+            }
+
+
+            ViewBag.CurrentSort = sortOrder;
+
+            
 
             JoinedList = (from f in FormulaireService.GetMany(f=>f.EtatClient == Note.RDV)
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
@@ -2530,14 +2626,35 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public ActionResult MesRappels(string numLot, string RappelDate, string sortOrder, int? page)
+        public ActionResult MesRappels(string numLot,string currentFilterNumLot,string CurrentSort, string RappelDate, string sortOrder, int? page)
         {
 
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
+            
+            
+            if (numLot != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                numLot = currentFilterNumLot;
+            }
+
+            ViewBag.currentFilterNumLot = numLot;
+
+            if (sortOrder != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                sortOrder = CurrentSort;
+            }
+
 
             ViewBag.CurrentSort = sortOrder;
-
 
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
@@ -2549,7 +2666,7 @@ namespace WakilRecouvrement.Web.Controllers
             JoinedList = (from f in FormulaireService.GetAll()
                           join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                           join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where a.Employe.Username.Equals(Session["username"]) && f.RappelLe.Date == DateTime.Parse(RappelDate).Date
+                          where a.Employe.Username.Equals(Session["username"]) /* && f.RappelLe.Date == DateTime.Parse(RappelDate).Date */
 
                           select new ClientAffecteViewModel
                           {
