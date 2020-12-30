@@ -8,7 +8,6 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using WakilRecouvrement.Web.Job;
 
 namespace WakilRecouvrement.Web
 {
@@ -25,11 +24,11 @@ namespace WakilRecouvrement.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 
-            JobScheduler.StartAsync().GetAwaiter().GetResult();
+            //JobScheduler.StartAsync().GetAwaiter().GetResult();
             ConfigurationManager.AppSettings["ExecuteTaskServiceCallSchedulingStatus"] = "OFF";
 
 
-            SqlDependency.Start(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
+            //SqlDependency.Start(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
         
             
         }
@@ -37,7 +36,7 @@ namespace WakilRecouvrement.Web
 
         protected void Application_End()
         {
-           SqlDependency.Stop(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
+           //SqlDependency.Stop(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
 
         }
     }

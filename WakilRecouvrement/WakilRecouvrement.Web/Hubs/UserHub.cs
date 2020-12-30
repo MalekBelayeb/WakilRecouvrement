@@ -12,7 +12,7 @@ namespace WakilRecouvrement.Web.Hubs
     public class UserHub : Hub
     {
  
-
+/*
         public static void Show()
         {
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
@@ -36,6 +36,6 @@ namespace WakilRecouvrement.Web.Hubs
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<UserHub>();
             context.Clients.All.displayUserNotifs();
         }
-
+*/
     }
 }

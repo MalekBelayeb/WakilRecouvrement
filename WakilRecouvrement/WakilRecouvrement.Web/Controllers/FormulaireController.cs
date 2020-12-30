@@ -1766,6 +1766,8 @@ namespace WakilRecouvrement.Web.Controllers
                     excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                     excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
                     excelWorkSheet.Cells[1, i].Borders.Weight = 2;
+                    excelWorkSheet.Cells[1, i].Font.Size = 14;
+                    excelWorkSheet.Cells[1, i].ColumnWidth = 22;
 
                 }
                 // add all the rows
@@ -1773,14 +1775,15 @@ namespace WakilRecouvrement.Web.Controllers
                 {
                     for (int k = 0; k < table.Columns.Count; k++)
                     {
-                       
+
                         excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
                         excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                         excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                         excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                         excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
                         excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
-
+                        excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
+                        excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
                     }
                 }
             }

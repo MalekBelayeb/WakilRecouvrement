@@ -53,9 +53,11 @@
   <ItemGroup>
     <Compile Include="AffectationService.cs" />
     <Compile Include="EmployeService.cs" />
+    <Compile Include="FactureService.cs" />
     <Compile Include="FormulaireService.cs" />
     <Compile Include="IAffectationService.cs" />
     <Compile Include="IEmployeService.cs" />
+    <Compile Include="IFactureService.cs" />
     <Compile Include="IFormulaireService.cs" />
     <Compile Include="ILotService.cs" />
     <Compile Include="INotificationService.cs" />

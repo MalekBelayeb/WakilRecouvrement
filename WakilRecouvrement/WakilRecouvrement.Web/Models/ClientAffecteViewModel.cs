@@ -15,6 +15,6 @@ namespace WakilRecouvrement.Web.Models
         public Lot Lot { get; set; }
 
         public int NbCountHist { get; set; }
-   
+        public double vers { get; set; }
     }
 }

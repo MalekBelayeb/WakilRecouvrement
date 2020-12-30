@@ -151,7 +151,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                 </a>
                                             </li>
 
-                                            
+
                                         </ul>
                                     </li>
                                 </ul>
@@ -395,6 +395,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 </li>
 
+                                <li class="nav-item">
+
+                                    <a href="@Url.Action("genererFacture","Facture")" class="nav-link">
+                                        @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
+                                        <p>Facture</p>
+                                    </a>
+
+                                </li>
+
 
                                 <li class="nav-item">
 
@@ -518,7 +527,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <script type="text/javascript">
 
-        $(document).ready(function () {
+         if (@Html.Raw(Json.Encode(@role))== "agent") {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SuiviRDVNB", "Formulaire")',
+                dataType: 'json',
+                data: {  },
+                success: function (data) {
+
+                    document.getElementById("nbSuivi").innerHTML = data["nb"]
+                    document.getElementById("rappelNB").innerHTML = data["rappelNB"]
+                    document.getElementById("rejetesNB").innerHTML = data["rejetes"]
+                }
+
+            })
+
+        }
+
+
+
+        /*  $(document).ready(function () {
 
             var cus = $.connection.userHub
 
@@ -527,52 +556,52 @@ scratch. This page gets rid of all links and provides the needed markup only.
             }
             */
 
-            cus.client.displayAdminNotifs = function () {
+          /*  cus.client.displayAdminNotifs = function () {
                 if (@Html.Raw(Json.Encode(@role))== "admin")
-                getNotifsByRole("admin");
-            }
+                //getNotifsByRole("admin");
+           // }*/
 
-            cus.client.displayAgentNotifs = function () {
-                if (@Html.Raw(Json.Encode(@role)) == "agent")
-                getNotifsByRole("agent");
-            }
+            //cus.client.displayAgentNotifs = function () {
+           //     if (@Html.Raw(Json.Encode(@role)) == "agent")
+           //     getNotifsByRole("agent");
+           // }
 
 
-            cus.client.displayUserNotifs = function () {
-                getNotifsByUser(@Html.Raw(Json.Encode(@username)));
-            }
+           // cus.client.displayUserNotifs = function () {
+          //      getNotifsByUser(@Html.Raw(Json.Encode(@username)));
+          //  }
 
-           $.connection.hub.start();
+         //  $.connection.hub.start();-->-->
 
             @*if(@Html.Raw(Json.Encode(@username))!=null)
             getNotifsByUser(@Html.Raw(Json.Encode(@username)));*@
 
-            if (@Html.Raw(Json.Encode(@role))== "admin")
-            getNotifsByRole("admin");
+          <!--<!--//  if (@Html.Raw(Json.Encode(@role))== "admin")
+        //    getNotifsByRole("admin");
 
-            if (@Html.Raw(Json.Encode(@role)) == "agent")
-                getNotifsByRole("agent");
+         //   if (@Html.Raw(Json.Encode(@role)) == "agent")
+        //        getNotifsByRole("agent");
 
-        })
+      //  })*/
 
-
+/*
         function RedirectTo(elem) {
 
             $.ajax({
             url: '@Url.Action("OnNotificationClickIntermediate", "Formulaire")',
-                type: 'POST',
-                datatype: 'json',
-                        data: { id: elem.id},
-                success: function(data) {
+        //        type: 'POST',
+         //       datatype: 'json',
+          //              data: { id: elem.id},
+      //          success: function(data) {
 
-                    window.location.replace(data.redirectUrl);
-                }
-            })
+           //         window.location.replace(data.redirectUrl);
+             //   }
+          //  })
 
-        }
+     //   }-->-->
 
 
-            function getData() {
+            @*function getData() {
                 var $tbl = $('#notifTable');
                 $.ajax({
                     url: '@Url.Action("Get","Notification")',
@@ -813,26 +842,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 }
             });
 
-        }
+        }*@
 
 
-        if (@Html.Raw(Json.Encode(@role))== "agent") {
 
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("SuiviRDVNB", "Formulaire")',
-                dataType: 'json',
-                data: {  },
-                success: function (data) {
-
-                    document.getElementById("nbSuivi").innerHTML = data["nb"]
-                    document.getElementById("rappelNB").innerHTML = data["rappelNB"]
-                    document.getElementById("rejetesNB").innerHTML = data["rejetes"]
-                }
-
-            })
-
-        }
 
 
     </script>

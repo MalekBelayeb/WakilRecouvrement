@@ -15,7 +15,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         NotificationService NotificationService;
 
-
+        /*
         public NotificationController()
         {
             NotificationService = new NotificationService();
@@ -185,6 +185,6 @@ namespace WakilRecouvrement.Web.Controllers
             UserHub.ShowByUser();
         }
 
-
+        */
     }
 }

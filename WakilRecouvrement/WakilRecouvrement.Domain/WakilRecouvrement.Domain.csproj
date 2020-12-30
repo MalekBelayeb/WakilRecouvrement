@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Entities\Affectation.cs" />
     <Compile Include="Entities\Employe.cs" />
+    <Compile Include="Entities\Facture.cs" />
     <Compile Include="Entities\Formulaire.cs" />
     <Compile Include="Entities\Lot.cs" />
     <Compile Include="Entities\Note.cs" />
