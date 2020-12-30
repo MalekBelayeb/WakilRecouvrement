@@ -34,11 +34,11 @@
 
                 </div>
                 
-                @*<div class="col-xs-3 col-md-6">
+                <div class="col-xs-3 col-md-6">
                     <label for="RappelDate">Rappel:</label>
                     <input class="form-control" name="RappelDate" type="datetime-local" id="rappelDate">
 
-                </div>*@
+                </div>
 
             </div>
 
@@ -95,9 +95,6 @@
     </div>
 
 }
-
-
-
 
 <table class="table table-bordered table-condensed table-responsive" style="display:table">
     <tr>
@@ -197,9 +194,9 @@
 
 <script>
 
-    //var now = new Date();
-    //now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    //document.getElementById('rappelDate').value = now.toISOString().slice(0, 16);
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('rappelDate').value = now.toISOString().slice(0, 16);
 
     function showLoading() {
 

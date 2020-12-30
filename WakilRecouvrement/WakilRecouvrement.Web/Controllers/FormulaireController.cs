@@ -2631,11 +2631,58 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
-            
+
+
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+            if (Request.Form["RappelDate"]==null)
+            {
+                JoinedList = (from f in FormulaireService.GetMany(f=>f.EtatClient == Note.RAPPEL)
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              where a.Employe.Username.Equals(Session["username"]) 
+
+                              select new ClientAffecteViewModel
+                              {
+                                  Lot = l,
+                                  Affectation = a,
+                                  Formulaire = f
+
+                              }).OrderByDescending(o=>o.Formulaire.TraiteLe).ToList();
+
+            }
+            else
+            {
+                DateTime d = DateTime.Now;
+
+                if (DateTime.TryParse(RappelDate, out d))
+                {
+
+                    JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient == Note.RAPPEL)
+                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  where a.Employe.Username.Equals(Session["username"]) && f.RappelLe.Date == d.Date
+
+                                  select new ClientAffecteViewModel
+                                  {
+                                      Lot = l,
+                                      Affectation = a,
+                                      Formulaire = f
+
+                                  }).OrderByDescending(o => o.Formulaire.TraiteLe).ToList();
+                }
+
+            }
+           
+
+
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+            ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
             
             if (numLot != null)
             {
-                page = 1;
+                //page = 1;
             }
             else
             {
@@ -2646,7 +2693,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             if (sortOrder != null)
             {
-                page = 1;
+                //page = 1;
             }
             else
             {
@@ -2656,25 +2703,10 @@ namespace WakilRecouvrement.Web.Controllers
 
             ViewBag.CurrentSort = sortOrder;
 
+           
 
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
-          
             
-            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-
-            JoinedList = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where a.Employe.Username.Equals(Session["username"]) /* && f.RappelLe.Date == DateTime.Parse(RappelDate).Date */
-
-                          select new ClientAffecteViewModel
-                          {
-                              Lot = l,
-                              Affectation = a,
-                              Formulaire = f
-
-                          }).ToList();
+            
 
             if (!String.IsNullOrEmpty(numLot))
             {
