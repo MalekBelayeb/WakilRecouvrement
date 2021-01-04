@@ -43,10 +43,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-
-
-
-
         public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
@@ -513,6 +509,15 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
+
+            return listItems;
+        }
+        public IEnumerable<SelectListItem>typeListForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les traitements", Value = "ALL_TRAIT" });
+            listItems.Add(new SelectListItem { Text = "Traitements par date", Value = "DATE_TRAIT" });
 
             return listItems;
         }
@@ -2916,30 +2921,88 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public ActionResult SuiviTraiement(string numLot, string SearchString, string traite, string agent, string currentFilter, string sortOrder, int? page)
+        public ActionResult SuiviTraiement(string numLot,string currentNumLot, string SearchString, string currentFilter, string traite,string currentTraite, string agent,string currentAgent, string traitDate,string currentTraitDate,string type,string currentType, int? page)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
 
-            ViewBag.CurrentSort = sortOrder;
 
             List<ClientAffecteViewModel> JoinedList;
 
             if (SearchString != null)
             {
-                page = 1;
+                // page = 1;
             }
             else
             {
                 SearchString = currentFilter;
             }
 
-            ViewBag.CurrentFilter = SearchString;
+            ViewBag.currentFilter = SearchString;
 
+
+            if (numLot != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                numLot = currentNumLot;
+            }
+
+            ViewBag.currentNumLot = numLot;
+
+            if (type != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                type = currentType;
+            }
+
+            ViewBag.currentType = type;
+
+            if (traite != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                traite = currentTraite;
+            }
+
+            ViewBag.currentTraite = traite;
+
+            if (agent != null)
+            {
+                ///page = 1;
+            }
+            else
+            {
+                agent = currentAgent;
+            }
+
+
+            ViewBag.currentAgent = agent;
+
+            if (traitDate != null)
+            {
+                //page = 1;
+            }
+            else
+            {
+                traitDate = currentTraitDate;
+            }
+
+            ViewBag.currentTraitDate = traitDate;
+
+            ViewBag.page = page;
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
             ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitForDropDown(), "Value", "Text");
+            ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
 
 
             if (!String.IsNullOrEmpty(traite))
@@ -2997,6 +3060,20 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
 
+
+            if (type == "DATE_TRAIT")
+            {
+                
+                if(!String.IsNullOrEmpty(traitDate))
+                {
+                    DateTime d = DateTime.Parse(traitDate);
+                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
+                }
+
+            }
+            
+
+
             if (!String.IsNullOrEmpty(agent))
             {
                 if (int.Parse(agent) != 0)
@@ -3031,7 +3108,7 @@ namespace WakilRecouvrement.Web.Controllers
 
 
 
-
+/*
             switch (sortOrder)
             {
                 case "0":
@@ -3081,7 +3158,7 @@ namespace WakilRecouvrement.Web.Controllers
 
 
                     break;
-            }
+            }*/
 
 
             ViewBag.total = JoinedList.Count();

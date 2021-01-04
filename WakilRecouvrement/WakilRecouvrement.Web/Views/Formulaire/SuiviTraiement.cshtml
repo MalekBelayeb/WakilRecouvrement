@@ -7,10 +7,6 @@
     ViewBag.Title = "";
 }
 
-
-
-
-
 @using (Html.BeginForm("SuiviTraiement", "Formulaire", FormMethod.Get, new { onsubmit = "showLoading()" }))
 {
 
@@ -29,7 +25,7 @@
 
                     @Html.Label("traite", "Etat:", new { @class = "control-label" })
 
-                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentTraite })
 
                 </div>
 
@@ -38,19 +34,28 @@
 
                     @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
 
                 </div>
                 <div class="col-xs-3  col-md-3">
 
                     @Html.Label("agent", "Agent:", new { @class = "control-label " })
 
-                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
 
                 </div>
 
-            </div>
+                <div class="col-xs-3  col-md-3">
 
+                    @Html.Label("type", "Type:", new { @class = "control-label " })
+
+                    @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
+
+                </div>
+                
+   
+       
+            </div>
 
 
             <br />
@@ -59,14 +64,21 @@
             <div class="row">
 
 
-
-                <div class="col-xs-3 col-md-6">
+                <div class="col-xs-3 col-md-3">
 
                     @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
 
-                    @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+                    @Html.TextBox("SearchString", ViewBag.currentFilter as string, new { @class = "form-control" })
 
                 </div>
+                <div id="dateTraitement" style="display:none" class="col-xs-3 col-md-3">
+
+                    <label for="traitDate">Type:</label>
+                    <input class="form-control" name="traitDate" value="@ViewBag.currentTraitDate" id="traitDate" type="date">
+
+                </div>
+
+
 
 
             </div>
@@ -251,6 +263,22 @@
 
 <script>
 
+    document.getElementById("traitDate").valueAsDate = new Date()
+
+    document.getElementById("type").onchange = function () {
+
+        if (document.getElementById("type").value == "ALL_TRAIT") {
+
+            document.getElementById("dateTraitement").style.display = "none"
+
+        } else if (document.getElementById("type").value == "DATE_TRAIT") {
+
+            document.getElementById("dateTraitement").style.display = "block"
+
+        }
+
+    }
+
     function showLoading() {
 
         document.getElementById("submitLoading").style.display = "block";
@@ -265,4 +293,4 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("SuiviTraiement",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType= ViewBag.currentType, currentTraite= ViewBag.currentTraite, currentAgent= ViewBag.currentAgent, currentTraitDate= ViewBag.currentTraitDate }))

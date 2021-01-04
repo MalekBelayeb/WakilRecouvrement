@@ -196,14 +196,21 @@
             {
                 classStyle = "p-3 mb-2 bg-danger text-white";
             }
-            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE )
             {
                 classStyle = "p-3 mb-2 bg-warning text-dark";
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            {
+
+                classStyle = "p-3 mb-2 bg-primary text-dark";
+
             }
             else
             {
                 classStyle = "p-3 mb-2 bg-white text-dark";
             }
+
 
         }
         else
