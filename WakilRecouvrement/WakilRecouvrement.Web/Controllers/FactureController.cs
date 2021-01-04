@@ -227,7 +227,7 @@ namespace WakilRecouvrement.Web.Controllers
             FactureContent factureContent = new FactureContent();
             factureContent.FacNum = factureNum;
             factureContent.Date = DateTime.Today;
-            factureContent.Beneficiere = "Zaitouna Bank";
+            factureContent.Beneficiere = "Zitouna Bank";
             factureContent.PrixHT = tot;
             factureContent.PrixTVA = (tot*19)/100;
             factureContent.TimbreFiscal = 0.600;
@@ -262,12 +262,12 @@ namespace WakilRecouvrement.Web.Controllers
             PdfWriter writer = new PdfWriter(path);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
-            Paragraph title = new Paragraph("Facture Num: "+ factureContent.FacNum).SetTextAlignment(TextAlignment.CENTER).SetBold().SetFontSize(20);
+            Paragraph title = new Paragraph("Facture Num°: "+ factureContent.FacNum).SetTextAlignment(TextAlignment.CENTER).SetBold().SetFontSize(20);
             
-            Paragraph dateLabel = new Paragraph("Date: ").SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
+            Paragraph dateLabel = new Paragraph("Date: ").SetBold().SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
             Paragraph dateValue = new Paragraph(date).SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
             
-            Paragraph beneficiereLabel = new Paragraph("Bénéficiaire: ").SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
+            Paragraph beneficiereLabel = new Paragraph("Bénéficiaire: ").SetBold().SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
             Paragraph beneficiereValue = new Paragraph(factureContent.Beneficiere).SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
             Paragraph signature = new Paragraph("Signature").SetFontSize(18).SetTextAlignment(TextAlignment.RIGHT).SetPaddingRight(25);
 

@@ -1378,26 +1378,26 @@ namespace WakilRecouvrement.Web.Controllers
                  new FormulaireExportable
                  {
                      NomClient = j.Lot.NomClient,
-                     NumLot = j.Lot.NumLot,
+                     //NumLot = j.Lot.NumLot,
                      Compte = j.Lot.Compte,
                      IDClient = j.Lot.IDClient,
-                     Etat = j.Formulaire.EtatClient.ToString(),
+                     //Etat = j.Formulaire.EtatClient.ToString(),
                      RDV = j.Formulaire.DateRDV.ToString()
                  }
 
                  ).ToList();
 
-                dataTable.Columns.Add("NumLot", typeof(string));
+                //dataTable.Columns.Add("NumLot", typeof(string));
                 dataTable.Columns.Add("IDClient", typeof(string));
                 dataTable.Columns.Add("Compte", typeof(string));
                 dataTable.Columns.Add("NomClient", typeof(string));
-                dataTable.Columns.Add("Etat", typeof(string));
+                //dataTable.Columns.Add("Etat", typeof(string));
                 dataTable.Columns.Add("RDV", typeof(string));
 
                 foreach (FormulaireExportable c in newList)
                 {
 
-                    string etat = "";
+                    /*string etat = "";
 
                     if (c.Etat == "SOLDE")
                     {
@@ -1421,14 +1421,14 @@ namespace WakilRecouvrement.Web.Controllers
                     else
                     {
                         etat = "En cours de traitement...";
-                    }
+                    }*/
 
                     DataRow row = dataTable.NewRow();
-                    row["NumLot"] = c.NumLot;
+                    //row["NumLot"] = c.NumLot;
                     row["IDClient"] = c.IDClient;
                     row["Compte"] = c.Compte;
                     row["NomClient"] = c.NomClient;
-                    row["Etat"] = etat;
+                    //row["Etat"] = etat;
                     row["RDV"] = c.RDV;
                     dataTable.Rows.Add(row);
 
@@ -1440,26 +1440,26 @@ namespace WakilRecouvrement.Web.Controllers
                 new FormulaireExportable
                 {
                     NomClient = j.Lot.NomClient,
-                    NumLot = j.Lot.NumLot,
+                    //NumLot = j.Lot.NumLot,
                     Compte = j.Lot.Compte,
                     IDClient = j.Lot.IDClient,
-                    Etat = j.Formulaire.EtatClient.ToString(),
+                    //Etat = j.Formulaire.EtatClient.ToString(),
                     Versement = j.Formulaire.MontantVerseDeclare.ToString()
                 }
 
                 ).ToList();
 
-                dataTable.Columns.Add("NumLot", typeof(string));
+                //dataTable.Columns.Add("NumLot", typeof(string));
                 dataTable.Columns.Add("IDClient", typeof(string));
                 dataTable.Columns.Add("Compte", typeof(string));
                 dataTable.Columns.Add("NomClient", typeof(string));
-                dataTable.Columns.Add("Etat", typeof(string));
+                //dataTable.Columns.Add("Etat", typeof(string));
                 dataTable.Columns.Add("Versement", typeof(string));
 
                 foreach (FormulaireExportable c in newList)
                 {
 
-                    string etat = "";
+                    /*string etat = "";
 
                     if (c.Etat == "SOLDE")
                     {
@@ -1475,20 +1475,20 @@ namespace WakilRecouvrement.Web.Controllers
                     else if (c.Etat == "A_VERIFIE")
                     {
 
-                        etat = "A verifié";
+                        etat = "à verifier";
 
                     }
                     else
                     {
                         etat = "En cours de traitement...";
-                    }
+                    }*/
 
                     DataRow row = dataTable.NewRow();
-                    row["NumLot"] = c.NumLot;
+                    //row["NumLot"] = c.NumLot;
                     row["IDClient"] = c.IDClient;
                     row["Compte"] = c.Compte;
                     row["NomClient"] = c.NomClient;
-                    row["Etat"] = etat;
+                    //row["Etat"] = etat;
                     row["Versement"] = c.Versement;
                     dataTable.Rows.Add(row);
 
@@ -1501,25 +1501,25 @@ namespace WakilRecouvrement.Web.Controllers
                 new FormulaireExportable
                 {
                     NomClient = j.Lot.NomClient,
-                    NumLot = j.Lot.NumLot,
+                    //NumLot = j.Lot.NumLot,
                     Compte = j.Lot.Compte,
                     IDClient = j.Lot.IDClient,
-                    Etat = j.Formulaire.EtatClient.ToString(),
+                    //Etat = j.Formulaire.EtatClient.ToString(),
                 }
 
                 ).ToList();
 
-                dataTable.Columns.Add("NumLot", typeof(string));
+                //dataTable.Columns.Add("NumLot", typeof(string));
                 dataTable.Columns.Add("IDClient", typeof(string));
                 dataTable.Columns.Add("Compte", typeof(string));
                 dataTable.Columns.Add("NomClient", typeof(string));
-                dataTable.Columns.Add("Etat", typeof(string));
+                //dataTable.Columns.Add("Etat", typeof(string));
                 dataTable.Columns.Add("Montant", typeof(string));
 
                 foreach (FormulaireExportable c in newList)
                 {
 
-                    string etat = "";
+                    /*string etat = "";
 
                     if (c.Etat == "SOLDE")
                     {
@@ -1541,14 +1541,14 @@ namespace WakilRecouvrement.Web.Controllers
                     else
                     {
                         etat = "En cours de traitement...";
-                    }
+                    }*/
 
                     DataRow row = dataTable.NewRow();
-                    row["NumLot"] = c.NumLot;
+                    //row["NumLot"] = c.NumLot;
                     row["IDClient"] = c.IDClient;
                     row["Compte"] = c.Compte;
                     row["NomClient"] = c.NomClient;
-                    row["Etat"] = etat;
+                    //row["Etat"] = etat;
                     dataTable.Rows.Add(row);
 
                 }
@@ -1560,24 +1560,24 @@ namespace WakilRecouvrement.Web.Controllers
                 new FormulaireExportable
                 {
                     NomClient = j.Lot.NomClient,
-                    NumLot = j.Lot.NumLot,
+                   //NumLot = j.Lot.NumLot,
                     Compte = j.Lot.Compte,
                     IDClient = j.Lot.IDClient,
-                    Etat = j.Formulaire.EtatClient.ToString()
+                    //Etat = j.Formulaire.EtatClient.ToString()
                 }
 
                 ).ToList();
 
-                dataTable.Columns.Add("NumLot", typeof(string));
+                //dataTable.Columns.Add("NumLot", typeof(string));
                 dataTable.Columns.Add("IDClient", typeof(string));
                 dataTable.Columns.Add("Compte", typeof(string));
                 dataTable.Columns.Add("NomClient", typeof(string));
-                dataTable.Columns.Add("Etat", typeof(string));
+                //dataTable.Columns.Add("Etat", typeof(string));
 
                 foreach (FormulaireExportable c in newList)
                 {
 
-                    string etat = "";
+                   /* string etat = "";
 
                     if (c.Etat == "SOLDE")
                     {
@@ -1594,13 +1594,13 @@ namespace WakilRecouvrement.Web.Controllers
                     {
                         etat = "En cours de traitement...";
                     }
-
+                   */
                     DataRow row = dataTable.NewRow();
-                    row["NumLot"] = c.NumLot;
+                    //row["NumLot"] = c.NumLot;
                     row["IDClient"] = c.IDClient;
                     row["Compte"] = c.Compte;
                     row["NomClient"] = c.NomClient;
-                    row["Etat"] = etat;
+                    //row["Etat"] = etat;
                     dataTable.Rows.Add(row);
 
                 }
@@ -1776,7 +1776,7 @@ namespace WakilRecouvrement.Web.Controllers
                    }
                    );
 
-                int x = JoinedList.Count();
+                int x = totalRecords;
                 ViewBag.x = x;
                 var info = new { nbTotal = x, subject = subject, body = body, to = To };
 
@@ -1819,7 +1819,8 @@ namespace WakilRecouvrement.Web.Controllers
                 //Add a new worksheet to workbook with the Datatable name
                 // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
                 Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
-                
+
+                excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
 
                 excelWorkSheet.Name = table.TableName;
                 
@@ -1873,8 +1874,14 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
             mm.Subject = subject;
-            mm.Body = body;
-            mm.IsBodyHtml = false;
+            mm.Body = String.Format(@"Bonjour Mr,
+                     <br />
+                     <br /> {0}
+                     <br />
+                     <br />
+                     Bien cordialement.                     
+                     ", body) ;
+                mm.IsBodyHtml = true;
 
             mm.Attachments.Add(new Attachment(path));
             SmtpClient smtp = new SmtpClient("smtp.gmail.com");

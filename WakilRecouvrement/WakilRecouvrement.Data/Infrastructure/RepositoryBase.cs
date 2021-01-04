@@ -74,7 +74,14 @@ namespace MyFinance.Data.Infrastructure
         }
         public T Get(Expression<Func<T, bool>> where)
         {
-            return dbset.Where(where).FirstOrDefault<T>();
+            try
+            {
+                return dbset.Where(where).FirstOrDefault<T>();
+
+            }catch(InvalidOperationException e)
+            {
+                return null;
+            }
         }
 
 
