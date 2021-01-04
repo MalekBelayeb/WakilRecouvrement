@@ -24,12 +24,14 @@ namespace WakilRecouvrement.Web
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                 "~/Scripts/bootstrap.bundle.min.js"));
-
+            bundles.Add(new ScriptBundle("~/bundles/ekko-lightbox").Include(
+                "~/Scripts/ekko-lightbox.js"));
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/adminlte/plugins/fontawesome-free/css/all.min.css",
                       "~/adminlte/css/adminlte.min.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/ekko-lightbox.css"));
            
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
               "~/Content/themes/base/jquery.ui.core.css",
@@ -52,6 +54,7 @@ namespace WakilRecouvrement.Web
 
             bundles.Add(new ScriptBundle("~/adminlte/js").Include(
                  "~/adminlte/js/adminlte.min.js"));
+            
         }
     }
 }

@@ -49,12 +49,10 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
         {
-
-            
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
 
-            Debug.WriteLine(pageSave);
+
             ViewBag.page = pageSave;
             ViewBag.CurrentSort = currentSort;
             ViewBag.currentFilterNumLot = currentFilterNumLot;
@@ -546,7 +544,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase PostedFile,string pageSave,string CurrentSortSave, string currentFilterNumLotSave,string currentFilterTraiteSave)
+        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase[] PostedFile,string pageSave,string CurrentSortSave, string currentFilterNumLotSave,string currentFilterTraiteSave)
         {
             ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
             
@@ -696,10 +694,14 @@ namespace WakilRecouvrement.Web.Controllers
                              where f.FormulaireId == Formulaire.FormulaireId
                              select new Lot
                              {
+
+                                 Compte = l.Compte,
+                                 IDClient = l.IDClient,
                                  NumLot = l.NumLot,
                                  SoldeDebiteur = l.SoldeDebiteur
 
                              }).FirstOrDefault();
+
 
             if(Joinedlot.SoldeDebiteur=="" || Joinedlot.SoldeDebiteur==null)
             {
@@ -738,54 +740,47 @@ namespace WakilRecouvrement.Web.Controllers
 
             FormulaireService.Update(Formulaire);
             FormulaireService.Commit();
-
-            if (PostedFile != null)
+            
+            if (PostedFile != null  )
             {
-                string filePath = string.Empty;
-                string path = Server.MapPath("~/Uploads/Recu/");
-                if (!Directory.Exists(path))
+                if(PostedFile.Length > 0)
                 {
-                    Directory.CreateDirectory(path);
+
+                    foreach (HttpPostedFileBase postedFile in PostedFile)
+                    { 
+                        if(postedFile == null)
+                            return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
+                    }
+
+                    string filePath = string.Empty;
+                    string path = Server.MapPath("~/Uploads/Recu/");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string recuPath = path + Formulaire.FormulaireId;
+
+                    if (!Directory.Exists(recuPath))
+                    {
+                        Directory.CreateDirectory(recuPath);
+                    }
+
+                    foreach (HttpPostedFileBase postedFile in PostedFile)
+                    {
+                        string filename = Directory.GetFiles(recuPath).Length + 1 + "_" + Joinedlot.IDClient + "_" + Joinedlot.Compte;
+                        filePath = recuPath + "/" + filename + Path.GetExtension(postedFile.FileName);
+                        postedFile.SaveAs(filePath);
+                    }
                 }
-                filePath = path + Formulaire.FormulaireId.ToString() + Path.GetExtension(PostedFile.FileName);
-
-                PostedFile.SaveAs(filePath);
-            }
-
-
-            switch (Formulaire.EtatClient)
-            {
-                case Note.SOLDE:
-                    NotificationService.Add(new Notification { Message = "Nouveau client soldé avec un versement de " + Formulaire.MontantVerseDeclare + " TND", FormulaireId = Formulaire.FormulaireId, ToSingle = "", ToRole = "admin", Type = "SOLDE", From = Session["username"] + "", Status = "UNSEEN", AddedIn = DateTime.Now });
-
-                    NotificationService.Commit();
-
-                    break;
-
-                case Note.SOLDE_TRANCHE:
-                    NotificationService.Add(new Notification { Message = "Nouvelle tranche de somme " + Formulaire.MontantVerseDeclare + " TND a été versé ", FormulaireId = Formulaire.FormulaireId, ToSingle = "", ToRole = "admin", Type = "SOLDE_TRANCHE", From = Session["username"] + "", Status = "UNSEEN", AddedIn = DateTime.Now });
-
-                    NotificationService.Commit();
-
-                    break;
-
-                case Note.A_VERIFIE:
-
-                    NotificationService.Add(new Notification { Message = "Un client a declaré avoir versé une somme de " + Formulaire.MontantVerseDeclare + " TND", FormulaireId = Formulaire.FormulaireId, ToSingle = "", ToRole = "admin", Type = "A_VERIFIE", From = Session["username"] + "", Status = "UNSEEN", AddedIn = DateTime.Now });
-
-                    NotificationService.Commit();
-
-                    break;
+               
 
 
             }
-
+ 
             //return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5",page=5 });
 
-            Debug.WriteLine(currentFilterTraiteSave);
-            Debug.WriteLine(currentFilterNumLotSave);
-            Debug.WriteLine(pageSave);
-            Debug.WriteLine(CurrentSortSave);
             return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page=pageSave });
         }
 
@@ -838,15 +833,18 @@ namespace WakilRecouvrement.Web.Controllers
         }
         public string GetTraiteLe(Affectation affectation)
         {
-            if (affectation.Formulaires.Count() == 0)
+
+            List<Formulaire> formulaires = FormulaireService.GetAll().Where(f => f.AffectationId == affectation.AffectationId).ToList();
+
+
+            if (formulaires.Count() == 0)
             {
                 return "";
             }
             else
             {
 
-                return affectation.Formulaires.LastOrDefault().IfNotNull(i => i.TraiteLe).ToString();
-
+                return formulaires.OrderByDescending(f => f.TraiteLe).FirstOrDefault().TraiteLe.ToString(); 
             }
 
         }
@@ -855,6 +853,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
+            
             string path = Server.MapPath("~/Uploads/Recu/");
             if (!Directory.Exists(path))
             {
@@ -879,6 +878,8 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult ValiderTraitement(bool IsValid, string numLot, string traite, string agent)
         {
+
+            
             string status = "";
             if (IsValid == true)
                 status = "VERIFIE";
@@ -902,29 +903,30 @@ namespace WakilRecouvrement.Web.Controllers
                 JoinedList = (from f in FormulaireService.GetAll()
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
-                              orderby f.TraiteLe descending
+                              
                               select new ClientAffecteViewModel
                               {
                                   Formulaire = f,
                                   Lot = l,
                                   Affectation = a
 
-                              }).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
-
+                              }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
+                
             }
             else
             {
                 JoinedList = (from f in FormulaireService.GetAll()
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
-                              orderby f.TraiteLe descending
+                              
                               select new ClientAffecteViewModel
                               {
                                   Formulaire = f,
                                   Lot = l,
                                   Affectation = a
 
-                              }).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+                              }).OrderByDescending(j=>j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+            
             }
 
             if (numLot != "0")
@@ -940,21 +942,25 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
-
-
-
             JsonResult result = new JsonResult();
 
             try
             {
 
                 string search = Request.Form.GetValues("search[value]")[0];
-                string draw = Request.Form.GetValues("draw")[0];
+                
+                
+                string draw = Request.Form.GetValues("draw")[0];        
                 string order = Request.Form.GetValues("order[0][column]")[0];
                 string orderDir = Request.Form.GetValues("order[0][dir]")[0];
                 int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
                 int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
-
+                
+                if(order == "0" && orderDir =="asc")
+                {
+                    order = "6";
+                    orderDir = "DESC";
+                }
                 int totalRecords = JoinedList.Count();
 
                 if (!string.IsNullOrEmpty(search) &&
@@ -997,17 +1003,18 @@ namespace WakilRecouvrement.Web.Controllers
                        j.Affectation.AffectationId,
                        VerifieLe = j.Formulaire.VerifieLe.ToString(),
                        DateAff = j.Affectation.DateAffectation.ToString(),
-                       TraiteLe = GetTraiteLe(j.Affectation).ToString(),
+                       TraiteLe = j.Formulaire.TraiteLe.ToString("dd/MM/yyyy HH:mm:ss"),
                        Etat = GetEtat(j.Formulaire).ToString(),
                        FormulaireId = j.Formulaire.FormulaireId,
                        ContactBanque = j.Formulaire.ContacteBanque,
                        Image = getImagePath(j.Formulaire),
-                       descAutre = j.Formulaire.DescriptionAutre
+                       descAutre = j.Formulaire.DescriptionAutre,
+                       NBRecu = getImagePathNB(j.Formulaire)
                    }
                    );
                 int x = JoinedList.Count();
 
-                var info = new { nbTotal = x };
+                var info = new { nbTotal = totalRecords, draw = Convert.ToInt32(draw) };
 
                 result = this.Json(new
                 {
@@ -1076,38 +1083,35 @@ namespace WakilRecouvrement.Web.Controllers
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => long.Parse(j.Lot.NumLot)).ToList()
                                                                                                  : data.OrderBy(j => long.Parse(j.Lot.NumLot)).ToList();
                         break;
-                    case "3":
+                    case "5":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Formulaire.MontantVerseDeclare).ToList()
                                                                                                  : data.OrderBy(j => j.Formulaire.MontantVerseDeclare).ToList();
                         break;
 
-                    case "4":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => GetTraiteLe(j.Affectation)).ToList()
-                                                                                                 : data.OrderBy(j => GetTraiteLe(j.Affectation)).ToList();
-                        break;
-                    case "5":
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Affectation.DateAffectation).ToList()
-                                                                                                 : data.OrderBy(j => j.Affectation.DateAffectation).ToList();
-                        break;
                     case "6":
+                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Formulaire.TraiteLe).ToList()
+                                                                                                 : data.OrderBy(j => j.Formulaire.TraiteLe).ToList();
+                        break;
+                     case "7":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Affectation.EmployeId).ToList()
                                                                                                  : data.OrderBy(j => j.Affectation.EmployeId).ToList();
                         break;
 
-                    case "7":
+                    case "8":
 
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList()
                                                                                               : data.OrderBy(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList();
 
                         break;
-                    case "10":
+                    case "11":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.NomClient).ToList()
                                                                                                    : data.OrderBy(j => j.Lot.NomClient).ToList();
                         break;
 
                     default:
-                        lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => GetTraiteLe(j.Affectation)).ToList()
-                                                                                                   : data.OrderBy(j => GetTraiteLe(j.Affectation)).ToList();
+
+                        lst = data.OrderByDescending(j => j.Formulaire.TraiteLe).ToList();
+
                         break;
                 }
             }
@@ -1896,23 +1900,36 @@ namespace WakilRecouvrement.Web.Controllers
 
         public string getImagePath(Formulaire formulaire)
         {
-            string path = "";
-            foreach (string f in Directory.GetFiles(Server.MapPath("~/Uploads/Recu/")))
+            string path = Server.MapPath("~/Uploads/Recu/") + formulaire.FormulaireId;
+            List<string> urlImages =new List<string>(); 
+            if(!Directory.Exists(path))
             {
-                string extension = Path.GetExtension(f);
-                string name = Path.GetFileName(f);
-                if (name.Equals(formulaire.FormulaireId + extension))
-                {
-
-                    path = name;
-
-                }
-
+                return "";
             }
-            return path;
+            else
+            {
+                string uri = HttpContext.Request.Url.AbsoluteUri.Replace(HttpContext.Request.Url.LocalPath, "/WakilRecouvrement/" + "/Uploads/Recu/" + formulaire.FormulaireId)+"/";
+                Debug.WriteLine(uri);
+                foreach(string file in Directory.GetFiles(path))
+                {
+                    urlImages.Add(uri + Path.GetFileName(file) );
+                }
+                return String.Join(",", urlImages.ToArray());
+            }
         }
 
-
+        public string getImagePathNB(Formulaire formulaire)
+        {
+            string path = Server.MapPath("~/Uploads/Recu/") + formulaire.FormulaireId;
+            if (!Directory.Exists(path))
+            {
+                return "0";
+            }
+            else
+            {
+                return Directory.GetFiles(path).Length + "";
+            }
+        }
 
 
         [HttpPost]
@@ -2166,7 +2183,7 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Lot = l,
 
-                          }).ToList();
+                          }).Where(j=> verifMesRDV(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
 
 
             if (!String.IsNullOrEmpty(numLot))
@@ -2316,7 +2333,7 @@ namespace WakilRecouvrement.Web.Controllers
                       Affectation = a,
                       Lot = l,
 
-                  }).Count();
+                  }).Where(j => verifMesRDV(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
 
 
 
@@ -2331,7 +2348,7 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Formulaire = f
 
-                          }).Count();
+                          }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
 
 
             rejetes = (from f in FormulaireService.GetAll()
@@ -2345,7 +2362,7 @@ namespace WakilRecouvrement.Web.Controllers
                            Affectation = a,
                            Formulaire = f
 
-                       }).Count();
+                       }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
 
 
 
@@ -2625,6 +2642,53 @@ namespace WakilRecouvrement.Web.Controllers
             return View(joinedList.ToList());
         }
 
+        public bool verifMesRappels(int affId,int formId)
+        {
+
+            List<Formulaire> formulaires = new List<Formulaire>();
+            Formulaire formulaireRappel = FormulaireService.GetById(formId);
+
+            formulaires = FormulaireService.GetAll().Where(f => f.AffectationId == affId ).ToList();
+            formulaires = formulaires.Where(f => f.TraiteLe > formulaireRappel.TraiteLe).ToList(); 
+            int res = formulaires.Where(f => f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.RDV || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE).Count();
+            if(res==0)
+            {
+                return true;
+
+
+            }
+            else
+            {
+                return false;
+
+            }
+
+        }
+
+        public bool verifMesRDV(int affId, int formId)
+        {
+
+            List<Formulaire> formulaires = new List<Formulaire>();
+            Formulaire formulaireRappel = FormulaireService.GetById(formId);
+
+            formulaires = FormulaireService.GetAll().Where(f => f.AffectationId == affId).ToList();
+            formulaires = formulaires.Where(f => f.TraiteLe > formulaireRappel.TraiteLe).ToList();
+            int res = formulaires.Where(f => f.EtatClient == Note.A_VERIFIE  || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE).Count();
+            if (res == 0)
+            {
+                return true;
+
+
+            }
+            else
+            {
+                return false;
+
+            }
+
+        }
+
+
 
         public ActionResult MesRappels(string numLot,string currentFilterNumLot,string CurrentSort, string RappelDate, string sortOrder, int? page)
         {
@@ -2632,16 +2696,16 @@ namespace WakilRecouvrement.Web.Controllers
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
 
-
-
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
             if (Request.Form["RappelDate"]==null)
             {
+
                 JoinedList = (from f in FormulaireService.GetMany(f=>f.EtatClient == Note.RAPPEL)
                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                               join l in LotService.GetAll() on a.LotId equals l.LotId
-                              where a.Employe.Username.Equals(Session["username"]) 
+                              where a.Employe.Username.Equals(Session["username"])
+                             
 
                               select new ClientAffecteViewModel
                               {
@@ -2649,11 +2713,13 @@ namespace WakilRecouvrement.Web.Controllers
                                   Affectation = a,
                                   Formulaire = f
 
-                              }).OrderByDescending(o=>o.Formulaire.TraiteLe).ToList();
+                              }).OrderByDescending(o=>o.Formulaire.TraiteLe).Where(j=> verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
 
             }
             else
             {
+                Debug.WriteLine("qqq");
+
                 DateTime d = DateTime.Now;
 
                 if (DateTime.TryParse(RappelDate, out d))
@@ -2663,14 +2729,13 @@ namespace WakilRecouvrement.Web.Controllers
                                   join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                   join l in LotService.GetAll() on a.LotId equals l.LotId
                                   where a.Employe.Username.Equals(Session["username"]) && f.RappelLe.Date == d.Date
-
                                   select new ClientAffecteViewModel
                                   {
                                       Lot = l,
                                       Affectation = a,
                                       Formulaire = f
 
-                                  }).OrderByDescending(o => o.Formulaire.TraiteLe).ToList();
+                                  }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
                 }
 
             }
@@ -2817,7 +2882,7 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Formulaire = f
 
-                          }).ToList();
+                          }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
 
             if (!String.IsNullOrEmpty(SearchString))
             {

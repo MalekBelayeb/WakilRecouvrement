@@ -9,9 +9,6 @@
 }
 
 
-
-
-
 @using (Html.BeginForm("AffectationList", "Affectation", FormMethod.Post, new { onsubmit = "showLoading()" }))
 {
 
@@ -35,7 +32,7 @@
 
                 @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterNumLot })
 
             </div>
 
@@ -44,7 +41,7 @@
 
                 @Html.Label("traite", "Etat:", new { @class = "control-label" })
 
-                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterTraite })
 
             </div>
 
@@ -59,7 +56,7 @@
 
                 @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
 
-                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
 
             </div>
 
@@ -129,9 +126,14 @@
             Etat
         </th>
         <th>
-            Date affectation
+            Date
         </th>
-
+        <th>
+            Note
+        </th>
+        <th>
+            Traite Le:
+        </th>
         <th>
             Compte
         </th>
@@ -196,50 +198,145 @@
             classStyle = "p-3 mb-2 bg-white text-dark";
         }
 
-     <tr class="@classStyle">
 
-            <td>
-                @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class="btn btn-default" ,id = item.Affectation.AffectationId, msgError = "" }, null)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.NumLot)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Affectation.DateAffectation)
-            </td>
+        string TelPortableFnClassStyle = "";
+        string TelFixeFnClassStyle = "";
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.Compte)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.IDClient)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.NomClient)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.TelPortable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.TelFixe)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.Adresse)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lot.Numero)
-            </td>
+        if (item.Lot.TelPortableFN)
+        {
+            TelPortableFnClassStyle = "bg-secondary";
+        }
+        else
+        {
+            TelPortableFnClassStyle = "";
 
-        </tr>
+        }
+
+        if (item.Lot.TelFixeFN)
+        {
+            TelFixeFnClassStyle = "bg-secondary";
+            
+        }
+        else
+        {
+            TelFixeFnClassStyle = "";
+
+        }
+
+<tr class="@classStyle">
+
+    <td>
+        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }, null)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NumLot)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+    </td>
+    <td>
+
+
+        @if (item.Formulaire == null)
+        {
+            <text></text>
+        }
+        else
+        {
+            if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV)
+            {
+                if (item.Formulaire.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Formulaire.DateRDV)
+                }
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL)
+            {
+                if (item.Formulaire.RappelLe.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Formulaire.RappelLe)
+                }
+            }
+            else
+            {
+                <text></text>
+            }
+
+        }
+
+
+    </td>
+
+    <td>
+
+        @if (item.Formulaire == null)
+        {
+            <text></text>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.Formulaire.DescriptionAutre)
+        }
+
+    </td>
+    <td>
+
+        @if (item.Formulaire == null)
+        {
+            <text></text>
+        }
+        else
+        {
+            if (item.Formulaire.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+            {
+                <text></text>
+            }
+            else
+            {
+                @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+            }
+        }
+
+
+    </td>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Compte)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.IDClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NomClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+    </td>
+    <td class="@TelPortableFnClassStyle">
+        @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+    </td>
+    <td class="@TelFixeFnClassStyle">
+        @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Adresse)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Numero)
+    </td>
+
+</tr>
     }
 
 </table>
@@ -261,5 +358,5 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("AffectationList",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }))
 

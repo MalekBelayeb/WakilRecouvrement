@@ -7,6 +7,7 @@ namespace WakilRecouvrement.Web.Models.ViewModel
 {
     public class FactureContent
     {
+        public string FacNum { get; set; }
         public DateTime Date { get; set; }
         public string Beneficiere { get; set; }
         public string Lots { get; set; }

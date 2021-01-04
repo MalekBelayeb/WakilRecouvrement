@@ -43,11 +43,26 @@ namespace WakilRecouvrement.Web.Controllers
             factureService = new FactureService();
         }
 
+        public IEnumerable<SelectListItem> NumLotListForDropDown()
+        {
+
+            List<Lot> Lots = LotService.GetAll().ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
+
+            Lots.DistinctBy(l => l.NumLot).ForEach(l => {
+                listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
+            });
+
+            return listItems;
+        }
 
         public ActionResult genererFacture(int? page)
         {
 
             List<Facture> factureList = factureService.GetAll().OrderByDescending(f=>f.DateExtrait).ToList();
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
 
             ViewBag.total = factureList.Count();
@@ -107,40 +122,60 @@ namespace WakilRecouvrement.Web.Controllers
             return JoinedList.FirstOrDefault();
         }
 
-        public ActionResult extraireFacture(string debutDate, string finDate)
+        public ActionResult extraireFacture(string numLot,string factureNum,string pourcentage, string debutDate, string finDate)
         {
-
+            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
             DateTime startDate = DateTime.Parse(debutDate);
             DateTime endDate = DateTime.Parse(finDate);
             double trancheTot = 0;
             double soldeTot = 0;
             double tot = 0;
+            float revenuParOp = float.Parse(pourcentage.Replace(".",","));
             List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
             List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
             List<ClientAffecteViewModel> AnnexeJoinedList = new List<ClientAffecteViewModel>();
 
-            JoinedList = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where f.Status == Domain.Entities.Status.VERIFIE
-                          select new ClientAffecteViewModel
-                          {
+            if(numLot == "0")
+            {
+                JoinedList = (from f in FormulaireService.GetAll()
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              where f.Status == Domain.Entities.Status.VERIFIE 
+                              select new ClientAffecteViewModel
+                              {
 
-                              Formulaire = f,
-                              Affectation = a,
-                              Lot = l,
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
 
-                          }).Where(j=>j.Formulaire.TraiteLe.Date>=startDate.Date && j.Formulaire.TraiteLe.Date<=endDate.Date).ToList();
+                              }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
 
+            }
+            else
+            {
+                JoinedList = (from f in FormulaireService.GetAll()
+                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                              join l in LotService.GetAll() on a.LotId equals l.LotId
+                              where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot)
+                              select new ClientAffecteViewModel
+                              {
 
-            foreach(ClientAffecteViewModel cvm in JoinedList)
+                                  Formulaire = f,
+                                  Affectation = a,
+                                  Lot = l,
+
+                              }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+            }
+
+            foreach (ClientAffecteViewModel cvm in JoinedList)
             {
 
                 if(cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
                 {
-                    trancheTot += (cvm.Formulaire.MontantVerseDeclare * 15) / 100;
+                    trancheTot += (cvm.Formulaire.MontantVerseDeclare * revenuParOp) / 100;
                     cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                    cvm.recouvre = cvm.Formulaire.MontantVerseDeclare;
                     AnnexeJoinedList.Add(cvm);
 
                 }
@@ -151,15 +186,18 @@ namespace WakilRecouvrement.Web.Controllers
                     if(TempJoinedList.Count() == 0)
                     {
 
-                        soldeTot += (cvm.Formulaire.MontantDebInitial * 15) / 100;
-                        cvm.vers = cvm.Formulaire.MontantDebInitial;
+                        soldeTot += (cvm.Formulaire.MontantDebInitial * revenuParOp) / 100;
+                        cvm.recouvre = cvm.Formulaire.MontantDebInitial;
+                        cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                        
                         AnnexeJoinedList.Add(cvm);
                     }
                     else
                     {
 
-                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * 15) / 100;
-                        cvm.vers = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
+                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * revenuParOp) / 100;
+                        cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                        cvm.recouvre = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
                         AnnexeJoinedList.Add(cvm);
 
                     }
@@ -187,12 +225,14 @@ namespace WakilRecouvrement.Web.Controllers
 
             tot = soldeTot + trancheTot;
             FactureContent factureContent = new FactureContent();
+            factureContent.FacNum = factureNum;
             factureContent.Date = DateTime.Today;
             factureContent.Beneficiere = "Zaitouna Bank";
             factureContent.PrixHT = tot;
             factureContent.PrixTVA = (tot*19)/100;
-            factureContent.PrixTTC = tot + factureContent.PrixTVA;
             factureContent.TimbreFiscal = 0.600;
+
+            factureContent.PrixTTC = tot + factureContent.PrixTVA;
 
             string annexeFileName = "Annexe_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
             string factureFileName = "Facture_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".pdf";
@@ -209,7 +249,7 @@ namespace WakilRecouvrement.Web.Controllers
             };
             factureService.Add(facture);
             factureService.Commit();
-            GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe);
+            GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j=>j.recouvre)));
             GeneratePDF(pathFacture,lotsNames, factureContent);
 
             return RedirectToAction("genererFacture", new { page=1 });
@@ -222,7 +262,7 @@ namespace WakilRecouvrement.Web.Controllers
             PdfWriter writer = new PdfWriter(path);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
-            Paragraph title = new Paragraph("Facture "+ date).SetTextAlignment(TextAlignment.CENTER).SetBold().SetFontSize(20);
+            Paragraph title = new Paragraph("Facture Num: "+ factureContent.FacNum).SetTextAlignment(TextAlignment.CENTER).SetBold().SetFontSize(20);
             
             Paragraph dateLabel = new Paragraph("Date: ").SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
             Paragraph dateValue = new Paragraph(date).SetTextAlignment(TextAlignment.LEFT).SetFontSize(15);
@@ -281,9 +321,6 @@ namespace WakilRecouvrement.Web.Controllers
             table.AddCell(cell24);
 
 
-
-
-
             Table table2 = new Table(UnitValue.CreatePercentArray(6)).UseAllAvailableWidth();
 
 
@@ -323,7 +360,7 @@ namespace WakilRecouvrement.Web.Controllers
             Cell cell_2_42 = new Cell(4, 3)
                  .SetTextAlignment(TextAlignment.CENTER)
                  .SetBackgroundColor(ColorConstants.GRAY)
-                      .Add(new Paragraph(String.Format("{0:0.000}", factureContent.PrixTTC)));
+                      .Add(new Paragraph(String.Format("{0:0.000}", factureContent.PrixTTC+factureContent.TimbreFiscal)));
 
 
             table2.AddCell(cell_2_11);
@@ -393,19 +430,24 @@ namespace WakilRecouvrement.Web.Controllers
             newList = list.Select(j =>
                new FormulaireExportable
                {
+
                    IDClient = j.Lot.IDClient,
                    Compte = j.Lot.Compte,
                    NomClient = j.Lot.NomClient,
-                   Versement = String.Format("{0:0.000}", j.vers)
+                   Versement = String.Format("{0:0.000}", j.vers),
+                   MontantDebInitial = String.Format("{0:0.000}", j.Lot.SoldeDebiteur),
+                   MontantRecouvre = String.Format("{0:0.000}", j.recouvre)
+
                }
 
                ).ToList();
-
+            
             dataTable.Columns.Add("IDClient", typeof(string));
             dataTable.Columns.Add("Compte", typeof(string));
             dataTable.Columns.Add("NomClient", typeof(string));
-            dataTable.Columns.Add("Versement", typeof(string));
-
+            dataTable.Columns.Add("Solde débiteur", typeof(string));
+            dataTable.Columns.Add("Montant versé", typeof(string));
+            dataTable.Columns.Add("Montant recouvré", typeof(string));
 
             foreach (FormulaireExportable c in newList)
             {
@@ -414,7 +456,10 @@ namespace WakilRecouvrement.Web.Controllers
                 row["IDClient"] = c.IDClient;
                 row["Compte"] = c.Compte;
                 row["NomClient"] = c.NomClient;
-                row["Versement"] = c.Versement;
+                row["Solde débiteur"] = c.MontantDebInitial;
+                row["Montant versé"] = c.Versement;
+                row["Montant recouvré"] = c.MontantRecouvre;
+                
                 dataTable.Rows.Add(row);
 
             }
@@ -422,7 +467,7 @@ namespace WakilRecouvrement.Web.Controllers
             return dataTable;
         }
 
-        public static void GenerateExcel(DataTable dataTable, string path)
+        public static void GenerateExcel(DataTable dataTable, string path,string tot)
         {
 
             dataTable.TableName = "Table1";
@@ -442,12 +487,12 @@ namespace WakilRecouvrement.Web.Controllers
                 // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
                 Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
                 
-
                 excelWorkSheet.Name = table.TableName;
-
+                excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
                 // add all the columns
                 for (int i = 1; i < table.Columns.Count + 1; i++)
                 {
+                    
                     excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
                     excelWorkSheet.Cells[1, i].Font.Bold = true;
                     excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
@@ -475,7 +520,23 @@ namespace WakilRecouvrement.Web.Controllers
 
                     }
                 }
+                excelWorkSheet.Cells[table.Rows.Count+2, 5] = "Total";
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].Font.Size = 14;
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].Font.Bold = true;
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                excelWorkSheet.Cells[table.Rows.Count+2, 5].Borders.Weight = 2;
+               
+                excelWorkSheet.Cells[table.Rows.Count+2, 6] = tot;
+                excelWorkSheet.Cells[table.Rows.Count+2, 6].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                excelWorkSheet.Cells[table.Rows.Count+2, 6].Font.Size = 12;
+                excelWorkSheet.Cells[table.Rows.Count+2, 6].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                excelWorkSheet.Cells[table.Rows.Count+2, 6].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                excelWorkSheet.Cells[table.Rows.Count+2, 6].Borders.Weight = 2;
+
             }
+
             // excelWorkBook.Save(); -> this will save to its default location
 
             excelWorkBook.SaveAs(path); // -> this will do the custom
@@ -503,11 +564,18 @@ namespace WakilRecouvrement.Web.Controllers
             string fullPath = originPath+ FileName;
             string rootpath = Server.MapPath("~/")+ "/Uploads/Facture/";
 
-            byte[] fileBytes = System.IO.File.ReadAllBytes(rootpath + FileName);
-            string fileName = FileName;
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            try
+            {
+                byte[] fileBytes = System.IO.File.ReadAllBytes(rootpath + FileName);
+                string fileName = FileName;
+                return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            }
+            catch (FileNotFoundException e)
+            {
+                return null;
+            }
+           
         }
-
 
     }
 }

@@ -6,17 +6,25 @@
 
 }
 
-<script src="~/Scripts/jquery.min.js"></script>
+<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
+<script src="~/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="~/Scripts/notify.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+  
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
 
 <link href="~/Content/dataTables.bootstrap.min.css" rel="stylesheet" />
 <link href="~/Content/responsive.bootstrap.min.css" rel="stylesheet" />
-<link href="~/Content/zoomImage.css" rel="stylesheet" />
+
 <script src="~/Scripts/jquery.dataTables.min.js"></script>
-<script src="~/Scripts/dataTables.bootstrap4.min.js">
-</script>
+
+<script src="~/Scripts/dataTables.bootstrap4.min.js"></script>
+
+
+<script src="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.js"></script>
+<link rel="stylesheet" href="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.css" />
+
 
 
 
@@ -61,7 +69,7 @@
         <span><strong id="nbTotal"></strong></span>
 
     </div>
-
+    <span id="page" hidden></span>
 </div>
 
 
@@ -116,8 +124,9 @@
             <th>Verification</th>
             <th>Recu</th>
             <th>Etat Client</th>
+            <th>Note</th>
             <th>Montant Versé/Déclaré </th>
-            <th>Affecté le:</th>
+
             <th>Traité le:</th>
             <th>Agent</th>
             <th>Solde débiteur</th>
@@ -137,13 +146,25 @@
 
 
 
-
 <script>
 
     $(document).ready(function () {
         $.noConflict();
 
+
+
+        /*
+        $('.filter-container').filterizr({ gutterPixels: 3 });
+        $('.btn[data-filter]').on('click', function () {
+            $('.btn[data-filter]').removeClass('active');
+            $(this).addClass('active');
+        });
+        */
+
+
+
         var Table = DemoDatatable();
+        
 
         $("#importFile").hide()
 
@@ -186,7 +207,7 @@
                 data: { id: id, valid: valid },
                 success: function (data) {
 
-                    Table = DemoDatatable();
+                    Table.draw(false)                    
 
                 }
             });
@@ -202,7 +223,8 @@
                 data: { id: id, valid: valid, montant:  montant },
                 success: function (data) {
 
-                    Table = DemoDatatable();
+
+                    Table.draw(false)                    
 
                 }
             });
@@ -212,6 +234,7 @@
 
 
         $(document).on('click', 'tbody  .verifie', function () {
+
             var data_row = Table.row($(this).closest('tr')).data();
 
             validerTraitement(data_row["FormulaireId"], true)
@@ -253,6 +276,7 @@
 
 
     function DemoDatatable() {
+
         var table = $("#demodata").DataTable({
 
 
@@ -266,7 +290,7 @@
                 "url": '@Url.Action("ValiderTraitement", "Formulaire")',
                 "type": "POST",
                 "datatype": "json",
-                "data": { IsValid: false, numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
+                "data": { IsValid: false, numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val(), drawSave: document.getElementById("page").innerHTML }
 
             },
             "columns": [
@@ -289,16 +313,51 @@
                 }
                 , {
                     "data": "Image", "name": "Image", "autoWidth": true, "data": "Image", "name": "FormulaireId", "autoWidth": true, "render": function (data, type, row, meta) {
-                        if (row["Image"] != "")
-                            return '<div class="zoomin"><img class="img-responsive" src="' + "../Uploads/Recu/" + row["Image"] + '" runat="server" height="80" width="80"></div>';
-                        if (row["Image"] == "")
+
+                        if (row["Image"] != "") {
+
+                            var images = (row["Image"]).split(",")
+                            var el = document.createElement("div");
+                            el.innerHTML = "<a data-toggle='lightbox' runat='server' href=''></a>"
+                            el.firstChild.innerHTML = "Reçu (" + row["NBRecu"]+")"
+                            el.firstChild.setAttribute("data-gallery", 'gallery' + row["FormulaireId"])
+                            
+                              for (var i = 0; i < images.length; i++) {
+
+                                if (i == 0) {
+                                    var a = el.firstChild;
+                                    //el.firstChild.setAttribute("data-title", images[i])
+                                    //a.firstChild.setAttribute('src', images[i])
+
+                                    a.setAttribute('href', images[i])
+
+                                } else {
+                                    var newImg = document.createElement("a")
+                                    newImg.setAttribute("data-toggle", 'lightbox')
+                                    newImg.setAttribute("data-gallery", 'gallery' + row["FormulaireId"])
+                                    newImg.setAttribute("runat", 'server')
+                                    
+                                    //newImg.setAttribute("data-title", images[i])
+                                    newImg.setAttribute('href', images[i])
+                                    el.appendChild(newImg)
+                                }
+
+                            }
+
+                            return el.innerHTML;
+
+                        }
+                        if (row["Image"] == "") {
                             return '<p></p>';
 
+
+                        }
                     }
                   }
                 , { "data": "Etat", "name": "Etat", "autoWidth": true }
+                , { "data": "descAutre", "name": "descAutre", "autoWidth": true }
+
                 , { "data": "MontantVerseDeclare", "name": "MontantVerseDeclare", "autoWidth": true }
-                , { "data": "DateAff", "name": "DateAff", "autoWidth": true }
                 , { "data": "TraiteLe", "name": "TraiteLe", "autoWidth": true }
                 , { "data": "Username", "name": "Username", "autoWidth": true }
                 , { "data": "SoldeDebiteur", "name": "SoldeDebiteur", "autoWidth": true }
@@ -312,12 +371,22 @@
 
         table.on('xhr.dt',
             function (e, settings, data, xhr) {
-                console.log(data["info"])
-                 document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
+                
+                document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
+                document.getElementById("page").innerHTML = data["info"]["draw"]
             });
 
 
         return table;
     }
+
+    $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+        event.preventDefault();
+        $(this).ekkoLightbox({
+            alwaysShowClose: true,
+
+
+        });
+    });
 
 </script>

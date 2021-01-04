@@ -15,90 +15,101 @@
 {
 
 
-<div class="card">
-    <div class="card-header" id="headingTwo">
+    <div class="card">
+        <div class="card-header" id="headingTwo">
 
-        <h2>Suivi des RDV</h2>
+            <h2>Suivi des RDV</h2>
+
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="row">
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("RDVType", "Type:", new { @class = "control-label" })
+
+                    @Html.DropDownList("RDVType", ViewBag.RDVList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterRDVType })
+
+                </div>
+
+
+                <div id="rdvDate" class="col-xs-3 col-md-3">
+                    <label for="RdvDate">Date:</label>
+                    <input class="form-control" name="RdvDate" type="datetime-local" id="rappelDate">
+                </div>
+
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterNumLot })
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+            <br />
+
+
+            <div class="row">
+
+                <div class="col-xs-3 col-md-6">
+
+                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+
+                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
+
+                </div>
+
+            </div>
+
+            <br />
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="card-footer text-muted">
+
+
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+            </div>
+
+        </div>
 
     </div>
-
-    <div class="card-body">
-
-
-        <div class="row">
-            <div class="col-xs-3  col-md-3">
-
-                @Html.Label("RDVType", "Type:", new { @class = "control-label" })
-
-                @Html.DropDownList("RDVType", ViewBag.RDVList as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-            </div>
-
-            <div class="col-xs-3  col-md-3">
-
-
-                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
-
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-            </div>
-
-        </div>
-
-
-
-        <br />
-
-
-        <div class="row">
-
-            <div class="col-xs-3 col-md-6">
-
-                @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
-
-                @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-
-            </div>
-
-        </div>
-
-        <br />
-        <div class="row">
-
-            <div class="col-xs-3  col-md-10">
-
-
-                <p>
-                    <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
-                
-                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
-                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                        <span class="sr-only">Loading...</span>
-                    </button>
-                </p>
-
-            </div>
-
-
-
-        </div>
-
-
-    </div>
-
-
-    <div class="card-footer text-muted">
-
-
-        <div class="col-xs-4">
-
-            <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
-
-        </div>
-
-    </div>
-
-</div>
 
 }
 
@@ -203,12 +214,34 @@
 <script>
 
 
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('rappelDate').value = now.toISOString().slice(0, 16);
+
     function showLoading() {
 
         document.getElementById("submitLoading").style.display = "block";
         document.getElementById("submitBtn").style.display = "none";
 
     }
+
+    document.getElementById("rdvDate").style.display = "none";
+
+    document.getElementById("RDVType").onchange = function () {
+
+        if (this.value == "RDVDate") {
+
+            document.getElementById("rdvDate").style.display = "block";
+
+        } else {
+
+            document.getElementById("rdvDate").style.display = "none";
+
+        }
+
+    }
+
+
 
 </script>
 
@@ -217,5 +250,5 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("SuiviRDV",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterRDVType=ViewBag.currentFilterRDVType }))
 

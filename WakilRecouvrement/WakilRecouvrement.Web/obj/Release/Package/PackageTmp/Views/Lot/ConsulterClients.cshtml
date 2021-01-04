@@ -40,9 +40,7 @@
 
                     @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
-
                 </div>
-
 
             </div>
 
@@ -75,7 +73,6 @@
 
     </div>
 
-
 }
 
 
@@ -93,8 +90,15 @@
 
             </div>
         </div>
+        <br />
+        <div class="row">
 
+            <div class="col-xs-3  col-md-3">
 
+                @Html.ActionLink("Créer", "addLot", "Lot", new { @class = "btn btn-success" })
+
+            </div>
+        </div>
 
         <br />
         <div class="row">
@@ -108,6 +112,9 @@
                         <tr>
                             <th>
 
+                            </th>
+                            <th>
+
                                 Num Lot
                             </th>
                             <th>
@@ -115,7 +122,6 @@
 
                             </th>
                             <th>
-
 
                                 IDClient
                             </th>
@@ -164,6 +170,9 @@
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>
+                                    @Html.ActionLink("Modifier", "updateLot", "Lot", new { id = item.LotId }, new { @class = "btn btn-primary" })
+                                </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.NumLot)
                                 </td>

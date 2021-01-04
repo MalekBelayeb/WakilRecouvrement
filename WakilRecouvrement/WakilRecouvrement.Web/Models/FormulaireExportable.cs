@@ -13,7 +13,10 @@ namespace WakilRecouvrement.Web.Models
        public string IDClient { get; set; }
        public string Etat { get; set; }
        public string Versement { get; set; }
+       public string MontantDebInitial { get; set; }
+       public string MontantRecouvre { get; set; }
        public string RDV { get; set; }
+       public string TotRecouvre { get; set; }
     
 
 
