@@ -1866,7 +1866,7 @@ namespace WakilRecouvrement.Web.Controllers
         {
 
             MailMessage mm = new MailMessage();
-            mm.From = new MailAddress("alwakilrecouvrementmailtest@gmail.com");
+            mm.From = new MailAddress("alwakil.recouvrement@gmail.com");
             foreach (string t in to.Split(',').ToList())
             {
                 Debug.WriteLine(t);
@@ -1889,7 +1889,7 @@ namespace WakilRecouvrement.Web.Controllers
             smtp.Port = 587;
             smtp.EnableSsl = true;
 
-            smtp.Credentials = new NetworkCredential("alwakilrecouvrementmailtest@gmail.com", "wakil123456");
+            smtp.Credentials = new NetworkCredential("alwakil.recouvrement@gmail.com", "nbm290481");
             smtp.Send(mm);
         }
 
