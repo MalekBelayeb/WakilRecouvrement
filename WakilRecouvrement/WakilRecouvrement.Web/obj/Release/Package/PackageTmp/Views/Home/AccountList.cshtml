@@ -52,7 +52,7 @@
                 <td>
 
 
-                    @Html.DropDownListFor(modelItem => item.RoleId, new SelectListItem[]{new SelectListItem() { Text = item.Role.role }}, htmlAttributes: new { @class = "form-control", disabled = "disabled" })
+                    @Html.DropDownListFor(modelItem => item.RoleId, ViewBag.RoleList as SelectList, htmlAttributes: new { @class = "form-control", disabled = "disabled" })
 
                 </td>
                 <td>
@@ -61,7 +61,7 @@
                 
                 </td>
                 <td>
-                    @Html.ActionLink("Changer", "UpdateAccount", new { id = item.EmployeId })
+                    @Html.ActionLink("Modifier", "UpdateAccount", new { id = item.EmployeId })
                 </td>
             </tr>
         }

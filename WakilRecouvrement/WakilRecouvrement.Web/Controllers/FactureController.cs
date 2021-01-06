@@ -18,6 +18,8 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
 using WakilRecouvrement.Domain.Entities;
 using PagedList;
+using WakilRecouvrement.Data;
+using MyFinance.Data.Infrastructure;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -25,52 +27,62 @@ namespace WakilRecouvrement.Web.Controllers
     {
 
 
-        AffectationService AffectationService;
-        LotService LotService;
-        EmployeService EmpService;
-        FormulaireService FormulaireService;
-        NotificationService NotificationService;
-        FactureService factureService;
-
+     
 
         public FactureController ()
         {
-            AffectationService = new AffectationService();
-            LotService = new LotService();
-            EmpService = new EmployeService();
-            FormulaireService = new FormulaireService();
-            NotificationService = new NotificationService();
-            factureService = new FactureService();
+            
         }
 
         public IEnumerable<SelectListItem> NumLotListForDropDown()
         {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    LotService LotService = new LotService(UOW);
+                    List<Lot> Lots = LotService.GetAll().ToList();
+                    List<SelectListItem> listItems = new List<SelectListItem>();
 
-            List<Lot> Lots = LotService.GetAll().ToList();
-            List<SelectListItem> listItems = new List<SelectListItem>();
+                    listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
-            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
+                    Lots.DistinctBy(l => l.NumLot).ForEach(l => {
+                        listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
+                    });
 
-            Lots.DistinctBy(l => l.NumLot).ForEach(l => {
-                listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
-            });
+                    return listItems;
 
-            return listItems;
+                }
+            }
+                    
         }
 
         public ActionResult genererFacture(int? page)
         {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
 
-            List<Facture> factureList = factureService.GetAll().OrderByDescending(f=>f.DateExtrait).ToList();
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    FactureService factureService = new FactureService(UOW);
+                    List<Facture> factureList = factureService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
 
-            ViewBag.total = factureList.Count();
+                    ViewBag.total = factureList.Count();
 
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
+                    int pageSize = 10;
+                    int pageNumber = (page ?? 1);
 
-            return View(factureList.ToPagedList(pageNumber, pageSize));
+                    return View(factureList.ToPagedList(pageNumber, pageSize));
+
+                }
+            }
+
+
+
+
+                  
 
         }
 
@@ -78,23 +90,38 @@ namespace WakilRecouvrement.Web.Controllers
         public List<ClientAffecteViewModel> getTraitHist(int idAff)
         {
 
-            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    LotService LotService = new LotService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
 
-            JoinedList = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where f.Status == Domain.Entities.Status.VERIFIE && f.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE && f.AffectationId == idAff
+                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                          select new ClientAffecteViewModel
-                          {
+                    JoinedList = (from f in FormulaireService.GetAll()
+                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  where f.Status == Domain.Entities.Status.VERIFIE && f.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE && f.AffectationId == idAff
 
-                              Formulaire = f,
-                              Affectation = a,
-                              Lot = l,
+                                  select new ClientAffecteViewModel
+                                  {
 
-                          }).OrderByDescending(f=>f.Formulaire.TraiteLe).ToList();
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
 
-            return JoinedList;
+                                  }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+                    return JoinedList;
+
+                }
+            }
+
+
+
+                    
         }
 
 
@@ -103,156 +130,186 @@ namespace WakilRecouvrement.Web.Controllers
         public ClientAffecteViewModel getVersementDor(int idAff)
         {
 
-            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-            JoinedList = (from f in FormulaireService.GetAll()
-                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                          where f.Status == Domain.Entities.Status.VERIFIE && f.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE && f.AffectationId == idAff
 
-                          select new ClientAffecteViewModel
-                          {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    LotService LotService = new LotService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                              Formulaire = f,
-                              Affectation = a,
-                              Lot = l,
+                    JoinedList = (from f in FormulaireService.GetAll()
+                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  where f.Status == Domain.Entities.Status.VERIFIE && f.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE && f.AffectationId == idAff
 
-                          }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+                                  select new ClientAffecteViewModel
+                                  {
 
-            return JoinedList.FirstOrDefault();
+                                      Formulaire = f,
+                                      Affectation = a,
+                                      Lot = l,
+
+                                  }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+                    return JoinedList.FirstOrDefault();
+                }
+            }
+         
         }
 
         public ActionResult extraireFacture(string numLot,string factureNum,string pourcentage, string debutDate, string finDate)
         {
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
-            DateTime startDate = DateTime.Parse(debutDate);
-            DateTime endDate = DateTime.Parse(finDate);
-            double trancheTot = 0;
-            double soldeTot = 0;
-            double tot = 0;
-            float revenuParOp = float.Parse(pourcentage.Replace(".",","));
-            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-            List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
-            List<ClientAffecteViewModel> AnnexeJoinedList = new List<ClientAffecteViewModel>();
-
-            if(numLot == "0")
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
-                JoinedList = (from f in FormulaireService.GetAll()
-                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                              join l in LotService.GetAll() on a.LotId equals l.LotId
-                              where f.Status == Domain.Entities.Status.VERIFIE 
-                              select new ClientAffecteViewModel
-                              {
-
-                                  Formulaire = f,
-                                  Affectation = a,
-                                  Lot = l,
-
-                              }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
-
-            }
-            else
-            {
-                JoinedList = (from f in FormulaireService.GetAll()
-                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                              join l in LotService.GetAll() on a.LotId equals l.LotId
-                              where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot)
-                              select new ClientAffecteViewModel
-                              {
-
-                                  Formulaire = f,
-                                  Affectation = a,
-                                  Lot = l,
-
-                              }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
-            }
-
-            foreach (ClientAffecteViewModel cvm in JoinedList)
-            {
-
-                if(cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    trancheTot += (cvm.Formulaire.MontantVerseDeclare * revenuParOp) / 100;
-                    cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-                    cvm.recouvre = cvm.Formulaire.MontantVerseDeclare;
-                    AnnexeJoinedList.Add(cvm);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    LotService LotService = new LotService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    FactureService factureService = new FactureService(UOW);
 
-                }
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
 
-                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
-                {
-                    TempJoinedList = getTraitHist(cvm.Affectation.AffectationId);
-                    if(TempJoinedList.Count() == 0)
+                    DateTime startDate = DateTime.Parse(debutDate);
+                    DateTime endDate = DateTime.Parse(finDate);
+                    double trancheTot = 0;
+                    double soldeTot = 0;
+                    double tot = 0;
+                    float revenuParOp = float.Parse(pourcentage.Replace(".", ","));
+                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+                    List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
+                    List<ClientAffecteViewModel> AnnexeJoinedList = new List<ClientAffecteViewModel>();
+
+                    if (numLot == "0")
                     {
+                        JoinedList = (from f in FormulaireService.GetAll()
+                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                                      where f.Status == Domain.Entities.Status.VERIFIE
+                                      select new ClientAffecteViewModel
+                                      {
 
-                        soldeTot += (cvm.Formulaire.MontantDebInitial * revenuParOp) / 100;
-                        cvm.recouvre = cvm.Formulaire.MontantDebInitial;
-                        cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-                        
-                        AnnexeJoinedList.Add(cvm);
+                                          Formulaire = f,
+                                          Affectation = a,
+                                          Lot = l,
+
+                                      }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+
                     }
                     else
                     {
+                        JoinedList = (from f in FormulaireService.GetAll()
+                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                                      where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot)
+                                      select new ClientAffecteViewModel
+                                      {
 
-                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * revenuParOp) / 100;
-                        cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-                        cvm.recouvre = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
-                        AnnexeJoinedList.Add(cvm);
+                                          Formulaire = f,
+                                          Affectation = a,
+                                          Lot = l,
+
+                                      }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+                    }
+
+                    foreach (ClientAffecteViewModel cvm in JoinedList)
+                    {
+
+                        if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                        {
+
+                            trancheTot += (cvm.Formulaire.MontantVerseDeclare * revenuParOp) / 100;
+                            cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                            cvm.recouvre = cvm.Formulaire.MontantVerseDeclare;
+                            AnnexeJoinedList.Add(cvm);
+
+                        }
+
+                        if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                        {
+                            TempJoinedList = getTraitHist(cvm.Affectation.AffectationId);
+                            if (TempJoinedList.Count() == 0)
+                            {
+
+                                soldeTot += (cvm.Formulaire.MontantDebInitial * revenuParOp) / 100;
+                                cvm.recouvre = cvm.Formulaire.MontantDebInitial;
+                                cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+
+                                AnnexeJoinedList.Add(cvm);
+                            }
+                            else
+                            {
+
+                                soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * revenuParOp) / 100;
+                                cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                                cvm.recouvre = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
+                                AnnexeJoinedList.Add(cvm);
+
+                            }
+
+
+                        }
+
 
                     }
 
+                    string lotsNames = "";
+                    List<string> listNameLot = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).ToList();
+
+                    if (listNameLot.Count() == 1)
+                    {
+                        lotsNames = listNameLot.FirstOrDefault();
+                    }
+                    else if (listNameLot.Count() > 1)
+                    {
+                        string lastlots = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).LastOrDefault();
+                        listNameLot.RemoveAt(listNameLot.Count - 1);
+                        string lots = String.Join(", ", listNameLot);
+                        lotsNames = lots + " et " + lastlots;
+                    }
+
+
+                    tot = soldeTot + trancheTot;
+                    FactureContent factureContent = new FactureContent();
+                    factureContent.FacNum = factureNum;
+                    factureContent.Date = DateTime.Today;
+                    factureContent.Beneficiere = "Zitouna Bank";
+                    factureContent.PrixHT = tot;
+                    factureContent.PrixTVA = (tot * 19) / 100;
+                    factureContent.TimbreFiscal = 0.600;
+
+                    factureContent.PrixTTC = tot + factureContent.PrixTVA;
+
+                    string annexeFileName = "Annexe_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+                    string factureFileName = "Facture_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".pdf";
+                    string pathAnnexe = GetFolderName() + "/" + annexeFileName;
+                    string pathFacture = GetFolderName() + "/" + factureFileName;
+                    Facture facture = new Facture()
+                    {
+
+                        AnnexePathName = annexeFileName,
+                        FacturePathName = factureFileName,
+                        DateDeb = startDate,
+                        DateFin = endDate,
+                        DateExtrait = DateTime.Now
+
+                    };
+                    factureService.Add(facture);
+                    factureService.Commit();
+                    GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j => j.recouvre)));
+                    GeneratePDF(pathFacture, lotsNames, factureContent);
+
+                    return RedirectToAction("genererFacture", new { page = 1 });
 
                 }
-
-
-            }
-
-            string lotsNames = "";
-            List<string> listNameLot = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).ToList();
-       
-            if(listNameLot.Count()==1)
-            {
-                lotsNames = listNameLot.FirstOrDefault();
-            }else if(listNameLot.Count()>1)
-            {
-                string lastlots = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).LastOrDefault();
-                listNameLot.RemoveAt(listNameLot.Count - 1);
-                string lots = String.Join(", ", listNameLot);
-                lotsNames = lots + " et " + lastlots;
             }
 
 
-            tot = soldeTot + trancheTot;
-            FactureContent factureContent = new FactureContent();
-            factureContent.FacNum = factureNum;
-            factureContent.Date = DateTime.Today;
-            factureContent.Beneficiere = "Zitouna Bank";
-            factureContent.PrixHT = tot;
-            factureContent.PrixTVA = (tot*19)/100;
-            factureContent.TimbreFiscal = 0.600;
-
-            factureContent.PrixTTC = tot + factureContent.PrixTVA;
-
-            string annexeFileName = "Annexe_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
-            string factureFileName = "Facture_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".pdf";
-            string pathAnnexe = GetFolderName() + "/"+annexeFileName;
-            string pathFacture = GetFolderName() + "/"+factureFileName;
-            Facture facture = new Facture() { 
-            
-                AnnexePathName = annexeFileName,
-                FacturePathName = factureFileName,
-                DateDeb = startDate,
-                DateFin = endDate,
-                DateExtrait = DateTime.Now
-
-            };
-            factureService.Add(facture);
-            factureService.Commit();
-            GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j=>j.recouvre)));
-            GeneratePDF(pathFacture,lotsNames, factureContent);
-
-            return RedirectToAction("genererFacture", new { page=1 });
         }
 
         public void GeneratePDF(string path,string lotsNames,FactureContent factureContent)

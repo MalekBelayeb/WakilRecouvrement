@@ -11,11 +11,10 @@ namespace WakilRecouvrement.Service
 {
    public class RoleService : Service<Role>, IRoleService
     {
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
-        public RoleService() : base(UOW)
-        {
 
+        public RoleService(UnitOfWork UOW) : base(UOW)
+        {
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
     }
 }

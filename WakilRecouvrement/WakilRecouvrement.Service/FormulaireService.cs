@@ -11,12 +11,10 @@ namespace WakilRecouvrement.Service
 {
     public class FormulaireService : Service<Formulaire>, IFormulaireService
     {
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
 
-        public FormulaireService() : base(UOW)
+        public FormulaireService(UnitOfWork UOW) : base(UOW)
         {
-
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
 
 

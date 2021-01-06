@@ -12,12 +12,10 @@ namespace WakilRecouvrement.Service
     public class AffectationService : Service<Affectation>, IAffectationService
     {
 
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
 
-        public AffectationService() : base(UOW)
+        public AffectationService(UnitOfWork UOW) : base(UOW)
         {
-
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
         public IEnumerable<Affectation> GetAffectationByLot(string NumLot)
         {

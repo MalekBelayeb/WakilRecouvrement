@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WakilRecouvrement.Data;
 using WakilRecouvrement.Domain.Entities;
 
 namespace WakilRecouvrement.Service
@@ -12,12 +13,9 @@ namespace WakilRecouvrement.Service
     public class EmployeService:Service<Employe>, IEmployeService
     {
 
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
-
-        public EmployeService():base(UOW)
+        public EmployeService(UnitOfWork UOW) :base(UOW)
         {
-
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
 
         public IEnumerable<Employe> GetEmployeByRole(string role)

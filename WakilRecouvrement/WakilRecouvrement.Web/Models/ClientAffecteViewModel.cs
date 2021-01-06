@@ -14,6 +14,7 @@ namespace WakilRecouvrement.Web.Models
 
         public Lot Lot { get; set; }
 
+        public string Agent { get; set; }
         public int NbCountHist { get; set; }
         public double vers { get; set; }
         public double recouvre { get; set; }

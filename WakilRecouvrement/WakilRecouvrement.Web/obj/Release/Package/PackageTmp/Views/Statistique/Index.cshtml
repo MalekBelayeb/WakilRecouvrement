@@ -144,14 +144,15 @@
 
             </div>
             <div class="card-body">
+
                 <div class="d-flex">
 
                     <p class="d-flex flex-column">
                         <span class="text-bold text-lg">Traitement Annuel</span>
-                        <span><small > <span id="annuelTot"> </span> </small></span>
+                        <span><small> <span id="annuelTot"> </span> </small></span>
                     </p>
 
-                    
+
 
                 </div>
                 <!-- /.d-flex -->
@@ -160,7 +161,11 @@
                     <canvas id="sales-chart" height="200"></canvas>
                 </div>
 
-                
+                <div class="position-relative mb-4">
+                    <canvas id="sales-chart-rentabilite" height="200"></canvas>
+                </div>
+
+
 
 
 
@@ -200,26 +205,28 @@
                     
 
                 </div>
-                <div class="card-body">
-                    <div class="d-flex">
+            <div class="card-body">
+                <div class="d-flex">
 
-                        <p class="d-flex flex-column">
-                            <span class="text-bold text-lg">Traitement Mensuel</span>
-                            <span><small>  <span id="mensuelTot"> </span> </small></span>
-                        </p>
-
-                    </div>
-                    <!-- /.d-flex -->
-
-                    <div class="position-relative mb-4">
-                        <canvas id="sales-mensuel" height="200"></canvas>
-                    </div>
-
-
-
-
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Traitement Mensuel</span>
+                        <span><small>  <span id="mensuelTot"> </span> </small></span>
+                    </p>
 
                 </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="sales-mensuel" height="200"></canvas>
+                </div>
+
+                <div class="position-relative mb-4">
+                    <canvas id="sales-mensuel-Rentabilite" height="200"></canvas>
+                </div>
+
+
+
+            </div>
             </div>
 
 
@@ -259,7 +266,9 @@
                     <canvas id="sales-quotidien" height="200"></canvas>
                 </div>
 
-
+                <div class="position-relative mb-4">
+                    <canvas id="sales-quotidien-Rentabilite" height="200"></canvas>
+                </div>
             </div>
         </div>
 
@@ -333,7 +342,67 @@
             labels: ['POSTE 1','POSTE 2','POSTE 3','POSTE 4'],
             datasets: [
                 {
-                    backgroundColor: '#20c997',
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
+                    borderColor: '#007bff',
+                    data: [0,0,0,0]
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+
+    var $salesChartAnnuelRentabilite = $('#sales-chart-rentabilite')
+    var salesChartAnnuelRentabilite = new Chart($salesChartAnnuelRentabilite, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1','POSTE 2','POSTE 3','POSTE 4'],
+            datasets: [
+                {
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
                     borderColor: '#007bff',
                     data: [0,0,0,0]
                 }
@@ -394,7 +463,69 @@
             datasets: [
 
                 {
-                    backgroundColor: '#6f42c1',
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
+                    borderColor: '#007bff',
+                    data: [0,0,0,0]
+                }
+
+
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+    var $salesChartMensuelRentabilite = $('#sales-mensuel-Rentabilite')
+    var salesChartMensuelRentabilite = new Chart($salesChartMensuelRentabilite, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
+            datasets: [
+
+                {
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
                     borderColor: '#007bff',
                     data: [0,0,0,0]
                 }
@@ -455,8 +586,69 @@
         data: {
             labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
             datasets: [
+
                 {
-                    backgroundColor: '#007bff',
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
+                    borderColor: '#007bff',
+                    data: [0, 0, 0, 0 ]
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    // display: false,
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+
+                        // Include a dollar sign in the ticks
+                        callback: function (value, index, values) {
+                            if (value >= 1000) {
+                                value /= 1000
+                                value += 'k'
+                            }
+                            return value
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+    var $salesChartQutidienRentabilite = $('#sales-quotidien-Rentabilite')
+    var salesChartQutidienRentabilite = new Chart($salesChartQutidienRentabilite, {
+        type: 'bar',
+        data: {
+            labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
+            datasets: [
+
+                {
+                    backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
                     borderColor: '#007bff',
                     data: [0, 0, 0, 0 ]
                 }

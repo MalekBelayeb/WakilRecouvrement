@@ -822,6 +822,10 @@
       <Project>{611136d9-49d5-4c76-b7a9-912f0c819566}</Project>
       <Name>Service.Pattern</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WakilRecouvrement.Data\WakilRecouvrement.Data.csproj">
+      <Project>{85E6EF0C-967B-4892-BBD6-0FA53468FCCB}</Project>
+      <Name>WakilRecouvrement.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WakilRecouvrement.Domain\WakilRecouvrement.Domain.csproj">
       <Project>{cbe91027-d0d7-4373-a9ea-5ce6754f00be}</Project>
       <Name>WakilRecouvrement.Domain</Name>

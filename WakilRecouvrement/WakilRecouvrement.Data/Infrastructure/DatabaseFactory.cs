@@ -10,13 +10,14 @@ namespace MyFinance.Data.Infrastructure
 {
     public class DatabaseFactory : Disposable, IDatabaseFactory
     {
-        private WakilRecouvContext dataContext;
+        private WakilRecouvContext dataContext; 
         public WakilRecouvContext DataContext { get { return dataContext; } }
 
         public DatabaseFactory()
         {
             dataContext = new WakilRecouvContext();
         }
+
         protected override void DisposeCore()
         {
             if (DataContext != null)

@@ -8,17 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-
 namespace Service.Pattern
 {
     public abstract class Service<TEntity> : IService<TEntity> where TEntity : class
     {
 
-        IUnitOfWork utwk;
-        private IUnitOfWork utwk1;
-        private IUnitOfWork ut;
-
-        protected Service(IUnitOfWork utwk)
+        UnitOfWork utwk;
+     
+        protected Service(UnitOfWork utwk)
         {
             this.utwk = utwk;
         }

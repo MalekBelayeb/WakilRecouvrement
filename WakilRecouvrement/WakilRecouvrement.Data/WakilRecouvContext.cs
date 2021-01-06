@@ -13,7 +13,7 @@ namespace WakilRecouvrement.Data
     {
         public WakilRecouvContext():base("name= WRConnectionStrings")
         {
-           
+            //this.Configuration.LazyLoadingEnabled = false;
         }
         
         public DbSet<Employe> Employes { get; set; }

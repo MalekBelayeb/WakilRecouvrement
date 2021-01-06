@@ -12,20 +12,30 @@ namespace MyFinance.Data.Infrastructure
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         private WakilRecouvContext dataContext;
-        private readonly IDbSet<T> dbset;
-        IDatabaseFactory databaseFactory;
-        public RepositoryBase(IDatabaseFactory dbFactory)
+        private  IDbSet<T> dbset;
+        //IDatabaseFactory databaseFactory;
+        public RepositoryBase(WakilRecouvContext WakilCtx)
         {
-            this.databaseFactory = dbFactory;
-            dbset = DataContext.Set<T>();
-
-
+            dataContext = WakilCtx;
+            //this.databaseFactory = dbFactory;
+            dbset = WakilCtx.Set<T>();
         }
-        protected WakilRecouvContext DataContext
-        {
-            get { return dataContext = databaseFactory.DataContext; }
-        }
+        
+        //protected WakilRecouvContext DataContext
+        //{
+        //    get { 
 
+                
+        //        return dataContext = databaseFactory.DataContext;
+        //    }
+            
+        //    get
+        //    {
+        //        return dataContext ?? (dataContext = new WakilRecouvContext());
+        //    }
+
+        //}
+    
 
         public virtual void Add(T entity)
         {

@@ -18,7 +18,6 @@
 
         <h2>Traiter les affectations</h2>
 
-
     </div>
 
     <div class="card-body">
@@ -183,9 +182,16 @@
             {
                 classStyle = "p-3 mb-2 bg-danger text-white";
             }
-            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE)
             {
+
                 classStyle = "p-3 mb-2 bg-warning text-dark";
+
+            }else if(item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            {                
+                
+                classStyle = "p-3 mb-2 bg-primary text-dark";
+
             }
             else
             {
@@ -215,7 +221,7 @@
         if (item.Lot.TelFixeFN)
         {
             TelFixeFnClassStyle = "bg-secondary";
-            
+
         }
         else
         {

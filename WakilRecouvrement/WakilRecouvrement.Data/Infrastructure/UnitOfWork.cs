@@ -10,16 +10,15 @@ namespace MyFinance.Data.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
        
-         private WakilRecouvContext dataContext;
+        private WakilRecouvContext dataContext;
 
-        IDatabaseFactory dbFactory;
-        public UnitOfWork(IDatabaseFactory dbFactory)
+        //IDatabaseFactory dbFactory;
+        public UnitOfWork(WakilRecouvContext WakilCtx)
         {
-            this.dbFactory = dbFactory;
-            dataContext = dbFactory.DataContext;
+            //this.dbFactory = dbFactory;
+            dataContext = WakilCtx;
         }
         
-
 
         public void Commit()
         {
@@ -32,7 +31,7 @@ namespace MyFinance.Data.Infrastructure
         }
         public IRepositoryBase<T> getRepository<T>() where T : class
         {
-            IRepositoryBase<T> repo = new RepositoryBase<T>(dbFactory);
+            IRepositoryBase<T> repo = new RepositoryBase<T>(dataContext);
             return repo;
         }
       

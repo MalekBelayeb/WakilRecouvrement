@@ -11,12 +11,10 @@ namespace WakilRecouvrement.Service
 {
     public class FactureService:Service<Facture>, IFactureService
     {
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
 
-        public FactureService() : base(UOW)
+        public FactureService(UnitOfWork UOW) : base(UOW)
         {
-
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
     }
 }

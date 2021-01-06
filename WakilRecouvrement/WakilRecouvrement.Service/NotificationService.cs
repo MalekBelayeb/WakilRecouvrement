@@ -11,11 +11,10 @@ namespace WakilRecouvrement.Service
 {
     public class NotificationService : Service<Notification>, INotificationService
     {
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
-        public NotificationService() : base(UOW)
-        {
 
+        public NotificationService(UnitOfWork UOW) : base(UOW)
+        {
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
 
     }

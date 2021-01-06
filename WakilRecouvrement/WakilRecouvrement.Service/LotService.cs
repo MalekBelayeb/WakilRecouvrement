@@ -11,11 +11,10 @@ namespace WakilRecouvrement.Service
 {
     public class LotService : Service<Lot>, ILotService
     {
-        static IDatabaseFactory Factory = new DatabaseFactory();
-        static IUnitOfWork UOW = new UnitOfWork(Factory);
-        public LotService() : base(UOW)
-        {
 
+        public LotService(UnitOfWork UOW) : base(UOW)
+        {
+            //UOW = new UnitOfWork(wakilRecouvContext);
         }
 
         public Lot GetClientByIDClient(string ID)

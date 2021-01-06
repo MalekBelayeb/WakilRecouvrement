@@ -1,9 +1,11 @@
 ﻿using Microsoft.Ajax.Utilities;
+using MyFinance.Data.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
+using WakilRecouvrement.Data;
 using WakilRecouvrement.Domain.Entities;
 using WakilRecouvrement.Service;
 using WakilRecouvrement.Web.Models;
@@ -14,29 +16,36 @@ namespace WakilRecouvrement.Web.Controllers
     public class HomeController : Controller
     {
 
-        EmployeService EmpService;
-        RoleService RoleService;
-
-        AffectationService AffectationService;
-        LotService LotService;
-        FormulaireService FormulaireService;
-
+   
         public HomeController()
         {
-            EmpService = new EmployeService();
-            RoleService = new RoleService();
-          
-            AffectationService = new AffectationService();
-            LotService = new LotService();
-            EmpService = new EmployeService();
-            FormulaireService = new FormulaireService();
+         
 
         }
 
 
         public ActionResult AccountList()
         {
-            return View(EmpService.GetAll());
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    EmployeService EmpService = new EmployeService(UOW);
+
+                    RoleService RoleService = new RoleService(UOW);
+
+                   
+                    var Roles = RoleService.GetAll();
+                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                    return View(EmpService.GetAll());
+
+                }
+            }
+                   
+
+
+
         }
 
 
@@ -44,50 +53,100 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult AccountList(string type)
         {
-            if (type == "0")
+
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
-                return View(EmpService.GetAll());
-            }
-            else if (type == "1")
-            {
-                return View(EmpService.GetEmployeByVerified(true));
-            }
-            else if (type == "2")
-            {
-                return View(EmpService.GetEmployeByVerified(false));
-            }
-            else
-            {
-                return View(EmpService.GetAll());
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
+
+
+                    var Roles = RoleService.GetAll();
+                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                    if (type == "0")
+                    {
+                        return View(EmpService.GetAll());
+                    }
+                    else if (type == "1")
+                    {
+                        return View(EmpService.GetEmployeByVerified(true));
+                    }
+                    else if (type == "2")
+                    {
+                        return View(EmpService.GetEmployeByVerified(false));
+                    }
+                    else
+                    {
+                        return View(EmpService.GetAll());
+                    }
+
+
+                }
             }
 
+
+
+         
         }
 
 
         public ActionResult UpdateAccount(int id)
         {
-            var Roles = RoleService.GetAll();
-            ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
 
-            return View(EmpService.GetById(id));
+                    EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
+                
+                    var Roles = RoleService.GetAll();
+                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                    return View(EmpService.GetById(id));
+                }
+            }
+
+
+          
 
         }
 
         [HttpPost]
         public ActionResult UpdateAccount(int id, Employe e)
         {
-            var Roles = RoleService.GetAll();
-            ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
 
-            Employe emp = EmpService.GetById(id);
-            emp.RoleId = e.RoleId;
-            emp.IsVerified = e.IsVerified;
-            emp.ConfirmPassword = emp.Password;
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
 
-            EmpService.Update(emp);
-            EmpService.Commit();
+                    EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
+                 
+                    var Roles = RoleService.GetAll();
+                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
 
-            return View("AccountList", EmpService.GetAll());
+                    Employe emp = EmpService.GetById(id);
+                    emp.RoleId = e.RoleId;
+                    emp.IsVerified = e.IsVerified;
+                    emp.ConfirmPassword = emp.Password;
+
+                    EmpService.Update(emp);
+                    EmpService.Commit();
+
+                    return View("AccountList", EmpService.GetAll());
+
+
+
+                }
+            }
+
+
+                    
         }
 
 
@@ -102,71 +161,87 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult Index()
         {
 
-            List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
-            
-            List<HomeViewModel> result = new List<HomeViewModel>();
-            List<Lot> lots = new List<Lot>();
-            string[] lotsLst = { };
-
-            lots = LotService.GetAll().ToList();
-            lotsLst = lots.DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
-
-            List<Affectation> Affectations = new List<Affectation>();
-            List<Formulaire> Formulaires = new List<Formulaire>();
-            string[] agents = { };
-
-            Affectations = AffectationService.GetAll().ToList();
-            Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
-
-            foreach (string numlot in lotsLst)
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
-               
-                lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
-                
-                traiteList = (from f in Formulaires
-                              join a in Affectations on f.AffectationId equals a.AffectationId
-                              join l in lots on a.LotId equals l.LotId
-                              select new ClientAffecteViewModel
-                              {
-
-                                  Formulaire = f,
-                                  Affectation = a,
-                                  Lot = l,
-
-                              }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-
-                var agentLinq = (from a in Affectations
-                                 join l in lots on a.LotId equals l.LotId
-                                 select new ClientAffecteViewModel
-                                 {
-
-                                     Affectation = a
-
-                                 });
-
-
-                agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
-
-                string agentsStr = string.Join(", ", agents);
-
-                float nbAffTotal = agentLinq.Count();
-                float nbTraite = traiteList.Count();
-                string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
-
-
-                HomeViewModel homeViewModel = new HomeViewModel
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    agents = agentsStr,
-                    nbAffTotal = nbAffTotal + "",
-                    nbTraite = nbTraite + "",
-                    numLot = numlot,
-                    avancement = avgLot.Replace(",",".")
-                };
-                result.Add(homeViewModel);
 
+                    EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    LotService LotService = new LotService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+
+                    List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
+
+                    List<HomeViewModel> result = new List<HomeViewModel>();
+                    List<Lot> lots = new List<Lot>();
+                    string[] lotsLst = { };
+
+                    lots = LotService.GetAll().ToList();
+                    lotsLst = lots.DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
+
+                    List<Affectation> Affectations = new List<Affectation>();
+                    List<Formulaire> Formulaires = new List<Formulaire>();
+                    string[] agents = { };
+
+                    Affectations = AffectationService.GetAll().ToList();
+                    Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
+
+                    foreach (string numlot in lotsLst)
+                    {
+
+                        lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
+
+                        traiteList = (from f in Formulaires
+                                      join a in Affectations on f.AffectationId equals a.AffectationId
+                                      join l in lots on a.LotId equals l.LotId
+                                      select new ClientAffecteViewModel
+                                      {
+
+                                          Formulaire = f,
+                                          Affectation = a,
+                                          Lot = l,
+
+                                      }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+                        var agentLinq = (from a in Affectations
+                                         join l in lots on a.LotId equals l.LotId
+                                         select new ClientAffecteViewModel
+                                         {
+
+                                             Affectation = a
+
+                                         });
+
+
+                        agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
+
+                        string agentsStr = string.Join(", ", agents);
+
+                        float nbAffTotal = agentLinq.Count();
+                        float nbTraite = traiteList.Count();
+                        string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
+
+
+                        HomeViewModel homeViewModel = new HomeViewModel
+                        {
+                            agents = agentsStr,
+                            nbAffTotal = nbAffTotal + "",
+                            nbTraite = nbTraite + "",
+                            numLot = numlot,
+                            avancement = avgLot.Replace(",", ".")
+                        };
+                        result.Add(homeViewModel);
+
+                    }
+
+                    return View(result);
+
+                }
             }
 
-            return View(result);
+
         }
 
  
