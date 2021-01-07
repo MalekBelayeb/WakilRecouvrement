@@ -18,5 +18,6 @@ namespace WakilRecouvrement.Web.Models
         public int NbCountHist { get; set; }
         public double vers { get; set; }
         public double recouvre { get; set; }
+        public bool IsDeletable { get; set; }
     }
 }

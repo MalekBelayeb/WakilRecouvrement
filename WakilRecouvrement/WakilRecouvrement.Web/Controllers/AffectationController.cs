@@ -60,12 +60,27 @@ namespace WakilRecouvrement.Web.Controllers
                     LotService LotService = new LotService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
 
-                    List<Lot> listClients = LotService.GetClientsByLot(numLot + "").ToList();
+                    List<Lot> listClients = LotService.GetAll().Where(l => l.NumLot == numLot+"").ToList();
 
-                    var listAffectations = AffectationService.GetAffectationByLot(numLot + "");
+                    var listAffectations = (from a in AffectationService.GetAll()
+                                            join l in LotService.GetAll() on a.LotId equals l.LotId
+                                            where l.NumLot == numLot+""
+                                            select new
+                                            {
+                                                Affectation = a,
+                                                Lot = l
+                                            }).Select(a => a.Affectation).ToList();
 
-                    var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
+                    var agents  = (from e in EmpService.GetAll()
+                                               join r in RoleService.GetAll() on e.RoleId equals r.RoleId
+                                               where e.IsVerified = true && r.role == "agent"
+                                               select new
+                                               {
+                                                   Emp = e
+
+                                               }).Select(e => e.Emp).ToList();
 
                     ViewBag.AgentList = new SelectList(agents, "EmployeId", "Username");
 
@@ -125,9 +140,16 @@ namespace WakilRecouvrement.Web.Controllers
                     LotService LotService = new LotService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
 
-                    List<Lot> listClients = LotService.GetClientsByLot(numLot + "").ToList();
+                    List<Lot> listClients = LotService.GetAll().Where(l => l.NumLot == numLot + "").ToList();
 
-                    List<Affectation> listAffectations = AffectationService.GetAffectationByLot(numLot + "").ToList();
+                    var listAffectations = (from a in AffectationService.GetAll()
+                                            join l in LotService.GetAll() on a.LotId equals l.LotId
+                                            where l.NumLot == numLot + ""
+                                            select new
+                                            {
+                                                Affectation = a,
+                                                Lot = l
+                                            }).Select(a => a.Affectation).ToList();
 
                     var clientsNonAffecteList = from lot in listClients
                                                 where !(from aff in listAffectations
@@ -468,7 +490,7 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "NON_TRAITES", Value = "NON_TRAITES" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RDV (d'aujourd'hui)", Value = "RDV" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "RDV_REPORTE (d'aujourd'hui)", Value = "RDV_REPORTE" });
+            //listItems.Add(new SelectListItem { Selected = true, Text = "RDV_REPORTE (d'aujourd'hui)", Value = "RDV_REPORTE" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RAPPEL", Value = "RAPPEL" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RACCROCHE", Value = "RACCROCHE" });
             listItems.Add(new SelectListItem { Selected = true, Text = "NRP", Value = "NRP" });
@@ -774,11 +796,21 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
                     EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
                   
                     if (Session["username"] == null || Session["username"].ToString().Length < 1)
                         return RedirectToAction("Login", "Authentification");
 
-                    var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
+                    //var agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true);
+                    var agents = (from e in EmpService.GetAll()
+                                  join r in RoleService.GetAll() on e.RoleId equals r.RoleId
+                                  where e.IsVerified = true 
+                                  select new { 
+                                    Emp = e    
+
+                                  }).Select(e=>e.Emp).ToList();
+
+
                     ViewBag.AgentList = new SelectList(agents, "EmployeId", "Username");
                     ViewData["numLot"] = numLot;
                     ViewBag.TraiteList = new SelectList(TraiteListModifierAffForDropDown(), "Value", "Text");
@@ -834,7 +866,7 @@ namespace WakilRecouvrement.Web.Controllers
                         return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
 
                     }
-                    else if (traite.Equals("RDV_REPORTE"))
+                    /*else if (traite.Equals("RDV_REPORTE"))
                     {
                         nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), "RDV_REPORTE") && a.Formulaires.Last().DateRDVReporte.Date == DateTime.Today.Date).ToList().Count();
                         nbTotLots = LotService.GetAll().Where(l => l.NumLot.Equals(numLot)).Count();
@@ -843,7 +875,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                         return Json(new { nbTotalAffectation = nbTotalAffectation, pourcentageAgentDe = pourcentageAgentDe, nbTotLots = nbTotLots });
 
-                    }
+                    }*/
                     else
                     {
                         nbTotalAffectation = AffectationService.GetAll().Where(a => a.Lot.NumLot.Equals(numLot) && a.EmployeId == int.Parse(agentDe)).Where(a => a.Formulaires.Any()).Where(a => a.Formulaires.Last().EtatClient == (Note)Enum.Parse(typeof(Note), traite)).Count();

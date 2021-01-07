@@ -188,12 +188,11 @@ namespace WakilRecouvrement.Web.Controllers
                 }
             }
 
-
-
-                    
-
         }
 
+
+
+       
 
 
 
@@ -321,7 +320,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                     ViewBag.currentFilterTraite = traite;
 
-
                     if (!String.IsNullOrEmpty(traite))
                     {
 
@@ -441,7 +439,7 @@ namespace WakilRecouvrement.Web.Controllers
                         case "1":
                             try
                             {
-                                JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
+                                JoinedList = JoinedList.OrderByDescending(s => s.Lot.SoldeDebiteur).ToList();
 
                             }
                             catch (Exception)
@@ -598,6 +596,19 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+
+        public IEnumerable<SelectListItem> TraiteListSuiviTraitHistoriqueForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "SOLDE ET TRANCHE", Value = "ALL" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "SOLDE", Value = "SOLDE" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "TRANCHE", Value = "SOLDE_TRANCHE" });
+
+            
+
+
+            return listItems;
+        }
         public IEnumerable<SelectListItem>typeListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -651,6 +662,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     Formulaire Formulaire = new Formulaire();
                     ViewBag.errormsg = "";
+                    
                     switch ((Note)Enum.Parse(typeof(Note), EtatClient))
                     {
                         case Note.INJOIGNABLE:
@@ -706,7 +718,7 @@ namespace WakilRecouvrement.Web.Controllers
                                 soldetranche = soldetranche.Replace('.', ',');
                             }
 
-                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche);
+                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace(Formulaire.MontantDebInitial+""));
 
                             break;
                         case Note.FAUX_NUM:
@@ -756,15 +768,14 @@ namespace WakilRecouvrement.Web.Controllers
                                 soldetranche = soldetranche.Replace('.', ',');
                             }
 
-                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche);
+                            
+                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace("0"));
 
                             break;
                     }
 
                     Formulaire.DescriptionAutre = DescriptionAutre;
-
                     Formulaire.NotifieBanque = false;
-
 
                     var nbVerfie = (from f in FormulaireService.GetAll()
                                     join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
@@ -773,18 +784,31 @@ namespace WakilRecouvrement.Web.Controllers
                                     {
                                         Formulaire = f,
                                         Affectation = a
-                                    }).ToList();
+                                    }).Count();
+
+                    var nbSolde = (from f in FormulaireService.GetAll()
+                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                    where a.AffectationId == int.Parse(id) && f.EtatClient == Note.SOLDE
+                                    select new ClientAffecteViewModel
+                                    {
+                                        Formulaire = f,
+                                        Affectation = a
+                                    }).Count();
 
 
+
+                    if(nbSolde>=1)
+                    {
+                        return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Client est deja soldé !" });
+                    }
 
                     if (Formulaire.EtatClient == Note.A_VERIFIE)
                     {
-                        if (nbVerfie.Count() >= 1)
+                        if (nbVerfie >= 1)
                         {
-                            return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Une verification est deja en attente!" });
+                            return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Une verification est deja en attente !" });
                         }
                     }
-
 
                     FormulaireService.Add(Formulaire);
                     FormulaireService.Commit();
@@ -824,20 +848,28 @@ namespace WakilRecouvrement.Web.Controllers
                     }
                     else
                     {
-                        Formulaire.MontantDebMAJ = (from f in FormulaireService.GetAll()
-                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                    where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
-                                                    orderby f.MontantDebMAJ ascending
-                                                    select new ClientAffecteViewModel
-                                                    {
-                                                        Formulaire = f,
-                                                        Affectation = a
+                        ClientAffecteViewModel cavm = (from f in FormulaireService.GetAll()
+                                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                       where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
+                                                       orderby f.MontantDebMAJ ascending
+                                                       select new ClientAffecteViewModel
+                                                       {
+                                                           Formulaire = f,
+                                                           Affectation = a
 
-                                                    }).FirstOrDefault().Formulaire.MontantDebMAJ;
+                                                       }).FirstOrDefault();
+
+                        
+                        if(cavm!=null)
+                        {
+                            Formulaire.MontantDebMAJ = cavm.Formulaire.MontantDebMAJ;
+                        }
+                        else
+                        {
+                            Formulaire.MontantDebMAJ = 0;
+                        }
+
                     }
-
-
-
 
                     FormulaireService.Update(Formulaire);
                     FormulaireService.Commit();
@@ -907,6 +939,25 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
+
+        public ActionResult deleteHistVerifie(int id,string currentFilter ,string currentNumLot ,string currentType ,string currentTraite ,string currentAgent ,string currentTraitDate,string currentPage )
+        {
+
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    Debug.WriteLine(currentPage);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    
+                    FormulaireService.Delete(FormulaireService.GetById(id));
+                    FormulaireService.Commit();
+
+                    return RedirectToAction("HistoriqueTraitements", "Formulaire", new {currentFilter, currentNumLot ,currentType , currentTraite ,currentAgent , currentTraitDate, currentPage });
+
+                }
+            }
+        }
 
         [HttpPost]
         public ActionResult GetFormulaires(int id)
@@ -1138,13 +1189,13 @@ namespace WakilRecouvrement.Web.Controllers
                         {
                             JoinedList = JoinedList.Where(j =>
 
-                                j.Lot.Numero.ToString().Contains(search)
-                            || j.Lot.Adresse.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.IDClient.ToString().Contains(search)
-                            || j.Lot.Compte.ToString().Contains(search)
-                            || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.DescIndustry.ToString().ToLower().Contains(search.ToLower())
-                            || j.Formulaire.MontantVerseDeclare.ToString().ToLower().Contains(search.ToLower())
+                                j.Lot.Numero.IfNotNull(n=>n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Lot.Adresse.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Lot.IDClient.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Lot.Compte.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Lot.NomClient.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Lot.DescIndustry.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
+                            || j.Formulaire.MontantVerseDeclare.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
 
                                 ).ToList();
                         }
@@ -1358,16 +1409,247 @@ namespace WakilRecouvrement.Web.Controllers
             return lst;
         }
 
-        public ActionResult HistoriqueTraitements()
+        public bool IsDeletable(int idForm,List<Formulaire> formulaires)
+        {
+            Formulaire _formulaire = new Formulaire();
+            _formulaire = formulaires.OrderByDescending(f => f.TraiteLe).FirstOrDefault();
+
+            if(_formulaire.FormulaireId == idForm)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+
+        public ActionResult HistoriqueTraitements(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType,string currentPage, int? page)
         {
             if (Session["username"] == null || Session["username"].ToString().Length < 1)
                 return RedirectToAction("Login", "Authentification");
 
             ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            ViewBag.TraiteList = new SelectList(TraiteValidationValideListForDropDown(), "Value", "Text");
             ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+            ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitHistoriqueForDropDown(), "Value", "Text");
+            ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
 
-            return View();
+                    LotService LotService = new LotService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    EmployeService EmpService = new EmployeService(UOW);
+
+                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                        return RedirectToAction("Login", "Authentification");
+
+                    List<ClientAffecteViewModel> JoinedList;
+
+                
+
+                    if(page==null)
+                    {
+                        if(currentPage!=null)
+                        page = int.Parse(currentPage);
+                    }
+
+                    ViewBag.page= page;
+                      
+                    if (SearchString != null)
+                    {
+                        // page = 1;
+                    }
+                    else
+                    {
+                        SearchString = currentFilter;
+                    }
+
+                    ViewBag.currentFilter = SearchString;
+
+                    if (numLot != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        numLot = currentNumLot;
+                    }
+
+                    ViewBag.currentNumLot = numLot;
+
+                    if (type != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        type = currentType;
+                    }
+
+                    ViewBag.currentType = type;
+
+                    if (traite != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        traite = currentTraite;
+                    }
+
+                    ViewBag.currentTraite = traite;
+
+                    if (agent != null)
+                    {
+                        ///page = 1;
+                    }
+                    else
+                    {
+                        agent = currentAgent;
+                    }
+
+                    ViewBag.currentAgent = agent;
+
+                    if (traitDate != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        traitDate = currentTraitDate;
+                    }
+
+                    ViewBag.currentTraitDate = traitDate;
+
+
+
+                    if (!String.IsNullOrEmpty(traite))
+                    {
+
+                        if (traite == "ALL")
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+                                          where (f.EtatClient == Note.SOLDE || f.EtatClient== Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Affectation = a,
+                                              Lot = l,
+                                              Agent = e.Username,
+                                              IsDeletable = IsDeletable(f.FormulaireId,FormulaireService.GetMany(f=>f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+                                          }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+
+                        }
+
+                        else
+                        {
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+                                          where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Affectation = a,
+                                              Lot = l,
+                                              Agent = e.Username,
+                                              IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+                                          }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+                        }
+
+                    }
+                    else
+                    {
+
+                        JoinedList = (from f in FormulaireService.GetAll()
+                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                                      join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+                                      where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+                                      select new ClientAffecteViewModel
+                                      {
+
+                                          Formulaire = f,
+                                          Affectation = a,
+                                          Lot = l,
+                                          Agent = e.Username,
+                                          IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+                                      }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+
+                    }
+
+
+
+                    if (type == "DATE_TRAIT")
+                    {
+
+                        if (!String.IsNullOrEmpty(traitDate))
+                        {
+                            DateTime d = DateTime.Parse(traitDate);
+                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
+                        }
+
+                    }
+
+
+
+                    if (!String.IsNullOrEmpty(agent))
+                    {
+                        if (int.Parse(agent) != 0)
+                        {
+                            JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+                        }
+
+                    }
+
+                    if (!String.IsNullOrEmpty(numLot))
+                    {
+                        if (numLot.Equals("0") == false)
+                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+
+                    }
+
+                    if (!String.IsNullOrEmpty(SearchString))
+                    {
+                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+                                               || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+
+                                               ).ToList();
+                    }
+
+
+
+
+
+
+                    ViewBag.total = JoinedList.Count();
+
+                    int pageSize = 10;
+                    int pageNumber = (page ?? 1);
+
+                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
+                }
+            }
+
         }
 
 
@@ -2406,7 +2688,6 @@ namespace WakilRecouvrement.Web.Controllers
         public void DeleteFromulaire(Formulaire formulaire,FormulaireService FormulaireService)
         {
            
-
                     //LotService LotService = new LotService(UOW);
                     //FormulaireService FormulaireService = new FormulaireService(UOW);
 
@@ -2414,7 +2695,6 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService.Update(formulaire);
                     //FormulaireService.Commit();
                 
-
         }
 
         public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)

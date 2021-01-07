@@ -1,169 +1,297 @@
-﻿@model WakilRecouvrement.Domain.Entities.Formulaire
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "";
 }
 
-
-<br />
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-
-<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+@using (Html.BeginForm("HistoriqueTraitements", "Formulaire", FormMethod.Get, new { onsubmit = "showLoading()" }))
+{
 
 
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
 
-<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js">
-</script>
+            <h2>Historique Traitements</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentTraite })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
 
 
-<div class="card">
-    <div class="card-header" id="headingTwo">
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
 
-        <h2>Historique Des Traitements Validés</h2>
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
 
-    </div>
+                </div>
+                <div class="col-xs-3  col-md-3">
 
-    <div class="card-body">
+                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("type", "Type:", new { @class = "control-label " })
+
+                    @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
+
+                </div>
 
 
-        <div class="row">
-            <div class="col-xs-3">
-
-
-                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
-
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
-
-            </div>
-            <div class="col-xs-3 col-md-5">
-
-                @Html.Label("traite", "Etat:", new { @class = "control-label " })
-
-                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
-
-            </div>
-            <div class="col-xs-3">
-
-                @Html.Label("agent", "Agent:", new { @class = "control-label " })
-
-                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
 
             </div>
+
+
+            <br />
+
+
+            <div class="row">
+
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+                    @Html.TextBox("SearchString", ViewBag.currentFilter as string, new { @class = "form-control" })
+
+                </div>
+                <div id="dateTraitement" style="display:none" class="col-xs-3 col-md-3">
+
+                    <label for="traitDate">Type:</label>
+                    <input class="form-control" name="traitDate" value="@ViewBag.currentTraitDate" id="traitDate" type="date">
+
+                </div>
+
+
+
+
+            </div>
+
+            <br />
+
+            <br />
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer text-muted">
+
+
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+            </div>
+
         </div>
 
     </div>
 
-    <div class="card-footer text-muted">
+}
 
-        <span>
-            Total:
-        </span>
-        <span><strong id="nbTotal"></strong></span>
-
-    </div>
-
-</div>
+<table class="table table-bordered table-condensed table-responsive" style="display:table">
+    <tr>
 
 
-<table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
-    <thead>
-        <tr>
-            <th>Num Lot</th>
-            <th>Etat Client</th>
-            <th>Montant Versé/Déclaré </th>
-            <th>Verifié le: </th>
-            <th>Traité le:</th>
-            <th>Affecté le:</th>
-            <th>Agent</th>
-            <th>Solde débiteur</th>
-            <th>Compte</th>
-            <th>IDClient</th>
-            <th>NomClient</th>
-            <th>Agence</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
+        
+
+        <th>
+
+            Hist.
+
+        </th>
+
+        <th>
+            Num Lot
+        </th>
+        <th>
+            Etat
+        </th>
+        <th>
+            Traité Le:
+        </th>
+        <th>
+            Verifié Le:
+        </th>
+        <th>
+            Agent
+        </th>
+
+        <th>
+            Compte
+        </th>
+        <th>
+            IDClient
+        </th>
+        <th>
+            Nom Client
+        </th>
+        <th>
+            Solde Debiteur
+        </th>
+
+        <th>
+            Tel Portable
+        </th>
+
+        <th>
+            Tel Fixe
+        </th>
+        <th>
+            Agence
+        </th>
+        <th>
+            Adresse
+        </th>
+        <th>
+            Numero
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+
+        string classStyle = "";
+
+        if (item.Formulaire != null)
+        {
+
+            if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
+            {
+                classStyle = "p-3 mb-2 bg-success text-white";
+            }
+
+        }
+
+
+<tr class="@classStyle">
+    <td>
+
+        @Html.ActionLink("Historique", "HistoriqueClient", new { id = item.Affectation.AffectationId })
+        
+
+            @if (item.IsDeletable)
+            {
+                @Html.ActionLink("Supp.", "deleteHistVerifie", new { id = item.Formulaire.FormulaireId, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType = ViewBag.currentType, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent, currentTraitDate = ViewBag.currentTraitDate, currentPage = ViewBag.page }, new { @class = "text-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" });
+
+            }
+        
+
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NumLot)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Formulaire.VerifieLe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Agent)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Compte)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.IDClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NomClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Adresse)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Numero)
+    </td>
+
+</tr>
+    }
+
 </table>
-
 
 <script>
 
+    document.getElementById("traitDate").valueAsDate = new Date()
 
+    document.getElementById("type").onchange = function () {
 
-    $(document).ready(function () {
-        $.noConflict();
+        if (document.getElementById("type").value == "ALL_TRAIT") {
 
-        var Table = DemoDatatable();
+            document.getElementById("dateTraitement").style.display = "none"
 
+        } else if (document.getElementById("type").value == "DATE_TRAIT") {
 
-        $("#numLot").change(function () {
+            document.getElementById("dateTraitement").style.display = "block"
 
-            Table = DemoDatatable();
+        }
 
-        })
+    }
 
-        $("#traite").change(function () {
+    function showLoading() {
 
-            Table = DemoDatatable();
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
 
-        })
-
-        $("#agent").change(function () {
-
-            Table = DemoDatatable();
-
-        })
-
-    });
-
-
-    function DemoDatatable() {
-        var table = $("#demodata").DataTable({
-            "processing": true,
-            "serverSide": true,
-            "filter": true,
-            "orderMulti": false,
-            "destroy": true,
-            "ordering": true,
-            "ajax": {
-                "url": '@Url.Action("ValiderTraitement", "Formulaire")',
-                "type": "POST",
-                "datatype": "json",
-                "data": { IsValid: true, numLot: $("#numLot").val(), traite: $("#traite").val(), agent: $("#agent").val() }
-
-            },
-            "columns": [
-
-
-                  { "data": "NumLot", "name": "NumLot", "autoWidth": true }
-                , { "data": "Etat", "name": "Etat", "autoWidth": true }
-                , { "data": "MontantVerseDeclare", "name": "MontantVerseDeclare", "autoWidth": true }
-                , { "data": "VerifieLe", "name": "VerifieLe", "autoWidth": true }
-                , { "data": "TraiteLe", "name": "TraiteLe", "autoWidth": true }
-                , { "data": "DateAff", "name": "DateAff", "autoWidth": true }
-                , { "data": "Username", "name": "Username", "autoWidth": true }
-                , { "data": "SoldeDebiteur", "name": "SoldeDebiteur", "autoWidth": true }
-                , { "data": "Compte", "Name": "Compte", "autoWidth": true }
-                , { "data": "IDClient", "name": "IDClient", "autoWidth": true }
-                , { "data": "NomClient", "name": "NomClient", "autoWidth": true }
-                , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }
-
-
-            ]
-        });
-
-
-        table.on('xhr.dt',
-            function (e, settings, data, xhr) {
-                document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
-            });
-        return table;
     }
 
 </script>
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("HistoriqueTraitements",
+    new { page, currentPage=ViewBag.page,currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType = ViewBag.currentType, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent, currentTraitDate = ViewBag.currentTraitDate }))

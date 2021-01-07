@@ -325,8 +325,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                     ViewData["noDup"] = "1";
                                                 }
                                                 LotService.Add(Lot);
-                                                LotService.Commit();
-                                                AffecterClient(Lot, filename);
+                                                //AffecterClient(Lot, filename);
 
                                             }
 
@@ -335,6 +334,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                                         ViewData["nbTotal"] = dt.Rows.Count;
                                         ViewData["finished"] = "1";
+                                        LotService.Commit();
 
                                     }
                                 }
@@ -361,7 +361,26 @@ namespace WakilRecouvrement.Web.Controllers
           
         }
 
-        public ActionResult ConsulterClients(string SearchString,string numLot,string currentFilter, string sortOrder,int? page)
+        public ActionResult deleteLot(int id, string currentFilter, string currentNumLot, string currentPage)
+        {
+
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                 
+                    LotService LotService = new LotService(UOW);
+
+                    LotService.Delete(LotService.GetById(id));
+                    LotService.Commit();
+
+                    return RedirectToAction("ConsulterClients", "Lot", new { currentFilter, currentNumLot, currentPage });
+
+                }
+            }
+        }
+
+        public ActionResult ConsulterClients(string SearchString,string numLot, string currentFilter, string currentNumLot, string currentPage,string CurrentSort, string sortOrder,int? page)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -370,22 +389,55 @@ namespace WakilRecouvrement.Web.Controllers
                 {
                    LotService LotService = new LotService(UOW);
                    
-                    ViewBag.CurrentSort = sortOrder;
 
                     ViewData["list"] = new SelectList(NumLotAllListForDropDown(), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(SortOrdrForDropDown(), "Value", "Text");
 
                     List<SuiviAffectationViewModel> JoinedList = new List<SuiviAffectationViewModel>();
+
+
+                    if (sortOrder != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        sortOrder = CurrentSort;
+                    }
+
+
+                    ViewBag.CurrentSort = sortOrder;
+
+
+                    if (page == null)
+                    {
+                        if (currentPage != null)
+                            page = int.Parse(currentPage);
+                    }
+
+                    ViewBag.page = page;
+
                     if (SearchString != null)
                     {
-                        page = 1;
+                        // page = 1;
                     }
                     else
                     {
                         SearchString = currentFilter;
                     }
 
-                    ViewBag.CurrentFilter = SearchString;
+                    ViewBag.currentFilter = SearchString;
+
+                    if (numLot != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        numLot = currentNumLot;
+                    }
+
+                    ViewBag.currentNumLot = numLot;
 
 
                     JoinedList = (from a in LotService.GetAll()
@@ -449,14 +501,19 @@ namespace WakilRecouvrement.Web.Controllers
                     switch (sortOrder)
                     {
                         case "0":
+
                             JoinedList = JoinedList.OrderBy(s => s.NomClient).ToList();
+                            
                             break;
                         case "1":
+
                             JoinedList = JoinedList.OrderByDescending(s => s.SoldeDebiteur).ToList();
+
                             break;
 
                         case "2":
                             JoinedList = JoinedList.OrderBy(s => s.SoldeDebiteur).ToList();
+                            
                             break;
 
                         default:
@@ -515,41 +572,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
-
-        public void AffecterClient(Lot lot, string filename)
-        {
-
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    LotService LotService = new LotService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-                    string agent = "POSTE4";
-                    string numlot = filename.Split('_')[1];
-
-                    Employe emp = EmpService.GetEmployeByUername(agent);
-
-                    Affectation affectation = new Affectation
-                    {
-                        AffectePar = "",
-                        EmployeId = emp.EmployeId,
-                        DateAffectation = DateTime.Now,
-                        LotId = lot.LotId
-                    };
-
-                    AffectationService.Add(affectation);
-                    AffectationService.Commit();
-                }
-            }
-
-
-
-
-                   
-        }
-
 
         public ActionResult updateLot(int id)
         {
