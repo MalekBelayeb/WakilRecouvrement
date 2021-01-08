@@ -19,5 +19,6 @@ namespace WakilRecouvrement.Web.Models
         public double vers { get; set; }
         public double recouvre { get; set; }
         public bool IsDeletable { get; set; }
+        public int AffectationId { get; set; }
     }
 }

@@ -1,0 +1,89 @@
+﻿@model IEnumerable<WakilRecouvrement.Web.Models.ViewModel.RenseignerViewModel>
+
+@{
+    ViewBag.Title = "";
+}
+
+
+
+
+
+@using (Html.BeginForm("ExtraireLettre", "Facture", FormMethod.Post, new { onsubmit = "showLoading()" }))
+{
+
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h2>Renseigner Client (FN-NRP-REFUS)</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+
+                <div class="col-xs-3 col-md-3 ">
+
+                    <label for="RappelDate">Date de début:</label>
+                    <input class="form-control" name="debutDate" id="debutdate" type="date">
+
+
+                </div>
+
+
+                <div class="col-xs-3 col-md-3">
+
+                    <label for="RappelDate">Date de fin:</label>
+                    <input class="form-control" name="finDate" id="findate" type="date">
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Exporter" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+}
+
+
+
+
+<table class="table">
+    <tr>
+        <th></th>
+    </tr>
+
+
+</table>
+
+
+
+
+<script>
+
+    document.getElementById('debutdate').valueAsDate = new Date();
+    document.getElementById('findate').valueAsDate = new Date();
+
+</script>

@@ -343,6 +343,25 @@ namespace WakilRecouvrement.Web.Controllers
 
                                           }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" != "SOLDE" && f.Formulaire.EtatClient + "" != "FAUX_NUM").ToList();
 
+                        
+                        }else if(traite== "VERS")
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetMany(a => a.EmployeId == emp.EmployeId) on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+                                          
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Affectation = a,
+                                              Lot = l,
+
+                                          }).Where(f => f.Formulaire.EtatClient == Note.SOLDE || f.Formulaire.EtatClient == Note.SOLDE_TRANCHE || f.Formulaire.EtatClient == Note.A_VERIFIE).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+
                         }
                         else
                         {
@@ -473,7 +492,8 @@ namespace WakilRecouvrement.Web.Controllers
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients affectés", Value = "ALL" });
-            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients traités sauf SOLDE/FAUX_NUM", Value = "SAUF" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous mes traitements (VERSEMENT/VERIFIE)", Value = "VERS" });
 
             foreach (var n in Enum.GetValues(typeof(Note)))
             {

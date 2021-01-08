@@ -13,7 +13,7 @@ namespace WakilRecouvrement.Web.Controllers
     public class NotificationController : Controller
     {
 
-        NotificationService NotificationService;
+        //NotificationService NotificationService;
 
         /*
         public NotificationController()

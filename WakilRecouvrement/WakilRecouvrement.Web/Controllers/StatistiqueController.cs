@@ -524,7 +524,6 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult quotidienStatTraite(string date)
         {
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -535,7 +534,6 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                    
                     DateTime d = new DateTime();
-
 
                     int quotidienPoste1Tot = 0;
                     int quotidienPoste2Tot = 0;

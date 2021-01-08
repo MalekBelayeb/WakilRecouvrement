@@ -211,26 +211,23 @@ namespace WakilRecouvrement.Web.Controllers
                     
                     List<ClientAffecteViewModel> clientAffecteViewModels = (from f in FormulaireService.GetAll()
                                                                             join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                                            join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+
                                                                             where a.AffectationId == id
                                                                             select new ClientAffecteViewModel
                                                                             {
                                                                                 Formulaire = f,
-                                                                                Affectation = a
+                                                                                Affectation = a,
+                                                                                Agent = e.Username
 
                                                                             }).ToList();
-                    var obj = (from a in AffectationService.GetAll()
-                               join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                               where a.AffectationId == id
-                               select new { e.Username, a.AffectationId }).FirstOrDefault();
+                    
+                   
 
-
-                    ViewBag.username = obj.Username.ToString();
-                    ViewBag.id = obj.AffectationId.ToString();
+                    ViewBag.username = clientAffecteViewModels.Select(c=>c.Agent);
+                    ViewBag.id = id+"";
 
                     return View(clientAffecteViewModels);
-
-
-
 
                 }
             }

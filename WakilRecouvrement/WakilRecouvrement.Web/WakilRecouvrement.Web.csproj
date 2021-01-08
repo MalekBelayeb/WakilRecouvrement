@@ -48,9 +48,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
     <Reference Include="ClosedXML, Version=0.95.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.3\lib\net46\ClosedXML.dll</HintPath>
     </Reference>
@@ -380,6 +377,7 @@
     <Compile Include="Models\TelFN.cs" />
     <Compile Include="Models\ViewModel\FactureContent.cs" />
     <Compile Include="Models\ViewModel\HomeViewModel.cs" />
+    <Compile Include="Models\ViewModel\RenseignerViewModel.cs" />
     <Compile Include="Models\ViewModel\RentabiliteViewModel.cs" />
     <Compile Include="Models\ViewModel\StatLot.cs" />
     <Compile Include="Models\ViewModel\SuiviAffectationViewModel.cs" />
@@ -641,6 +639,8 @@
     <Content Include="adminlte\plugins\bootstrap\js\bootstrap.bundle.min.js.map" />
     <Content Include="adminlte\plugins\bootstrap\js\bootstrap.js.map" />
     <Content Include="adminlte\plugins\bootstrap\js\bootstrap.min.js.map" />
+    <Content Include="Content\Font\NotoNaskhArabicUI-Regular.ttf" />
+    <Content Include="Content\Font\trado.ttf" />
     <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile10.pubxml" />
@@ -810,6 +810,7 @@
     <Content Include="Views\Formulaire\TraitementRejetes.cshtml" />
     <Content Include="Views\Formulaire\SuiviTraiement.cshtml" />
     <Content Include="Views\Facture\genererFacture.cshtml" />
+    <Content Include="Views\Facture\Renseigner.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -925,6 +926,35 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Word">
+      <Guid>{00020905-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>8</VersionMajor>
+      <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

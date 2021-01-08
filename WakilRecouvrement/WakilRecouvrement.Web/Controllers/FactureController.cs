@@ -15,11 +15,19 @@ using WakilRecouvrement.Web.Models;
 using Microsoft.Ajax.Utilities;
 using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 using System.IO;
 using WakilRecouvrement.Domain.Entities;
 using PagedList;
 using WakilRecouvrement.Data;
 using MyFinance.Data.Infrastructure;
+using System.Globalization;
+using System.Text;
+using iText.Layout.Font;
+using System.Drawing;
+using iText.Kernel.Font;
+using iText.IO.Font;
+using System.Xml;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -87,17 +95,14 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public List<ClientAffecteViewModel> getTraitHist(int idAff)
+        public List<ClientAffecteViewModel> getTraitHist(int idAff, FormulaireService FormulaireService, AffectationService AffectationService, LotService LotService)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    LotService LotService = new LotService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-
+                   
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     JoinedList = (from f in FormulaireService.GetAll()
@@ -187,6 +192,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     if (numLot == "0")
                     {
+
                         JoinedList = (from f in FormulaireService.GetAll()
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -203,6 +209,7 @@ namespace WakilRecouvrement.Web.Controllers
                     }
                     else
                     {
+
                         JoinedList = (from f in FormulaireService.GetAll()
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -215,6 +222,7 @@ namespace WakilRecouvrement.Web.Controllers
                                           Lot = l,
 
                                       }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+                        
                     }
 
                     foreach (ClientAffecteViewModel cvm in JoinedList)
@@ -232,7 +240,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                         if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
                         {
-                            TempJoinedList = getTraitHist(cvm.Affectation.AffectationId);
+                            
+                            TempJoinedList = getTraitHist(cvm.Affectation.AffectationId,FormulaireService,AffectationService,LotService);
                             if (TempJoinedList.Count() == 0)
                             {
 
@@ -479,6 +488,113 @@ namespace WakilRecouvrement.Web.Controllers
             document.Close();
 
         }
+
+        public void GeneratePDFForLettre(string path)
+        {
+
+            Microsoft.Office.Interop.Word.Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.ShowAnimation = false;
+            winword.Visible = false;
+            object missing = System.Reflection.Missing.Value;
+            Microsoft.Office.Interop.Word.Document document = winword.Documents.Add(ref missing, ref missing, ref missing, ref missing);
+
+            Word.Paragraph paragraphEmpty = document.Content.Paragraphs.Add(missing);
+            paragraphEmpty.SpaceAfter = 100;
+            paragraphEmpty.Range.InsertParagraphAfter();
+
+
+            Word.Paragraph paragraphTitle = document.Content.Paragraphs.Add(missing);
+            paragraphTitle.Range.Text = "من شركة الوكيل لإستخلاص الديون";
+            paragraphTitle.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+            paragraphTitle.Range.Font.NameBi = "Arial";
+            paragraphTitle.Range.Font.SizeBi = 20;
+            paragraphTitle.SpaceAfter = 15;
+            paragraphTitle.Range.InsertParagraphAfter();
+
+
+            object oEndOfDoc = "\\endofdoc";
+
+            Word.Range tblRange = document.Bookmarks[oEndOfDoc].Range;
+            
+            Word.Table tableName = document.Tables.Add(tblRange, 1,3);
+
+            tableName.Borders.Enable = 0;
+
+            tableName.Cell(1, 1).Range.Text = "Nom et prénom:";
+            tableName.Cell(1, 1).Range.Font.Name = "Arial";
+            tableName.Cell(1, 1).Range.Font.Size = 12;
+            tableName.Cell(1, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+
+            tableName.Cell(1, 2).Range.Text = "Malek Belayeb Malek Belayeb Malek Belayeb";
+            tableName.Cell(1, 2).Range.Font.Name = "Arial";
+            tableName.Cell(1, 2).Range.Font.Size = 18;
+            tableName.Cell(1, 2).Range.Font.Bold = 1;
+            tableName.Cell(1, 2).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+            tableName.Cell(1, 3).Range.Text = "الاسم واللقب";
+            tableName.Cell(1, 3).Range.Font.NameBi = "Arial";
+            tableName.Cell(1, 3).Range.Font.SizeBi = 13;
+            tableName.Cell(1, 3).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+
+
+            Word.Range tblRangeAgence = document.Bookmarks[oEndOfDoc].Range;
+
+            Word.Table tableAgence = document.Tables.Add(tblRangeAgence, 1, 3);
+
+            tableAgence.Borders.Enable = 0;
+
+            tableAgence.Cell(1, 1).Range.Text = "Agence:";
+            tableAgence.Cell(1, 1).Range.Font.Name = "Arial";
+            tableAgence.Cell(1, 1).Range.Font.Size = 12;
+            tableAgence.Cell(1, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+
+            tableAgence.Cell(1, 2).Range.Text = " Agence sfax qsd  qsd qs df ";
+            tableAgence.Cell(1, 2).Range.Font.Name = "Arial";
+            tableAgence.Cell(1, 2).Range.Font.Size = 18;
+            tableAgence.Cell(1, 2).Range.Font.Bold = 1;
+            tableAgence.Cell(1, 2).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+            tableAgence.Cell(1, 3).Range.Text = "الفرع";
+            tableAgence.Cell(1, 3).Range.Font.NameBi = "Arial";
+            tableAgence.Cell(1, 3).Range.Font.SizeBi = 13;
+            tableAgence.Cell(1, 3).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+
+
+
+
+            Word.Paragraph paragraphBody1 = document.Content.Paragraphs.Add(missing);
+            paragraphBody1.Range.Text = "تحية طيبة وبعد";
+            paragraphBody1.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+            paragraphBody1.Range.Font.NameBi = "Arial";
+            paragraphBody1.Range.Font.SizeBi = 20;
+            paragraphBody1.Range.InsertParagraphAfter();
+
+            
+            Word.Paragraph paragraphBody2 = document.Content.Paragraphs.Add(missing);
+            paragraphBody2.Range.Text = "في إطار تكليفنا لمساعدتكم على التواصل  لتسوية وضعية دينكم تجاه مصرف الزيتونة فرع مركزي و المتعلق بحسابكم البنكي  الخاص، نرجو منكم التوجه إلى الفرع المذكور أو الإتصال بالشركة لإيجاد أفضل الحلول المناسبة التي تضمن لكم أحسن طريقة لتطهير دينكم";
+            paragraphBody2.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+            paragraphBody2.Range.Font.NameBi = "Arial";
+            paragraphBody2.Range.Font.SizeBi = 20;
+            paragraphTitle.SpaceAfter = 30;
+            paragraphBody2.Range.InsertParagraphAfter();
+            
+            Word.Paragraph footer = document.Content.Paragraphs.Add(missing);
+            footer.Range.Text = "رهاننا وعيكم وحسن تفهمكم";
+            footer.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+            footer.Range.Font.NameBi = "Arial";
+            footer.Range.Font.SizeBi = 20;
+            footer.Range.InsertParagraphAfter();
+
+           
+            object filename = path;
+            document.SaveAs2(ref filename);
+            document.Close(ref missing, ref missing, ref missing);
+            document = null;
+            winword.Quit(ref missing, ref missing, ref missing);
+            winword = null;
+
+        }
+
         public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list)
         {
             List<FormulaireExportable> newList = new List<FormulaireExportable>();
@@ -612,6 +728,32 @@ namespace WakilRecouvrement.Web.Controllers
             }
 
             return folderName;
+        }
+
+
+        public ActionResult Renseigner()
+        {
+
+            return View();
+        }
+
+        public ActionResult ExtraireLettre(string debutDate, string finDate)
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    Debug.WriteLine(debutDate);
+                    Debug.WriteLine(finDate);
+                    string path = GetFolderName() + "/" + "lettre.docx";
+
+                    GeneratePDFForLettre(path);
+
+                    return View("Renseigner");
+                }
+            }
+
+                    
         }
 
 
