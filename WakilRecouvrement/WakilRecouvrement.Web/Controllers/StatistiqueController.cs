@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WakilRecouvrement.Data;
 using WakilRecouvrement.Domain.Entities;
@@ -106,7 +105,6 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        // GET: Statistique
         public ActionResult Index()
         {
 
@@ -175,7 +173,7 @@ namespace WakilRecouvrement.Web.Controllers
                     List<ClientAffecteViewModel> versCAVm = new List<ClientAffecteViewModel>();
                     List<ClientAffecteViewModel> encoursCAVm = new List<ClientAffecteViewModel>();
                     List<ClientAffecteViewModel> tot = new List<ClientAffecteViewModel>();
-
+                        
                     if (numLot == 0)
                     {
 
@@ -321,7 +319,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                                        }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == Note.REFUS_PAIEMENT || f.Formulaire.EtatClient == Note.RAPPEL || f.Formulaire.EtatClient == Note.RACCROCHE || f.Formulaire.EtatClient == Note.NRP || f.Formulaire.EtatClient == Note.INJOIGNABLE || f.Formulaire.EtatClient == Note.AUTRE || f.Formulaire.EtatClient == Note.A_VERIFIE).ToList();
 
-
                     }
 
                     if (typeStat == "1")
@@ -356,8 +353,6 @@ namespace WakilRecouvrement.Web.Controllers
                     else if (typeStat == "3")
                     {
 
-
-
                         rdv = rdvCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
                         fn = fnCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
                         versement = versCAVm.Where(a => a.Affectation.EmployeId + "" == agent).Count();
@@ -372,8 +367,6 @@ namespace WakilRecouvrement.Web.Controllers
                     }
                     else if (typeStat == "4")
                     {
-
-
 
                         rdv = rdvCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
                         fn = fnCAVm.Where(a => a.Affectation.EmployeId + "" == agent && a.Formulaire.TraiteLe.Date == DateTime.Parse(dateStat).Date).Count();
@@ -430,7 +423,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public ActionResult annuelStatTraite(string year)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -447,7 +440,15 @@ namespace WakilRecouvrement.Web.Controllers
                     int annuelPoste2Tot = 0;
                     int annuelPoste3Tot = 0;
                     int annuelPoste4Tot = 0;
+
+                    double annuelRentaPoste1Tot = 0;
+                    double annuelRentaPoste2Tot = 0;
+                    double annuelRentaPoste3Tot = 0;
+                    double annuelRentaPoste4Tot = 0;
+
                     int tot = 0;
+                    double totRenta = 0;
+
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     JoinedList = (from f in FormulaireService.GetAll()
@@ -463,16 +464,234 @@ namespace WakilRecouvrement.Web.Controllers
 
                                   }).ToList();
 
-                    annuelPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
-                    annuelPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
-                    annuelPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
-                    annuelPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
+                    if(year != null && year!="")
+                    {
+                        annuelPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
+                        annuelPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
+                        annuelPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
+                        annuelPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date.Year + "" == year).Count();
+
+                        annuelRentaPoste1Tot = rentabiliteAgents(year, "POSTE1", LotService, FormulaireService, AffectationService);
+                        annuelRentaPoste2Tot = rentabiliteAgents(year, "POSTE2", LotService, FormulaireService, AffectationService);
+                        annuelRentaPoste3Tot = rentabiliteAgents(year, "POSTE3", LotService, FormulaireService, AffectationService);
+                        annuelRentaPoste4Tot = rentabiliteAgents(year, "POSTE4", LotService, FormulaireService, AffectationService);
+
+                    }
 
                     tot = annuelPoste1Tot + annuelPoste2Tot + annuelPoste3Tot + annuelPoste4Tot;
+                    totRenta = annuelRentaPoste1Tot + annuelRentaPoste2Tot + annuelRentaPoste3Tot + annuelRentaPoste4Tot;
 
-                    return Json(new { tot = tot, annuelPoste1Tot = annuelPoste1Tot, annuelPoste2Tot = annuelPoste2Tot, annuelPoste3Tot = annuelPoste3Tot, annuelPoste4Tot = annuelPoste4Tot });
+                    return Json(new { tot = tot, annuelPoste1Tot = annuelPoste1Tot, annuelPoste2Tot = annuelPoste2Tot, annuelPoste3Tot = annuelPoste3Tot, annuelPoste4Tot = annuelPoste4Tot, totRenta = String.Format("{0:0.000}", totRenta), annuelRentaPoste1Tot = annuelRentaPoste1Tot, annuelRentaPoste2Tot = annuelRentaPoste2Tot, annuelRentaPoste3Tot = annuelRentaPoste3Tot, annuelRentaPoste4Tot = annuelRentaPoste4Tot }, JsonRequestBehavior.AllowGet);
                 }
             }
+        }
+        public List<ClientAffecteViewModel> getTraitHist(int idAff, FormulaireService FormulaireService, AffectationService AffectationService, LotService LotService)
+        {
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where f.Status == Domain.Entities.Status.VERIFIE && f.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE && f.AffectationId == idAff
+
+                          select new ClientAffecteViewModel
+                          {
+
+                              Formulaire = f,
+                              Affectation = a,
+                              Lot = l,
+
+                          }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+            return JoinedList;
+
+
+        }
+
+        public double rentabiliteAgents(string year,string agent, LotService LotService, FormulaireService FormulaireService, AffectationService AffectationService)
+        {
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+            List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
+
+            double trancheTot = 0;
+            double soldeTot = 0;
+            double res=0; 
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where f.Status == Domain.Entities.Status.VERIFIE
+                          select new ClientAffecteViewModel
+                          {
+
+                              Formulaire = f,
+                              Affectation = a,
+                              Lot = l,
+
+                          }).Where(j => j.Affectation.Employe.Username == agent && j.Formulaire.TraiteLe.Date.Year + "" == year).ToList();
+
+
+
+            foreach (ClientAffecteViewModel cvm in JoinedList)
+            {
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                {
+
+                    trancheTot += (cvm.Formulaire.MontantVerseDeclare);
+
+                }
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                {
+
+                    TempJoinedList = getTraitHist(cvm.Affectation.AffectationId, FormulaireService, AffectationService, LotService);
+                    if (TempJoinedList.Count() == 0)
+                    {
+
+                        soldeTot += (cvm.Formulaire.MontantDebInitial);
+
+                    }
+                    else
+                    {
+
+                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ);
+
+                    }
+
+                }
+
+
+            }
+
+            res = soldeTot + trancheTot;
+
+            return res;
+
+        }
+        public double rentabiliteAgents(string year,string month, string agent, LotService LotService, FormulaireService FormulaireService, AffectationService AffectationService)
+        {
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+            List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
+
+            double trancheTot = 0;
+            double soldeTot = 0;
+            double res = 0;
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where f.Status == Domain.Entities.Status.VERIFIE
+                          select new ClientAffecteViewModel
+                          {
+
+                              Formulaire = f,
+                              Affectation = a,
+                              Lot = l,
+
+                          }).Where(j => j.Affectation.Employe.Username == agent && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).ToList();
+
+
+
+            foreach (ClientAffecteViewModel cvm in JoinedList)
+            {
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                {
+
+                    trancheTot += (cvm.Formulaire.MontantVerseDeclare);
+
+                }
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                {
+
+                    TempJoinedList = getTraitHist(cvm.Affectation.AffectationId, FormulaireService, AffectationService, LotService);
+                    if (TempJoinedList.Count() == 0)
+                    {
+
+                        soldeTot += (cvm.Formulaire.MontantDebInitial);
+
+                    }
+                    else
+                    {
+
+                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ);
+
+                    }
+
+                }
+
+
+            }
+
+            res = soldeTot + trancheTot;
+
+            return res;
+
+        }
+
+
+        public double rentabiliteAgents(DateTime date, string agent, LotService LotService, FormulaireService FormulaireService, AffectationService AffectationService)
+        {
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+            List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
+
+            double trancheTot = 0;
+            double soldeTot = 0;
+            double res = 0;
+            JoinedList = (from f in FormulaireService.GetAll()
+                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                          where f.Status == Domain.Entities.Status.VERIFIE
+                          select new ClientAffecteViewModel
+                          {
+
+                              Formulaire = f,
+                              Affectation = a,
+                              Lot = l,
+
+                          }).Where(j => j.Affectation.Employe.Username == agent && j.Formulaire.TraiteLe.Date  == date ).ToList();
+
+
+
+            foreach (ClientAffecteViewModel cvm in JoinedList)
+            {
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                {
+
+                    trancheTot += (cvm.Formulaire.MontantVerseDeclare);
+
+                }
+
+                if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                {
+
+                    TempJoinedList = getTraitHist(cvm.Affectation.AffectationId, FormulaireService, AffectationService, LotService);
+                    if (TempJoinedList.Count() == 0)
+                    {
+
+                        soldeTot += (cvm.Formulaire.MontantDebInitial);
+
+                    }
+                    else
+                    {
+
+                        soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ);
+
+                    }
+
+                }
+
+
+            }
+
+            res = soldeTot + trancheTot;
+
+            return res;
+
         }
 
         [HttpPost]
@@ -494,6 +713,12 @@ namespace WakilRecouvrement.Web.Controllers
                     int mensuelPoste3Tot = 0;
                     int mensuelPoste4Tot = 0;
                     int tot = 0;
+                    
+                    double mensuelRentaPoste1Tot = 0;
+                    double mensuelRentaPoste2Tot = 0;
+                    double mensuelRentaPoste3Tot = 0;
+                    double mensuelRentaPoste4Tot = 0;
+                    double totRenta = 0;
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     JoinedList = (from f in FormulaireService.GetAll()
@@ -509,14 +734,26 @@ namespace WakilRecouvrement.Web.Controllers
 
                                   }).ToList();
 
-                    mensuelPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
-                    mensuelPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
-                    mensuelPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
-                    mensuelPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
-                    tot = mensuelPoste1Tot + mensuelPoste2Tot + mensuelPoste3Tot + mensuelPoste4Tot;
 
 
-                    return Json(new { tot = tot, mensuelPoste1Tot = mensuelPoste1Tot, mensuelPoste2Tot = mensuelPoste2Tot, mensuelPoste3Tot = mensuelPoste3Tot, mensuelPoste4Tot = mensuelPoste4Tot });
+                    if(month!="" && year!="" && month !=null && year != null)
+                    {
+                        mensuelPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
+                        mensuelPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
+                        mensuelPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
+                        mensuelPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date.Year + "" == year && j.Formulaire.TraiteLe.Date.Month + "" == month).Count();
+                        tot = mensuelPoste1Tot + mensuelPoste2Tot + mensuelPoste3Tot + mensuelPoste4Tot;
+
+                        mensuelRentaPoste1Tot = rentabiliteAgents(year, month, "POSTE1", LotService, FormulaireService, AffectationService);
+                        mensuelRentaPoste2Tot = rentabiliteAgents(year, month, "POSTE2", LotService, FormulaireService, AffectationService);
+                        mensuelRentaPoste3Tot = rentabiliteAgents(year, month, "POSTE3", LotService, FormulaireService, AffectationService);
+                        mensuelRentaPoste4Tot = rentabiliteAgents(year, month, "POSTE4", LotService, FormulaireService, AffectationService);
+                        totRenta = mensuelRentaPoste1Tot + mensuelRentaPoste2Tot + mensuelRentaPoste3Tot + mensuelRentaPoste4Tot;
+
+                    }
+
+
+                    return Json(new { tot = tot, mensuelPoste1Tot = mensuelPoste1Tot, mensuelPoste2Tot = mensuelPoste2Tot, mensuelPoste3Tot = mensuelPoste3Tot, mensuelPoste4Tot = mensuelPoste4Tot, totRenta = String.Format("{0:0.00}", totRenta) , mensuelRentaPoste1Tot = mensuelRentaPoste1Tot, mensuelRentaPoste2Tot = mensuelRentaPoste2Tot, mensuelRentaPoste3Tot = mensuelRentaPoste3Tot, mensuelRentaPoste4Tot = mensuelRentaPoste4Tot }) ;
                 }
             }
         }
@@ -540,6 +777,12 @@ namespace WakilRecouvrement.Web.Controllers
                     int quotidienPoste3Tot = 0;
                     int quotidienPoste4Tot = 0;
                     int tot = 0;
+
+                    double quotidienRentaPoste1Tot = 0;
+                    double quotidienRentaPoste2Tot = 0;
+                    double quotidienRentaPoste3Tot = 0;
+                    double quotidienRentaPoste4Tot = 0;
+                    double totRenta = 0;
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     JoinedList = (from f in FormulaireService.GetAll()
@@ -555,19 +798,29 @@ namespace WakilRecouvrement.Web.Controllers
 
                                   }).ToList();
 
-
-                    if (DateTime.TryParse(date, out d))
+                    if(date != "" && date !=null)
                     {
-                        quotidienPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date == d.Date).Count();
-                        quotidienPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date == d.Date).Count();
-                        quotidienPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date == d.Date).Count();
-                        quotidienPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date == d.Date).Count();
-                        tot = quotidienPoste1Tot + quotidienPoste2Tot + quotidienPoste3Tot + quotidienPoste4Tot;
+                        if (DateTime.TryParse(date, out d))
+                        {
+                            quotidienPoste1Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE1" && j.Formulaire.TraiteLe.Date == d.Date).Count();
+                            quotidienPoste2Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE2" && j.Formulaire.TraiteLe.Date == d.Date).Count();
+                            quotidienPoste3Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE3" && j.Formulaire.TraiteLe.Date == d.Date).Count();
+                            quotidienPoste4Tot = JoinedList.Where(j => j.Affectation.Employe.Username == "POSTE4" && j.Formulaire.TraiteLe.Date == d.Date).Count();
+                            tot = quotidienPoste1Tot + quotidienPoste2Tot + quotidienPoste3Tot + quotidienPoste4Tot;
 
+
+                            quotidienRentaPoste1Tot = rentabiliteAgents(d, "POSTE1", LotService, FormulaireService, AffectationService);
+                            quotidienRentaPoste2Tot = rentabiliteAgents(d, "POSTE2", LotService, FormulaireService, AffectationService);
+                            quotidienRentaPoste3Tot = rentabiliteAgents(d, "POSTE3", LotService, FormulaireService, AffectationService);
+                            quotidienRentaPoste4Tot = rentabiliteAgents(d, "POSTE4", LotService, FormulaireService, AffectationService);
+                            totRenta = quotidienRentaPoste1Tot + quotidienRentaPoste2Tot + quotidienRentaPoste3Tot + quotidienRentaPoste4Tot;
+                        
+                        }
                     }
+                   
 
 
-                    return Json(new { tot = tot, quotidienPoste1Tot = quotidienPoste1Tot, quotidienPoste2Tot = quotidienPoste2Tot, quotidienPoste3Tot = quotidienPoste3Tot, quotidienPoste4Tot = quotidienPoste4Tot });
+                    return Json(new { tot = tot, quotidienPoste1Tot = quotidienPoste1Tot, quotidienPoste2Tot = quotidienPoste2Tot, quotidienPoste3Tot = quotidienPoste3Tot, quotidienPoste4Tot = quotidienPoste4Tot,totRenta= String.Format("{0:0.00}", totRenta),quotidienRentaPoste1Tot=quotidienRentaPoste1Tot,quotidienRentaPoste2Tot=quotidienRentaPoste2Tot,quotidienRentaPoste3Tot=quotidienRentaPoste3Tot,quotidienRentaPoste4Tot=quotidienRentaPoste4Tot });
                 }
             }
         }

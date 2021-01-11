@@ -23,6 +23,7 @@ namespace WakilRecouvrement.Data
         public DbSet<Affectation> Affectationss { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Facture> Facture { get; set; }
+        public DbSet<Lettre> Lettre { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

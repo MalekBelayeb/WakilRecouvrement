@@ -71,6 +71,10 @@
     <Compile Include="Migrations\202012300604492_erererkkff.designer.cs">
       <DependentUpon>202012300604492_erererkkff.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101100152538_eers.cs" />
+    <Compile Include="Migrations\202101100152538_eers.designer.cs">
+      <DependentUpon>202101100152538_eers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WakilRecouvContext.cs" />
@@ -95,6 +99,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012300604492_erererkkff.resx">
       <DependentUpon>202012300604492_erererkkff.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101100152538_eers.resx">
+      <DependentUpon>202101100152538_eers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

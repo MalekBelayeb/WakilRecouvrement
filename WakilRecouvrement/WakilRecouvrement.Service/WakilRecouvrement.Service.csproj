@@ -63,9 +63,11 @@
     <Compile Include="IEmployeService.cs" />
     <Compile Include="IFactureService.cs" />
     <Compile Include="IFormulaireService.cs" />
+    <Compile Include="ILettreService.cs" />
     <Compile Include="ILotService.cs" />
     <Compile Include="INotificationService.cs" />
     <Compile Include="IRoleService.cs" />
+    <Compile Include="LettreService.cs" />
     <Compile Include="LotService.cs" />
     <Compile Include="NotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

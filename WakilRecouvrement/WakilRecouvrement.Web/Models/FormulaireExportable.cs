@@ -17,8 +17,10 @@ namespace WakilRecouvrement.Web.Models
        public string MontantRecouvre { get; set; }
        public string RDV { get; set; }
        public string TotRecouvre { get; set; }
-    
-
+       public string Adresse { get; set; }
+       public string Agence { get; set; }
+       
+       public string TraiteLe { get; set; }
 
     }
 }
