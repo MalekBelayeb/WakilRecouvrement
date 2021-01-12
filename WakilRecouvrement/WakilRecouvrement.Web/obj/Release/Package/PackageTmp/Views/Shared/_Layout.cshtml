@@ -11,8 +11,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <title>Al-Wakil Recouvrement</title>
 
-    <!-- Font Awesome Icons -->
-    <!-- Google Font: Source Sans Pro -->
 
 
 </head>
@@ -54,7 +52,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <li class="nav-item dropdown">
 
                         <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="fas fa-bell"></i>
                             <span id="nbNotif" class="badge badge-warning navbar-badge">0</span>
                         </a>
 
@@ -69,7 +66,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     <li class="nav-item">
                         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                            <i class="fas fa-th-large"></i>
                         </a>
                     </li>
                 </ul>
@@ -78,8 +74,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         }
 
-        <!-- /.navbar -->
-        <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             -
             <!-- Brand Logo -->
@@ -89,9 +83,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="brand-text font-weight-light">AL Wakil Recouv. </span>
             </a>
 
-            <!-- Sidebar -->
+
             <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
 
                 @if (Session["username"] != null)
                 {
@@ -107,7 +100,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 }
 
                 <nav class="mt-2">
-
                     <ul id="myUL" class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                         @if (Session["role"] != null)
@@ -132,21 +124,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                             <li class="nav-item">
                                                 <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
-                                                    @*<i class="fas fa-upload mr-4"></i>*@
                                                     <p>Importer</p>
                                                 </a>
                                             </li>
 
                                             <li class="nav-item">
                                                 <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                                    @*<i class="fas fa-book mr-4"></i>*@
                                                     <p>Consulter</p>
                                                 </a>
                                             </li>
 
                                             <li class="nav-item">
                                                 <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                                    @*<i class="fas fa-gavel mr-4"></i>*@
                                                     <p>Affecter</p>
                                                 </a>
                                             </li>
@@ -155,45 +144,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         </ul>
                                     </li>
                                 </ul>
-
-                                <!-- Sidebar Menu
-
-                                <li class="nav-item has-treeview">
-                                    <a href="#" class="nav-link active">
-                                        <i class="fa fa-address-book mr-2"></i>
-                                        <p>
-                                            Gestion des lots
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ImportLot", "Lot")" class="nav-link active">
-                                                <i class="fas fa-upload mr-4"></i>
-                                                <p>Importer un lot</p>
-                                            </a>
-                                        </li>
-
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ConsulterClients", "Lot")" class="nav-link">
-                                                <i class="fas fa-book mr-4"></i>
-                                                <p>Consulter les clients</p>
-                                            </a>
-                                        </li>
-
-                                        <li class="nav-item">
-                                            <a href="@Url.Action("ChoisirLot", "Affectation")" class="nav-link">
-                                                <i class="fas fa-gavel mr-4"></i>
-                                                <p>Affecter aux agents</p>
-                                            </a>
-                                        </li>
-
-                                                </ul>
-
-                                                    </li>
-
-                                                        -->
-
 
 
                                 <ul id="myUL">
@@ -214,8 +164,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                                 <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
 
-                                                    @*<i class="fas fa-check mr-3"></i>*@
-
                                                     <p>Valider </p>
 
                                                 </a>
@@ -224,7 +172,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                             <li class="nav-item">
                                                 <a href="@Url.Action("SuiviTraiement", "Formulaire")" class="nav-link">
-                                                    @*<i class="fas fa-gavel mr-4"></i>*@
                                                     <p>Suivi</p>
                                                 </a>
                                             </li>
@@ -233,8 +180,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <li class="nav-item">
 
                                                 <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
-
-                                                    @*<i class="fas fa-archive mr-3"></i>*@
 
                                                     <p>Historique</p>
 
@@ -255,7 +200,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                             <a class="nav-link ">
                                                 <p>
-                                                    Banque et rentabilité
+                                                    Banque
                                                 </p>
                                             </a>
 
@@ -268,18 +213,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                                 <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
 
-
                                                     <p>Mail</p>
 
-                                                </a>
-
-                                            </li>
-
-
-                                            <li class="nav-item">
-
-                                                <a href="@Url.Action("Rentablite","Formulaire")" class="nav-link">
-                                                    <p>Rentabilité</p>
                                                 </a>
 
                                             </li>
@@ -288,30 +223,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         </ul>
                                     </li>
                                 </ul>
-
-
-
-
-
-
-
-
-                                @*<li class="nav-item has-treeview">
-                                        <a href="#" class="nav-link active">
-                                            <i class="fas fa-list-ul mr-2"></i>
-                                            <p>
-                                                Gestion des traitements
-                                                <i class="right fas fa-angle-left"></i>
-                                            </p>
-                                        </a>
-
-                                        <ul class="nav nav-treeview">
-
-
-                                        </ul>
-                                    </li>*@
-
-
 
                             }
                         }
@@ -327,9 +238,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     <a href="@Url.Action("AffectationList", "Affectation", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
 
-                                        @*<i class="fas fa-fax mr-2" aria-hidden="true"></i>*@
-
                                         <p>Traiter les affectations</p>
+
+                                    </a>
+
+                                </li>
+
+
+                                <li class="nav-item">
+
+                                    <a href="@Url.Action("SuiviTraiement", "Formulaire", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
+
+                                        <p>Mes traitements</p>
 
                                     </a>
 
@@ -371,8 +291,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <a href="@Url.Action("SuiviClient","Formulaire",new {traite="SAUF" })" class="nav-link">
 
-                                    @*<i class="fas fa-address-card mr-2" aria-hidden="true"></i>*@
-
                                     <p>Suivi des affectations</p>
 
                                 </a>
@@ -382,15 +300,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             if (Session["role"].Equals("admin"))
                             {
 
-
-
-
-
                                 <li class="nav-item">
 
                                     <a href="@Url.Action("Index","Statistique")" class="nav-link">
-                                        @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
-                                        <p>Statistiques</p>
+                                        <p>Stats et Rentabilité</p>
                                     </a>
 
                                 </li>
@@ -398,17 +311,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <li class="nav-item">
 
                                     <a href="@Url.Action("genererFacture","Facture")" class="nav-link">
-                                        @*<i class="fas fa-percent mr-2" aria-hidden="true"></i>*@
                                         <p>Facture</p>
                                     </a>
 
                                 </li>
 
+                                <li class="nav-item">
+
+                                    <a href="@Url.Action("Renseigner","Facture")" class="nav-link">
+                                        <p>Renseigner</p>
+                                    </a>
+
+                                </li>
 
                                 <li class="nav-item">
 
                                     <a href="@Url.Action("AccountList","Home")" class="nav-link">
-                                        @*<i class="fas fa-users mr-2"></i>*@
                                         <p>Gestion des comptes</p>
                                     </a>
 
@@ -420,7 +338,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
 
                                 <a href="@Url.Action("ChangePassword","Authentification")" class="nav-link">
-                                    @*<i class="fas fa-cog fa-fw mr-2"></i>*@
                                     <p>Parametre du compte</p>
                                 </a>
 
@@ -429,7 +346,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
 
                                 <a href="@Url.Action("Deconnect","Authentification")" class="nav-link">
-                                    @*<i class="fa fa-sign-out mr-2"></i>*@
                                     <p>Se deconnecter</p>
                                 </a>
 
@@ -493,7 +409,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <footer class="main-footer">
             <!-- To the right -->
             <!-- Default to the left -->
-            <strong>AL-Wakil Recouvrement .</strong>
+            <strong>Al-Wakil Recouvrement.</strong>
         </footer>
     </div>
 
@@ -510,10 +426,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     @RenderSection("scripts", required: false)
 
     <link href="~/adminlte/css/treeViewJs.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="~/Scripts/toastr.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">
-    <script type="text/javascript" src="~/Scripts/notify.js"></script>
-    <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
+
+    <!--
+        <link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">
+        <script type="text/javascript" src="~/Scripts/notify.js"></script>
+        <script type="text/javascript" src="~/Scripts/toastr.min.js"></script>
+        <script src="~/Scripts/jquery.signalR-2.4.1.min.js" type="text/javascript"></script>
+    -->
+
     <script type="text/javascript" src="~/adminlte/js/treeViewJs.js"></script>
 
     <script type="text/javascript">

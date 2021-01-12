@@ -588,9 +588,6 @@
 </div>
 
 
-
-
-
 <script>
     $(document).ready(function () {
         $.noConflict();
@@ -606,9 +603,7 @@
 
 
     })
-    
-  
-
+   
 
             function showLoading() {
 
@@ -671,10 +666,6 @@
 
     hideAll()
 
-    
-
-
-
         dropdown.onchange = function () {
 
             switch (dropdown.value) {
@@ -710,9 +701,9 @@
                     document.getElementById("galleryRecu").style.display = "block"
 
                     document.getElementById("textLabel").innerHTML = "Versement en TND:";
-                   //document.getElementById("exampleInputAmount").max = "any";
+                    document.getElementById("exampleInputAmount").max = "any";
                     document.getElementById("exampleInputAmount").value = @ViewBag.soldeDeb+ "";
-                    //document.getElementById("exampleInputAmount").min = @ViewBag.soldeDeb +"";
+                    document.getElementById("exampleInputAmount").min = @ViewBag.soldeDeb +"";
 
                     break;
                 case "REFUS_PAIEMENT":
@@ -747,11 +738,9 @@
                     document.getElementById("recu").style.display = "block"
                     document.getElementById("galleryRecu").style.display = "block"
 
-
-
                     document.getElementById("textLabel").innerHTML = "Tranche en TND:";
 
-                    //document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";
+                    document.getElementById("exampleInputAmount").max =  @ViewBag.soldeDeb +"";
                     document.getElementById("exampleInputAmount").value = "1.000";
                     document.getElementById("exampleInputAmount").min =0 +"";
 

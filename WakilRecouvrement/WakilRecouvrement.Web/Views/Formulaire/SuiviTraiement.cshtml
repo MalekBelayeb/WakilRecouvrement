@@ -14,7 +14,7 @@
     <div class="card">
         <div class="card-header" id="headingTwo">
 
-            <h2>Suivi des Traiements</h2>
+            <h2>Suivi des Traitements</h2>
 
         </div>
 
@@ -37,13 +37,21 @@
                     @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
 
                 </div>
-                <div class="col-xs-3  col-md-3">
 
-                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+                @if (Session["role"].Equals("admin"))
+                {
 
-                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+                    <div class="col-xs-3  col-md-3">
 
-                </div>
+                        @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+
+                    </div>
+
+                }
+
+
 
                 <div class="col-xs-3  col-md-3">
 
@@ -52,9 +60,9 @@
                     @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
 
                 </div>
-                
-   
-       
+
+
+
             </div>
 
 
@@ -71,9 +79,10 @@
                     @Html.TextBox("SearchString", ViewBag.currentFilter as string, new { @class = "form-control" })
 
                 </div>
+
                 <div id="dateTraitement" style="display:none" class="col-xs-3 col-md-3">
 
-                    <label for="traitDate">Type:</label>
+                    <label for="traitDate">Date:</label>
                     <input class="form-control" name="traitDate" value="@ViewBag.currentTraitDate" id="traitDate" type="date">
 
                 </div>

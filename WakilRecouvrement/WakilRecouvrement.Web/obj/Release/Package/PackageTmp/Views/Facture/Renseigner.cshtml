@@ -1,0 +1,178 @@
+﻿@model PagedList.IPagedList<WakilRecouvrement.Domain.Entities.Lettre>
+
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+
+
+@using (Html.BeginForm("ExtraireLettreAction", "Facture", FormMethod.Post, new { onsubmit = "showLoading()" }))
+{
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h2>Renseigner Client (FN-NRP-INJ)</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+
+                </div>
+
+
+
+                <div class="col-xs-3 col-md-3 ">
+
+                    <label for="RappelDate">Date de début:</label>
+                    <input class="form-control" name="debutDate" id="debutdate" type="date">
+
+
+                </div>
+
+
+                <div class="col-xs-3 col-md-3">
+
+                    <label for="RappelDate">Date de fin:</label>
+                    <input class="form-control" name="finDate" id="findate" type="date">
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Exporter" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+}
+
+
+
+
+<div class="card">
+    <div class="card-header" id="headingThree">
+
+        <h2>Hist. des Lettres </h2>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered table-condensed table-responsive" style="display:table">
+            <tr>
+
+                <th>
+                    Date Extrait
+                </th>
+                <th>
+                    Date Deb.
+                </th>
+                <th>
+                    Date Fin
+                </th>
+                <th>
+                    Adresse
+                </th>
+                <th>
+                    Lettre
+                </th>
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr class="p-3 mb-2 bg-white text-dark">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateExtrait)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateDeb)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateFin)
+                    </td>
+
+                    <td>
+                        @if (item.LettreAdressPathName != null)
+                        {
+                            @Html.ActionLink(item.LettreAdressPathName, "downloadLettreZip", "Facture", new { FileName = item.LettreAdressPathName }, null)
+                        }
+                        else
+                        {
+                            <p></p>
+
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.LettrePathName != null)
+                        {
+
+                            @Html.ActionLink(item.LettrePathName, "downloadLettreZip", "Facture", new { FileName = item.LettrePathName }, null)
+
+                        }
+                        else
+                        {
+                            <p></p>
+                        }
+
+                    </td>
+
+
+                </tr>
+            }
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    document.getElementById('debutdate').valueAsDate = new Date();
+    document.getElementById('findate').valueAsDate = new Date();
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+</script>
+
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("ExtraireLettre",
+new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

@@ -18,7 +18,6 @@ namespace WakilRecouvrement.Domain.Entities
         [StringLength(25,ErrorMessage = "Username doit etre inferieure a 25")]        
         public string Username { get; set; }
 
-
         [Required(ErrorMessage = "Champ obligatoire")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -33,12 +32,10 @@ namespace WakilRecouvrement.Domain.Entities
         [Display(Name = "Role")]
         public int RoleId { get; set; }
 
-
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }
 
         [Display(Name = "Verifié")]
-        //[ScaffoldColumn(false)]
         [DefaultValue(false)]   
         public bool IsVerified { get; set; }
         

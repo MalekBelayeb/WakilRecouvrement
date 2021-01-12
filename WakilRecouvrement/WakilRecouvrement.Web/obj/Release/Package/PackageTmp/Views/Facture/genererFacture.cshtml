@@ -76,7 +76,7 @@
                 <div class="col-xs-3  col-md-10">
 
                     <p>
-                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Calculer" />
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Extraire" />
 
                         <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -143,11 +143,29 @@
             </td>
 
             <td>
-                @Html.ActionLink(item.AnnexePathName, "downloadFactureAnnexe", "Facture", new { FileName = item.AnnexePathName }, null)
+
+                @if (item.AnnexePathName != null)
+                {
+                    @Html.ActionLink(item.AnnexePathName, "downloadFactureAnnexe", "Facture", new { FileName = item.AnnexePathName }, null)
+
+                }
+                else
+                {
+                    <p></p>
+                }
 
             </td>
             <td>
-                @Html.ActionLink(item.FacturePathName, "downloadFactureAnnexe", "Facture", new { FileName = item.FacturePathName }, null)
+
+                @if (item.FacturePathName!=null)
+                {
+                    @Html.ActionLink(item.FacturePathName, "downloadFactureAnnexe", "Facture", new { FileName = item.FacturePathName }, null)
+
+                }
+                else
+                {
+                    <p></p>
+                }
 
             </td>
 

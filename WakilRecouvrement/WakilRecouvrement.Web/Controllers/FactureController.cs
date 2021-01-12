@@ -45,13 +45,9 @@ namespace WakilRecouvrement.Web.Controllers
             
         }
 
-        public IEnumerable<SelectListItem> NumLotListForDropDown()
+        public IEnumerable<SelectListItem> NumLotListForDropDown(LotService LotService)
         {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    LotService LotService = new LotService(UOW);
+            
                     List<Lot> Lots = LotService.GetAll().ToList();
                     List<SelectListItem> listItems = new List<SelectListItem>();
 
@@ -63,8 +59,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     return listItems;
 
-                }
-            }
+            
                     
         }
 
@@ -75,9 +70,10 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
+                    LotService LotService = new LotService(UOW);
                     FactureService factureService = new FactureService(UOW);
                     List<Facture> factureList = factureService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
 
                     ViewBag.total = factureList.Count();
@@ -127,7 +123,7 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                     FactureService factureService = new FactureService(UOW);
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
                     DateTime startDate = DateTime.Parse(debutDate);
                     DateTime endDate = DateTime.Parse(finDate);
@@ -478,7 +474,6 @@ namespace WakilRecouvrement.Web.Controllers
             table.Cell(1, 2).Range.Font.Size = 18;
             table.Cell(1, 2).Range.Font.Bold = 1;
             table.Cell(1, 2).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-            //table.Cell(1, 2).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
             
             table.Cell(1, 3).Range.ParagraphFormat.BaseLineAlignment = Word.WdBaselineAlignment.wdBaselineAlignFarEast50;
             table.Cell(1, 3).Width = 70;
@@ -713,8 +708,9 @@ namespace WakilRecouvrement.Web.Controllers
                 {
 
                     LettreService lettreService = new LettreService(UOW);
+                    LotService LotService = new LotService(UOW);
                     List<Lettre> lettreList = lettreService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
 
                     ViewBag.total = lettreList.Count();
@@ -863,7 +859,7 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                     LotService LotService = new LotService(UOW);
                     LettreService lettreService = new LettreService(UOW);
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
                     string lettreDir = GetFolderNameForLettre();
                     DateTime startDate = DateTime.Parse(debutDate);

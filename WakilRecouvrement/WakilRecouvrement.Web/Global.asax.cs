@@ -30,6 +30,8 @@ namespace WakilRecouvrement.Web
 
             //SqlDependency.Start(ConfigurationManager.ConnectionStrings["WRConnectionStrings"].ConnectionString);
         
+
+
             
         }
 

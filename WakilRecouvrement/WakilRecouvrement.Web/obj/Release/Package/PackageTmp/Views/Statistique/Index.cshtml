@@ -4,9 +4,15 @@
     ViewBag.Title = "";
 }
 
-<script src="~/Scripts/jquery.min.js"></script>
+<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
 <script src="~/adminlte/plugins/chart.js/Chart.min.js"></script>
 
+
+<script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<link rel="stylesheet" href="~/adminlte/css/adminlte.min.css">
+
+<script src="~/adminlte/js/adminlte.min.js"></script>
 
 <h2>Statistiques</h2>
 
@@ -131,28 +137,32 @@
     <div class="col-md-12">
 
 
-        <div class="card">
+        <div class="card" id="annu">
             <div class="card-header border-0">
-              
-                <div class="col-xs-3  col-md-3">
+
+                <div class="col-xs-3">
 
                     @Html.Label("years", "Année:", new { @class = "control-label " })
 
                     @Html.DropDownList("years", ViewData["years"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
+               
 
                 </div>
+                <div style="display:none" id="loadingAnnuel" class="col-xs-3">
 
+                    <div class="spinner-grow text-success" role="status">
+
+                    </div>
+
+                </div>
             </div>
             <div class="card-body">
 
                 <div class="d-flex">
-
                     <p class="d-flex flex-column">
                         <span class="text-bold text-lg">Traitement Annuel</span>
                         <span><small> <span id="annuelTot"> </span> </small></span>
                     </p>
-
-
 
                 </div>
                 <!-- /.d-flex -->
@@ -161,6 +171,14 @@
                     <canvas id="sales-chart" height="200"></canvas>
                 </div>
 
+
+                <div class="d-flex">
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Rentabilité annuel</span>
+                        <span><small> <span id="annuelRentaTot"> </span> </small></span>
+                    </p>
+
+                </div>
                 <div class="position-relative mb-4">
                     <canvas id="sales-chart-rentabilite" height="200"></canvas>
                 </div>
@@ -183,7 +201,7 @@
 
         <div class="card">
             <div class="card-header border-0">
-                
+
                 <div class="row">
                     <div class="col-xs-3  col-md-3">
 
@@ -200,11 +218,23 @@
                         @Html.DropDownList("month", ViewData["month"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
                     </div>
-                </div>
 
                     
+                </div>
+
+                <div class="row">
+
+                    <div style="display:none" id="loadingMensuel" class="col-xs-3">
+
+                        <div class="spinner-grow text-success" role="status">
+
+                        </div>
+
+                    </div>
 
                 </div>
+
+            </div>
             <div class="card-body">
                 <div class="d-flex">
 
@@ -220,6 +250,14 @@
                     <canvas id="sales-mensuel" height="200"></canvas>
                 </div>
 
+                <div class="d-flex">
+
+                    <p class="d-flex flex-column">
+                        <span class="text-bold text-lg">Rentabilité Mensuel</span>
+                        <span><small>  <span id="mensuelRentaTot"> </span> </small></span>
+                    </p>
+
+                </div>
                 <div class="position-relative mb-4">
                     <canvas id="sales-mensuel-Rentabilite" height="200"></canvas>
                 </div>
@@ -227,7 +265,7 @@
 
 
             </div>
-            </div>
+        </div>
 
 
     </div>
@@ -240,40 +278,64 @@
 
         <div class="card">
             <div class="card-header border-0">
-         
 
 
-                <div  id="dateTraiteStat" class="form-group row">
-                    <label for="RDVDateTime">Date:</label>
-                    <input class="form-control" name="dateStat" type="date" id="statTraiteDate">
+                <div class="row">
+
+                    <div class="col-xs-3 col-md-3">
+
+                        <div id="dateTraiteStat" class="form-group row">
+                            <label for="RDVDateTime">Date:</label>
+                            <input class="form-control" name="dateStat" type="date" id="statTraiteDate">
+                        </div>
+
+                    </div>
                 </div>
 
+                      
+                <div class="row">
+
+                    <div style="display:none" id="loadingQutodien" class="col-xs-3  col-md-3">
+
+                        <div class="spinner-grow text-success" role="status">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">Traitement Quotidien</span>
+                                <span><small> <span id="quotidienTot"> </span> </small></span>
+                            </p>
+
+                        </div>
+                        <!-- /.d-flex -->
+
+                        <div class="position-relative mb-4">
+                            <canvas id="sales-quotidien" height="200"></canvas>
+                        </div>
+                        <div class="d-flex">
+
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">Traitement Quotidien</span>
+                                <span><small> <span id="quotidienRentaTot"> </span> </small></span>
+                            </p>
+
+                        </div>
+                        <div class="position-relative mb-4">
+                            <canvas id="sales-quotidien-Rentabilite" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
 
 
             </div>
-            <div class="card-body">
-                <div class="d-flex">
-
-                    <p class="d-flex flex-column">
-                        <span class="text-bold text-lg">Traitement Quotidien</span>
-                        <span><small> <span id="quotidienTot"> </span> </small></span>
-                    </p>
-
-                </div>
-                <!-- /.d-flex -->
-
-                <div class="position-relative mb-4">
-                    <canvas id="sales-quotidien" height="200"></canvas>
-                </div>
-
-                <div class="position-relative mb-4">
-                    <canvas id="sales-quotidien-Rentabilite" height="200"></canvas>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
 </div>
 
 <script>
@@ -399,12 +461,12 @@
     var salesChartAnnuelRentabilite = new Chart($salesChartAnnuelRentabilite, {
         type: 'bar',
         data: {
-            labels: ['POSTE 1','POSTE 2','POSTE 3','POSTE 4'],
+            labels: ['POSTE 1', 'POSTE 2', 'POSTE 3', 'POSTE 4'],
             datasets: [
                 {
                     backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
                     borderColor: '#007bff',
-                    data: [0,0,0,0]
+                    data: [0, 0, 0, 0]
                 }
             ]
         },
@@ -527,7 +589,7 @@
                 {
                     backgroundColor: ['#0275d8', '#f0ad4e', '#d9534f', '#5cb85c'],
                     borderColor: '#007bff',
-                    data: [0,0,0,0]
+                    data: [0, 0, 0, 0]
                 }
 
 
@@ -700,12 +762,15 @@
         }
     })
 
+    annuelStat()
 
     document.getElementById("years").onchange = function () {
+
 
         annuelStat()
 
     }
+    mensuelStat()
 
     document.getElementById("month").onchange = function () {
 
@@ -717,6 +782,7 @@
         mensuelStat()
 
     }
+    quotidienStat()
 
     document.getElementById("statTraiteDate").onchange = function () {
 
@@ -730,20 +796,46 @@
 
 
         $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '@Url.Action("annuelStatTraite", "Statistique")',
                 dataType: 'json',
-            data: { year: document.getElementById("years").value },
-                success: function (data) {
 
+                data: { year: document.getElementById("years").value },
+
+                beforeSend: function () {
+
+                    document.getElementById("loadingAnnuel").style.display = "block"
+           
+                },
+            success: function (data) {
+                console.log(data)
                     salesChartAnnuel.data.datasets[0].data[0] = data["annuelPoste1Tot"]
                     salesChartAnnuel.data.datasets[0].data[1] = data["annuelPoste2Tot"]
                     salesChartAnnuel.data.datasets[0].data[2] = data["annuelPoste3Tot"]
                     salesChartAnnuel.data.datasets[0].data[3] = data["annuelPoste4Tot"]
                     document.getElementById("annuelTot").innerHTML = data["tot"] + " Traitements En total"
-                    
-                    salesChartAnnuel.update();
-                }
+
+                salesChartAnnuelRentabilite.data.datasets[0].data[0] = data["annuelRentaPoste1Tot"]
+                salesChartAnnuelRentabilite.data.datasets[0].data[1] = data["annuelRentaPoste2Tot"]
+                salesChartAnnuelRentabilite.data.datasets[0].data[2] = data["annuelRentaPoste3Tot"]
+                salesChartAnnuelRentabilite.data.datasets[0].data[3] = data["annuelRentaPoste4Tot"]
+                
+                document.getElementById("annuelRentaTot").innerHTML = data["totRenta"] + " M.Recouvré En total"
+
+                salesChartAnnuel.update();
+                salesChartAnnuelRentabilite.update();
+
+                },
+                complete: function () {
+
+                    document.getElementById("loadingAnnuel").style.display = "none"
+
+            },
+            error: function () { // if error occured
+           //     document.getElementById("annu").removeAttribute("data-card-widget")
+              //  document.getElementById("annu").removeAttribute("data-source")
+
+            },
 
             })
 
@@ -757,6 +849,13 @@
                 url: '@Url.Action("mensuelStatTraite", "Statistique")',
                 dataType: 'json',
              data: { year: document.getElementById("yearsMensuel").value, month: document.getElementById("month").value  },
+
+             beforeSend: function () {
+
+                 document.getElementById("loadingMensuel").style.display = "block"
+
+             },
+
              success: function (data) {
 
 
@@ -770,9 +869,29 @@
 
                  document.getElementById("mensuelTot").innerHTML = data["tot"] + " Traitements En total"
 
+                 mensuelRentaTot
+
+                 salesChartMensuelRentabilite.data.datasets[0].data[0] = data["mensuelRentaPoste1Tot"]
+
+                 salesChartMensuelRentabilite.data.datasets[0].data[1] = data["mensuelRentaPoste2Tot"]
+
+                 salesChartMensuelRentabilite.data.datasets[0].data[2] = data["mensuelRentaPoste3Tot"]
+
+                 salesChartMensuelRentabilite.data.datasets[0].data[3] = data["mensuelRentaPoste4Tot"]
+
+                 document.getElementById("mensuelRentaTot").innerHTML = data["totRenta"] + " M.Recouvré En total"
+
+
                  salesChartMensuel.update();
 
-                }
+                 salesChartMensuelRentabilite.update();
+
+             },
+             complete: function () {
+
+                 document.getElementById("loadingMensuel").style.display = "none"
+
+             },
 
             })
 
@@ -786,7 +905,14 @@
                 url: '@Url.Action("quotidienStatTraite", "Statistique")',
              dataType: 'json',
              data: { date: document.getElementById("statTraiteDate").value },
-                success: function (data) {
+
+             beforeSend: function () {
+
+                 document.getElementById("loadingQutodien").style.display = "block"
+
+             },
+
+             success: function (data) {
 
 
 
@@ -800,8 +926,30 @@
 
                     document.getElementById("quotidienTot").innerHTML = data["tot"] + " Traitements En total"
 
+
+
+                    salesChartQutidienRentabilite.data.datasets[0].data[0] = data["quotidienRentaPoste1Tot"]
+
+                    salesChartQutidienRentabilite.data.datasets[0].data[1] = data["quotidienRentaPoste2Tot"]
+
+                    salesChartQutidienRentabilite.data.datasets[0].data[2] = data["quotidienRentaPoste3Tot"]
+
+                    salesChartQutidienRentabilite.data.datasets[0].data[3] = data["quotidienRentaPoste4Tot"]
+
+                    document.getElementById("quotidienTot").innerHTML = data["tot"] + " Traitements En total"
+                    document.getElementById("quotidienRentaTot").innerHTML = data["totRenta"] + " M.Recouvré En total"
+
+
+
+
                     salesChartQutidien.update();
-                }
+                    salesChartQutidienRentabilite.update();
+             },
+             complete: function () {
+
+                 document.getElementById("loadingQutodien").style.display = "none"
+
+             },
 
             })
 

@@ -5,7 +5,7 @@
 }
 
 
-@if (@ViewBag.username == Session["username"])
+@if (Session["username"].Equals(ViewBag.username))
 {
 
     @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { id = ViewBag.id, msgError = "" }, null)

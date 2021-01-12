@@ -231,7 +231,6 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. decroissant)", Value = "5" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. croissant)", Value = "6" });
 
-
             return listItems;
         }
 
@@ -253,7 +252,7 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
 
@@ -502,7 +501,6 @@ namespace WakilRecouvrement.Web.Controllers
 
             }
 
-
             return listItems;
         }
         public IEnumerable<SelectListItem> TraiteListModifierAffForDropDown()
@@ -510,7 +508,6 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem { Selected = true, Text = "NON_TRAITES", Value = "NON_TRAITES" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RDV (d'aujourd'hui)", Value = "RDV" });
-            //listItems.Add(new SelectListItem { Selected = true, Text = "RDV_REPORTE (d'aujourd'hui)", Value = "RDV_REPORTE" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RAPPEL", Value = "RAPPEL" });
             listItems.Add(new SelectListItem { Selected = true, Text = "RACCROCHE", Value = "RACCROCHE" });
             listItems.Add(new SelectListItem { Selected = true, Text = "NRP", Value = "NRP" });
@@ -519,59 +516,22 @@ namespace WakilRecouvrement.Web.Controllers
             return listItems;
         }
 
-        public IEnumerable<SelectListItem> NumLotListForDropDown()
+        public IEnumerable<SelectListItem> NumLotListForDropDown(LotService LotService)
         {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    LotService LotService = new LotService(UOW);
-                    
-                    
-                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-                    
-                    List<Lot> Lots = LotService.GetAll().ToList();
-                    List<SelectListItem> listItems = new List<SelectListItem>();
+            
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
+            List<Lot> Lots = LotService.GetAll().ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
 
-                    Lots.DistinctBy(l => l.NumLot).ForEach(l => {
-                        listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
-                    });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
-                    return listItems;
+            Lots.DistinctBy(l => l.NumLot).ForEach(l => {
+                listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
+            });
 
-                }
-            }
+            return listItems;
 
-
-
-
-
-
-                    
-        }
-
-        public IEnumerable<SelectListItem> AgentListForDropDown()
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    EmployeService EmpService = new EmployeService(UOW);
-                    List<Employe> agents = EmpService.GetAll().Where(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
-                    List<SelectListItem> listItems = new List<SelectListItem>();
-
-                    listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
-
-                    agents.ForEach(l => {
-                        listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
-                    });
-
-                    return listItems;
-                }
-            }
-                    
         }
 
 
@@ -589,7 +549,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
 
                     if (traite == "ALL")
@@ -604,7 +564,7 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Lot = l,
 
-                                      }).ToList().OrderByDescending(o => o.Affectation.DateAffectation).DistinctBy(a => a.Affectation.AffectationId).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
+                                      }).OrderByDescending(o => o.Affectation.DateAffectation).DistinctBy(a => a.Affectation.AffectationId).Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
 
                     }
                     else if (traite == "SAUF")
@@ -638,14 +598,14 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Lot = l,
 
-                                      }).ToList().OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList().Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
+                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
 
                     }
 
 
                     if (numLot != "0")
                     {
-                        JoinedList = JoinedList.ToList().Where(l => l.Lot.NumLot.Equals(numLot)).ToList();
+                        JoinedList = JoinedList.Where(l => l.Lot.NumLot.Equals(numLot)).ToList();
                     }
 
 
@@ -809,7 +769,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public ActionResult ModifierAffectation(int numLot)
+        /*public ActionResult ModifierAffectation(int numLot)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
@@ -839,11 +799,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-
-
-
-                  
-        }
+ 
+        }*/
 
         [HttpPost]
         public ActionResult GetInfoAgent(string agentDe,string numLot,string traite)

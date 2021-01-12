@@ -88,8 +88,6 @@ namespace WakilRecouvrement.Web.Controllers
 
 
                     return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
-
-
                 }
             }
                
@@ -222,9 +220,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                                                                             }).ToList();
                     
-                   
-
-                    ViewBag.username = clientAffecteViewModels.Select(c=>c.Agent);
+                    ViewBag.username = clientAffecteViewModels.Select(c=>c.Agent).FirstOrDefault();
                     ViewBag.id = id+"";
 
                     return View(clientAffecteViewModels);
@@ -253,8 +249,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                     List<ClientAffecteViewModel> JoinedList;
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
 
@@ -494,31 +490,20 @@ namespace WakilRecouvrement.Web.Controllers
                     
         }
 
-        public IEnumerable<SelectListItem> NumLotListForDropDown()
+        public IEnumerable<SelectListItem> NumLotListForDropDown(LotService LotService)
         {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                  
-
-
-                    List<Lot> Lots = LotService.GetAll().ToList();
+                    
+                    List<Lot> Lots = LotService.GetAll().DistinctBy(l => l.NumLot).ToList();
                     List<SelectListItem> listItems = new List<SelectListItem>();
 
                     listItems.Add(new SelectListItem { Selected = true, Text = "Tous les lots", Value = "0" });
 
-                    Lots.DistinctBy(l => l.NumLot).ForEach(l =>
+                    Lots.ForEach(l =>
                     {
                         listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
                     });
 
                     return listItems;
-
-                }
-            }
         }
 
 
@@ -539,14 +524,9 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public IEnumerable<SelectListItem> AgentListForDropDown()
+        public IEnumerable<SelectListItem> AgentListForDropDown(EmployeService EmpService)
         {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    EmployeService EmpService = new EmployeService(UOW);
-                    
+                               
                     List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
                     List<SelectListItem> listItems = new List<SelectListItem>();
 
@@ -559,8 +539,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     return listItems;
 
-                }
-            }
+                
         }
         public IEnumerable<SelectListItem> TraiteListForDropDown()
         {
@@ -601,11 +580,9 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Selected = true, Text = "SOLDE", Value = "SOLDE" });
             listItems.Add(new SelectListItem { Selected = true, Text = "TRANCHE", Value = "SOLDE_TRANCHE" });
 
-            
-
-
             return listItems;
         }
+
         public IEnumerable<SelectListItem>typeListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -904,13 +881,7 @@ namespace WakilRecouvrement.Web.Controllers
                                 postedFile.SaveAs(filePath);
                             }
                         }
-
-
-
                     }
-
-                    //return RedirectToAction("AffectationList", "Affectation", new { traite = "SAUF", numLot = Joinedlot.NumLot, sortOrder = "5",page=5 });
-
                     return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
 
                 }
@@ -944,7 +915,6 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    Debug.WriteLine(currentPage);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     
                     FormulaireService.Delete(FormulaireService.GetById(id));
@@ -1032,28 +1002,43 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult ValiderTraitement()
         {
-            if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                return RedirectToAction("Login", "Authentification");
-            
-            string path = Server.MapPath("~/Uploads/Recu/");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
 
-            if (TempData["IDClient"] == null)
+
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
-                ViewBag.IDClient = "0";
-            }
-            else
-            {
-                ViewBag.IDClient = TempData["IDClient"];
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                        return RedirectToAction("Login", "Authentification");
+
+                    string path = Server.MapPath("~/Uploads/Recu/");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    LotService LotService = new LotService(UOW);
+                    EmployeService EmployeService = new EmployeService(UOW);
+
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
+
+                    if (TempData["IDClient"] == null)
+                    {
+                        ViewBag.IDClient = "0";
+                    }
+                    else
+                    {
+                        ViewBag.IDClient = TempData["IDClient"];
+                    }
+
+                    return View();
+
+                }
             }
 
-            return View();
+
         }
 
 
@@ -1105,14 +1090,14 @@ namespace WakilRecouvrement.Web.Controllers
 
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
                     if (IsValid == false)
                         ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
                     if (IsValid == true)
                         ViewBag.TraiteList = new SelectList(TraiteValidationValideListForDropDown(), "Value", "Text");
 
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
                     if (traite.Equals("ALL"))
                     {
@@ -1268,8 +1253,16 @@ namespace WakilRecouvrement.Web.Controllers
             listItems.Add(new SelectListItem { Text = "A verifié", Value = "A_VERIFIE" });
 
             return listItems;
-        } 
+        }
+        public IEnumerable<SelectListItem> TraiteTypeForValiderListForDropDown()
+        {
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Text = "Tous les traitements", Value = "P_ALL" });
+            listItems.Add(new SelectListItem { Text = "Par interval de temps", Value = "P_INTERVAL" });
+            listItems.Add(new SelectListItem { Text = "Par date", Value = "P_DATE" });
 
+            return listItems;
+        }
 
         public IEnumerable<SelectListItem> EnvoyerTraiteListForDropDown()
         {
@@ -1422,13 +1415,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult HistoriqueTraitements(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType,string currentPage, int? page)
         {
-            if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                return RedirectToAction("Login", "Authentification");
-
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
-            ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitHistoriqueForDropDown(), "Value", "Text");
-            ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -1439,13 +1425,17 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
 
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
+                    ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitHistoriqueForDropDown(), "Value", "Text");
+                    ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
+
                     if (Session["username"] == null || Session["username"].ToString().Length < 1)
                         return RedirectToAction("Login", "Authentification");
 
                     List<ClientAffecteViewModel> JoinedList;
 
-                
-
+               
                     if(page==null)
                     {
                         if(currentPage!=null)
@@ -1633,11 +1623,6 @@ namespace WakilRecouvrement.Web.Controllers
                                                ).ToList();
                     }
 
-
-
-
-
-
                     ViewBag.total = JoinedList.Count();
 
                     int pageSize = 10;
@@ -1673,7 +1658,7 @@ namespace WakilRecouvrement.Web.Controllers
                          }).FirstOrDefault();
 
 
-            return forms.Formulaire;
+                    return forms.Formulaire;
 
                 }
             }
@@ -1683,9 +1668,6 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult VerifierEtat(int id, bool valid, string montant)
         {
-
-
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -1707,7 +1689,7 @@ namespace WakilRecouvrement.Web.Controllers
                     Formulaire Formulaire = JoinedLot.Select(j=>j.Formulaire).FirstOrDefault();
 
                     double DebMaJ = GetFormulaire(Formulaire.AffectationId).MontantDebMAJ;
-                    Debug.WriteLine(montant);
+
                     
                     if (valid == false)
                     {
@@ -1793,12 +1775,6 @@ namespace WakilRecouvrement.Web.Controllers
                             break;
                     }
 
-                    /*if (NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).Count() != 0)
-                    {
-                        NotificationService.Delete(NotificationService.GetAll().Where(e => e.FormulaireId == Formulaire.FormulaireId).FirstOrDefault());
-                        NotificationService.Commit();
-
-                    }*/
 
                     FormulaireService.Update(Formulaire);
                     FormulaireService.Commit();
@@ -1807,37 +1783,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-        }
-
-
-        [HttpPost]
-        public ActionResult OnNotificationClickIntermediate()
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    Formulaire formulaire = FormulaireService.GetById(long.Parse(HttpContext.Request.Form["id"].ToString()));
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
-                    ViewBag.searching = "1";
-
-                    Affectation affectation = AffectationService.GetById(formulaire.AffectationId);
-
-                    //ViewBag.searching = "1";
-                    TempData["IDClient"] = affectation.Lot.IDClient;
-
-                    return Json(new { redirectUrl = Url.Action("ValiderTraitement", "Formulaire") });
-                }
-            }
-
         }
 
         [HttpPost]
@@ -1851,16 +1796,13 @@ namespace WakilRecouvrement.Web.Controllers
 
                     LotService LotService = new LotService(UOW);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
                     Formulaire formulaire = FormulaireService.GetById(id);
-
-                    Debug.WriteLine(id);
 
                     formulaire.ContacteBanque = true;
 
@@ -1895,57 +1837,23 @@ namespace WakilRecouvrement.Web.Controllers
                          new FormulaireExportable
                          {
                              NomClient = j.Lot.NomClient,
-                             //NumLot = j.Lot.NumLot,
                              Compte = j.Lot.Compte,
                              IDClient = j.Lot.IDClient,
-                             //Etat = j.Formulaire.EtatClient.ToString(),
                              RDV = j.Formulaire.DateRDV.ToString()
-                         }
+                         }).ToList();
 
-                         ).ToList();
-
-                        //dataTable.Columns.Add("NumLot", typeof(string));
                         dataTable.Columns.Add("IDClient", typeof(string));
                         dataTable.Columns.Add("Compte", typeof(string));
                         dataTable.Columns.Add("NomClient", typeof(string));
-                        //dataTable.Columns.Add("Etat", typeof(string));
                         dataTable.Columns.Add("RDV", typeof(string));
 
                         foreach (FormulaireExportable c in newList)
                         {
 
-                            /*string etat = "";
-
-                            if (c.Etat == "SOLDE")
-                            {
-                                etat = "Client soldé";
-
-                            }
-                            else if (c.Etat == "SOLDE_TRANCHE")
-                            {
-
-                                etat = "tranche versé";
-
-                            }
-                            else if (c.Etat == "RDV")
-                            {
-                                etat = "RDV";
-                            }
-                            else if (c.Etat == "A_VERIFIE")
-                            {
-                                etat = "A_VERIFIE";
-                            }
-                            else
-                            {
-                                etat = "En cours de traitement...";
-                            }*/
-
                             DataRow row = dataTable.NewRow();
-                            //row["NumLot"] = c.NumLot;
                             row["IDClient"] = c.IDClient;
                             row["Compte"] = c.Compte;
                             row["NomClient"] = c.NomClient;
-                            //row["Etat"] = etat;
                             row["RDV"] = c.RDV;
                             dataTable.Rows.Add(row);
 
@@ -1957,55 +1865,25 @@ namespace WakilRecouvrement.Web.Controllers
                         new FormulaireExportable
                         {
                             NomClient = j.Lot.NomClient,
-                            //NumLot = j.Lot.NumLot,
                             Compte = j.Lot.Compte,
                             IDClient = j.Lot.IDClient,
-                            //Etat = j.Formulaire.EtatClient.ToString(),
-                            Versement = j.Formulaire.MontantVerseDeclare.ToString()
+                            Versement = j.Formulaire.MontantVerseDeclare+""
                         }
 
                         ).ToList();
 
-                        //dataTable.Columns.Add("NumLot", typeof(string));
                         dataTable.Columns.Add("IDClient", typeof(string));
                         dataTable.Columns.Add("Compte", typeof(string));
                         dataTable.Columns.Add("NomClient", typeof(string));
-                        //dataTable.Columns.Add("Etat", typeof(string));
                         dataTable.Columns.Add("Versement", typeof(string));
 
                         foreach (FormulaireExportable c in newList)
                         {
 
-                            /*string etat = "";
-
-                            if (c.Etat == "SOLDE")
-                            {
-                                etat = "Client soldé";
-
-                            }
-                            else if (c.Etat == "SOLDE_TRANCHE")
-                            {
-
-                                etat = "Tranche versé";
-
-                            }
-                            else if (c.Etat == "A_VERIFIE")
-                            {
-
-                                etat = "à verifier";
-
-                            }
-                            else
-                            {
-                                etat = "En cours de traitement...";
-                            }*/
-
                             DataRow row = dataTable.NewRow();
-                            //row["NumLot"] = c.NumLot;
                             row["IDClient"] = c.IDClient;
                             row["Compte"] = c.Compte;
                             row["NomClient"] = c.NomClient;
-                            //row["Etat"] = etat;
                             row["Versement"] = c.Versement;
                             dataTable.Rows.Add(row);
 
@@ -2018,54 +1896,26 @@ namespace WakilRecouvrement.Web.Controllers
                         new FormulaireExportable
                         {
                             NomClient = j.Lot.NomClient,
-                            //NumLot = j.Lot.NumLot,
                             Compte = j.Lot.Compte,
                             IDClient = j.Lot.IDClient,
-                            //Etat = j.Formulaire.EtatClient.ToString(),
                         }
 
                         ).ToList();
 
-                        //dataTable.Columns.Add("NumLot", typeof(string));
                         dataTable.Columns.Add("IDClient", typeof(string));
                         dataTable.Columns.Add("Compte", typeof(string));
                         dataTable.Columns.Add("NomClient", typeof(string));
-                        //dataTable.Columns.Add("Etat", typeof(string));
                         dataTable.Columns.Add("Montant", typeof(string));
 
                         foreach (FormulaireExportable c in newList)
                         {
 
-                            /*string etat = "";
-
-                            if (c.Etat == "SOLDE")
-                            {
-                                etat = "Client soldé";
-
-                            }
-                            else if (c.Etat == "SOLDE_TRANCHE")
-                            {
-
-                                etat = "Tranche versé";
-
-                            }
-                            else if (c.Etat == "A_VERIFIE")
-                            {
-
-                                etat = "A verifié";
-
-                            }
-                            else
-                            {
-                                etat = "En cours de traitement...";
-                            }*/
-
                             DataRow row = dataTable.NewRow();
-                            //row["NumLot"] = c.NumLot;
+
                             row["IDClient"] = c.IDClient;
                             row["Compte"] = c.Compte;
                             row["NomClient"] = c.NomClient;
-                            //row["Etat"] = etat;
+
                             dataTable.Rows.Add(row);
 
                         }
@@ -2077,47 +1927,24 @@ namespace WakilRecouvrement.Web.Controllers
                         new FormulaireExportable
                         {
                             NomClient = j.Lot.NomClient,
-                            //NumLot = j.Lot.NumLot,
                             Compte = j.Lot.Compte,
                             IDClient = j.Lot.IDClient,
-                            //Etat = j.Formulaire.EtatClient.ToString()
                         }
 
                         ).ToList();
 
-                        //dataTable.Columns.Add("NumLot", typeof(string));
                         dataTable.Columns.Add("IDClient", typeof(string));
                         dataTable.Columns.Add("Compte", typeof(string));
                         dataTable.Columns.Add("NomClient", typeof(string));
-                        //dataTable.Columns.Add("Etat", typeof(string));
 
                         foreach (FormulaireExportable c in newList)
                         {
 
-                            /* string etat = "";
 
-                             if (c.Etat == "SOLDE")
-                             {
-                                 etat = "Client soldé";
-
-                             }
-                             else if (c.Etat == "SOLDE_TRANCHE")
-                             {
-
-                                 etat = "tranche versé";
-
-                             }
-                             else
-                             {
-                                 etat = "En cours de traitement...";
-                             }
-                            */
                             DataRow row = dataTable.NewRow();
-                            //row["NumLot"] = c.NumLot;
                             row["IDClient"] = c.IDClient;
                             row["Compte"] = c.Compte;
                             row["NomClient"] = c.NomClient;
-                            //row["Etat"] = etat;
                             dataTable.Rows.Add(row);
 
                         }
@@ -2130,24 +1957,33 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-
-
-
         public ActionResult EnvoyerBanque()
         {
-            if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                return RedirectToAction("Login", "Authentification");
 
-            ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-            ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    LotService LotService = new LotService(UOW);
+                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                        return RedirectToAction("Login", "Authentification");
+
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+                    ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
 
-            return View();
+                    return View();
+
+                }
+            }
+
+
         }
 
 
         [HttpPost]
-        public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string objet, string email, bool send, string to)
+        public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string type, string debutDate, string finDate,string jourdate, string objet, string email, bool send, string to)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -2161,8 +1997,9 @@ namespace WakilRecouvrement.Web.Controllers
                     EmployeService EmpService = new EmployeService(UOW);
 
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+                    ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
 
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
@@ -2178,17 +2015,15 @@ namespace WakilRecouvrement.Web.Controllers
                                       Lot = l,
                                       Affectation = a
 
-                                  }).ToList().Where(j => ((j.Formulaire.Status == Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE) && j.Formulaire.NotifieBanque == false)).ToList();
+                                  }).Where(j => ((j.Formulaire.Status == Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE) && j.Formulaire.NotifieBanque == false)).ToList();
 
                     string subject = "";
                     string body = "";
                     string name = "";
                     string To = "";
 
-
                     if (traite == "RDV")
                     {
-
 
                         JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.RDV).ToList();
                         subject = EmailConstants.RDV_SUBJECT;
@@ -2230,14 +2065,31 @@ namespace WakilRecouvrement.Web.Controllers
 
                     if (numLot != "0")
                     {
-                        JoinedList = JoinedList.ToList().Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+                        JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
                     }
+
+                    Debug.WriteLine(jourdate);
+                    if(type == "P_INTERVAL")
+                    {
+
+                        if(debutDate!=null && debutDate!="" && finDate!="" && finDate!=null)
+                        {
+                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.TraiteLe.Date <= DateTime.Parse(finDate).Date).ToList();
+                        }
+
+                    }else if(type == "P_DATE")
+                    {
+
+                        if (jourdate != null && jourdate != "")
+                        {
+                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == DateTime.Parse(jourdate).Date).ToList();
+                        }
+
+                    }
+
 
                     if (send == true)
                     {
-
-                        //string fileName = Path.GetFileName(fileUploader.FileName);
-                        //mail.Attachments.Add(new Attachment(fileUploader.InputStream, fileName));
 
                         string path = GetFolderName() + "/" + name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
 
@@ -2254,9 +2106,7 @@ namespace WakilRecouvrement.Web.Controllers
                         }
                         FormulaireService.Commit();
 
-                        // return RedirectToAction("EnvoyerBanque");
                     }
-
 
                     JsonResult result = new JsonResult();
 
@@ -2405,7 +2255,6 @@ namespace WakilRecouvrement.Web.Controllers
             mm.From = new MailAddress("alwakil.recouvrement@gmail.com");
             foreach (string t in to.Split(',').ToList())
             {
-                Debug.WriteLine(t);
                 mm.To.Add(t);
             }
 
@@ -2492,9 +2341,9 @@ namespace WakilRecouvrement.Web.Controllers
                     if (Session["username"] == null || Session["username"].ToString().Length < 1)
                         return RedirectToAction("Login", "Authentification");
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
 
                     //Nthabtou li fichier mahouch feragh makenesh nabaathou erreur lel client
@@ -2546,7 +2395,7 @@ namespace WakilRecouvrement.Web.Controllers
                                         dtExcelSchema = connExcel.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                                         string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
                                         connExcel.Close();
-                                        Debug.WriteLine(sheetName);
+
                                         //Houni recuperation mtaa les données 
                                         connExcel.Open();
                                         cmdExcel.CommandText = "SELECT * FROM [Table1$]";
@@ -2554,8 +2403,7 @@ namespace WakilRecouvrement.Web.Controllers
                                         odaExcel.Fill(dt);
                                         connExcel.Close();
 
-                                        //string argNumLot = dt.Columns[1].ColumnName;
-                                        //Debug.WriteLine(argNumLot);
+
                                         string argIDClient = "IDClient";
                                         string argCompte = "Compte";
                                         string argNomClient = "NomClient";
@@ -2575,7 +2423,7 @@ namespace WakilRecouvrement.Web.Controllers
                                             NomClient = row[argNomClient].ToString();
                                             Montant = row[argMontant].ToString();
 
-                                            //Debug.WriteLine(IDClient);
+
                                             VerifyClient(IDClient, Montant,FormulaireService,AffectationService,LotService);
                                         }
 
@@ -2684,14 +2532,8 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void DeleteFromulaire(Formulaire formulaire,FormulaireService FormulaireService)
         {
-           
-                    //LotService LotService = new LotService(UOW);
-                    //FormulaireService FormulaireService = new FormulaireService(UOW);
-
                     formulaire.Status = Status.NON_VERIFIE;
-                    FormulaireService.Update(formulaire);
-                    //FormulaireService.Commit();
-                
+                    FormulaireService.Update(formulaire);                
         }
 
         public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)
@@ -2704,16 +2546,13 @@ namespace WakilRecouvrement.Web.Controllers
                     LotService LotService = new LotService(UOW);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-
 
                     if (Session["username"] == null || Session["username"].ToString().Length < 1)
                         return RedirectToAction("Login", "Authentification");
 
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewBag.RDVList = new SelectList(RDVForDropDown(), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
 
@@ -2767,8 +2606,7 @@ namespace WakilRecouvrement.Web.Controllers
                                       Affectation = a,
                                       Lot = l,
 
-                                  }).Where(j => verifMesRDV(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
-
+                                  }).Where(j => verifMesRDV(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
                     if (!String.IsNullOrEmpty(numLot))
                     {
@@ -2891,12 +2729,8 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
+                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
-
-
 
                     var username = from a in AffectationService.GetAll()
                                    join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
@@ -2924,7 +2758,6 @@ namespace WakilRecouvrement.Web.Controllers
                     LotService LotService = new LotService(UOW);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
 
                     int nb = 0;
                     int rappelNB = 0;
@@ -2943,7 +2776,7 @@ namespace WakilRecouvrement.Web.Controllers
                               Affectation = a,
                               Lot = l,
 
-                          }).Where(j => verifMesRDV(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
+                          }).Where(j => verifMesRDV(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
 
 
 
@@ -2958,7 +2791,7 @@ namespace WakilRecouvrement.Web.Controllers
                                     Affectation = a,
                                     Formulaire = f
 
-                                }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
+                                }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
 
 
                     rejetes = (from f in FormulaireService.GetAll()
@@ -2972,7 +2805,7 @@ namespace WakilRecouvrement.Web.Controllers
                                    Affectation = a,
                                    Formulaire = f
 
-                               }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).Count();
+                               }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
 
 
 
@@ -2991,9 +2824,6 @@ namespace WakilRecouvrement.Web.Controllers
                 {
 
                     LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
 
                     bool TelFixe = false;
                     bool TelPortable = false;
@@ -3026,300 +2856,11 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-        public ActionResult Rentablite(string rentabilite,string numLot, string SearchString, string traite, string agent, string currentFilter, string sortOrder, int? page,string poucentage)
+        public bool verifMesRappels(int affId,DateTime formTraiteLe, FormulaireService FormulaireService)
         {
-
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
-
-                    ViewBag.CurrentSort = sortOrder;
-
-                    List<RentabiliteViewModel> JoinedList = new List<RentabiliteViewModel>();
-
-
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(TraiteListRentabiliteForDropDown(), "Value", "Text");
-                    ViewData["sortOrder"] = new SelectList(SortOrderRentabiliteForDropDown(), "Value", "Text");
-                    ViewData["rentabilite"] = new SelectList(SortOrderRentabiliteDateForDropDown(), "Value", "Text");
-
-                    if (SearchString != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        SearchString = currentFilter;
-                    }
-
-                    ViewBag.CurrentFilter = SearchString;
-                    ViewBag.pourcentage = poucentage;
-
-
-                    if (!String.IsNullOrEmpty(traite))
-                    {
-
-                        JoinedList = (from f in FormulaireService.GetMany(f => f.Status == Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).OrderByDescending(f => f.TraiteLe)
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      select new RentabiliteViewModel
-                                      {
-
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
-                                          Revenue = CalculeRevenue(float.Parse(poucentage + ""), f.AffectationId)
-
-                                      }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-
-
-                        if (traite == "SOLDE")
-                        {
-
-                            JoinedList = JoinedList.Where(o => o.Formulaire.EtatClient == Note.SOLDE).ToList();
-
-                        }
-                        else if (traite == "SOLDE_TRANCHE")
-                        {
-
-                            JoinedList = JoinedList.Where(o => o.Formulaire.EtatClient == Note.SOLDE_TRANCHE).ToList();
-
-                        }
-
-                    }
-
-
-
-                    if (!String.IsNullOrEmpty(rentabilite))
-                    {
-
-                        if (int.Parse(rentabilite) == 0)
-                        {
-                            JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date.Year == DateTime.Now.Year).ToList();
-                        }
-                        else if (int.Parse(rentabilite) == 1)
-                        {
-
-
-                            JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date.Month == DateTime.Now.Month).ToList();
-
-                        }
-                        else if (int.Parse(rentabilite) == 2)
-                        {
-
-                            JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date.Day == DateTime.Now.Day).ToList();
-
-                        }
-                    }
-
-
-
-                    if (!String.IsNullOrEmpty(agent))
-                    {
-                        if (int.Parse(agent) != 0)
-                        {
-                            JoinedList = JoinedList.ToList().Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-                        }
-                    }
-
-                    if (!String.IsNullOrEmpty(rentabilite))
-                    {
-
-                        if (int.Parse(rentabilite) == 0)
-                        {
-                            JoinedList = JoinedList.ToList().Where(f => f.Formulaire.VerifieLe.Date.Year == DateTime.Now.Year).ToList();
-                        }
-
-                        if (int.Parse(rentabilite) == 1)
-                        {
-                            JoinedList = JoinedList.ToList().Where(f => f.Formulaire.VerifieLe.Date.Month == DateTime.Now.Month).ToList();
-                        }
-
-                        if (int.Parse(rentabilite) == 2)
-                        {
-                            JoinedList = JoinedList.ToList().Where(f => f.Formulaire.VerifieLe.Date.Day == DateTime.Now.Day).ToList();
-                        }
-
-                    }
-
-
-
-                    if (!String.IsNullOrEmpty(numLot))
-                    {
-                        if (numLot.Equals("0") == false)
-                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
-
-                    }
-
-                    if (!String.IsNullOrEmpty(SearchString))
-                    {
-                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Compte.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.DescIndustry.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.IDClient.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.NomClient.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Numero.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.SoldeDebiteur.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelFixe.ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelPortable.ToLower().Contains(SearchString.ToLower())
-
-                                               ).ToList();
-                    }
-
-
-                    switch (sortOrder)
-                    {
-                        case "0":
-                            JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
-                            break;
-                        case "1":
-                            try
-                            {
-                                JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
-
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            break;
-
-                        case "2":
-                            try
-                            {
-                                JoinedList = JoinedList.OrderBy(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
-
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            break;
-                        case "3":
-                            JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
-                            break;
-                        case "4":
-                            JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
-                            break;
-                        case "5":
-                            JoinedList = JoinedList.OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
-                            break;
-                        case "6":
-                            JoinedList = JoinedList.OrderBy(s => s.Formulaire.TraiteLe).ToList();
-                            break;
-                        case "7":
-                            JoinedList = JoinedList.OrderByDescending(s => s.Revenue).ToList();
-                            break;
-                        case "8":
-                            JoinedList = JoinedList.OrderBy(s => s.Revenue).ToList();
-                            break;
-
-
-                        default:
-
-
-                            break;
-                    }
-
-                    double x = 0;
-
-                    JoinedList.ForEach(e => x += e.Revenue);
-
-                    ViewBag.RevenueTotal = x;
-
-                    ViewBag.total = JoinedList.Count();
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
-
-                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
-                }
-            }
-
-        }
-
-        public double CalculeRevenue(float tauxPoucentage, int affId)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    double tot = 0;
-                    var x = (from f in FormulaireService.GetMany(f => f.AffectationId == affId && f.Status == Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE))
-                             select new { montantVerse = f.MontantVerseDeclare });
-
-                    foreach (var v in x)
-                    {
-
-                        tot += (double)v.montantVerse * tauxPoucentage / 100;
-
-                    }
-
-
-                    return tot;
-                }
-            }
-        }
-
-        public ActionResult DetailsRevenue(int idAff,int idLot, string pourcentage,string total)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
-
-                    var joinedList = (from f in FormulaireService.GetMany(f => f.AffectationId == idAff && f.Status == Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE))
-
-                                      select new RentabiliteViewModel { Affectation = AffectationService.GetById(idAff), Lot = LotService.GetById(idLot), Formulaire = f, Revenue = (f.MontantVerseDeclare * float.Parse(pourcentage)) / 100 });
-
-                    ViewBag.RevenueTotal = total;
-
-                    return View(joinedList.ToList());
-                }
-            }
-        }
-
-        public bool verifMesRappels(int affId,int formId)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    List<Formulaire> formulaires = new List<Formulaire>();
-                    Formulaire formulaireRappel = FormulaireService.GetById(formId);
-
-                    formulaires = FormulaireService.GetAll().Where(f => f.AffectationId == affId).ToList();
-                    formulaires = formulaires.Where(f => f.TraiteLe > formulaireRappel.TraiteLe).ToList();
-                    int res = formulaires.Where(f => f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.RDV || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE).Count();
+                
+                   
+                    int res = FormulaireService.GetMany(f => f.AffectationId == affId && f.TraiteLe > formTraiteLe && (f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.RDV || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).Count();
                     if (res == 0)
                     {
                         return true;
@@ -3329,41 +2870,24 @@ namespace WakilRecouvrement.Web.Controllers
                         return false;
 
                     }
-                }
-            }
+                
         }
 
-        public bool verifMesRDV(int affId, int formId)
+        public bool verifMesRDV(int affId, DateTime formTraiteLe, FormulaireService FormulaireService)
         {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+            
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
 
-                    List<Formulaire> formulaires = new List<Formulaire>();
-                    Formulaire formulaireRappel = FormulaireService.GetById(formId);
-
-                    formulaires = FormulaireService.GetAll().Where(f => f.AffectationId == affId).ToList();
-                    formulaires = formulaires.Where(f => f.TraiteLe > formulaireRappel.TraiteLe).ToList();
-                    int res = formulaires.Where(f => f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE || f.EtatClient == Note.RAPPEL).Count();
+                    int res = FormulaireService.GetMany(f => f.AffectationId == affId &&  f.TraiteLe > formTraiteLe && (f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE || f.EtatClient == Note.RAPPEL)).Count();
+                   
                     if (res == 0)
                     {
                         return true;
-
-
                     }
                     else
                     {
                         return false;
-
-                    }
-                }
-            }
+                    }       
 
         }
 
@@ -3401,12 +2925,11 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Formulaire = f
 
-                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
+                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
                     }
                     else
                     {
-                        Debug.WriteLine("qqq");
 
                         DateTime d = DateTime.Now;
 
@@ -3423,14 +2946,14 @@ namespace WakilRecouvrement.Web.Controllers
                                               Affectation = a,
                                               Formulaire = f
 
-                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
+                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
                         }
 
                     }
 
 
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(SortOrderSuiviRDVForDropDown(), "Value", "Text");
 
                     if (numLot != null)
@@ -3582,7 +3105,7 @@ namespace WakilRecouvrement.Web.Controllers
                                       Affectation = a,
                                       Formulaire = f
 
-                                  }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.FormulaireId)).ToList();
+                                  }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
                     if (!String.IsNullOrEmpty(SearchString))
                     {
@@ -3618,13 +3141,13 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
+                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                        return RedirectToAction("Login", "Authentification");
+
                     LotService LotService = new LotService(UOW);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
-
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
 
 
                     List<ClientAffecteViewModel> JoinedList;
@@ -3654,7 +3177,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     if (type != null)
                     {
-                        //page = 1;
+                        //type = 1;
                     }
                     else
                     {
@@ -3699,8 +3222,12 @@ namespace WakilRecouvrement.Web.Controllers
 
                     ViewBag.page = page;
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    
+                    if(Session["role"].Equals("admin"))
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
+                    
+
                     ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitForDropDown(), "Value", "Text");
                     ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
 
@@ -3781,14 +3308,22 @@ namespace WakilRecouvrement.Web.Controllers
 
 
 
-                    if (!String.IsNullOrEmpty(agent))
+                    if(Session["role"].Equals("admin"))
                     {
-                        if (int.Parse(agent) != 0)
+                        if (!String.IsNullOrEmpty(agent))
                         {
-                            JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-                        }
+                            if (int.Parse(agent) != 0)
+                            {
+                                JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+                            }
 
+                        }
                     }
+                    else
+                    {
+                                JoinedList = JoinedList.Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
+                    }
+                    
 
                     if (!String.IsNullOrEmpty(numLot))
                     {
@@ -3811,61 +3346,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                                                ).ToList();
                     }
-
-
-
-
-                    /*
-                                switch (sortOrder)
-                                {
-                                    case "0":
-                                        JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
-                                        break;
-                                    case "1":
-                                        try
-                                        {
-                                            JoinedList = JoinedList.OrderByDescending(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
-
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-                                        break;
-
-                                    case "2":
-
-                                        try
-                                        {
-                                            JoinedList = JoinedList.OrderBy(s => s.Lot.SoldeDebiteur).ToList();
-
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-
-
-                                        break;
-                                    case "3":
-                                        JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
-                                        break;
-                                    case "4":
-                                        JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
-                                        break;
-                                    case "5":
-                                        JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
-                                        break;
-                                    case "6":
-                                        JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
-                                        break;
-
-
-                                    default:
-
-
-                                        break;
-                                }*/
 
 
                     ViewBag.total = JoinedList.Count();
