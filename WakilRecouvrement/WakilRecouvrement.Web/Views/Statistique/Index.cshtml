@@ -56,7 +56,14 @@
                                 <input class="form-control" name="dateStat" type="date" id="statDate">
                             </div>
                         </div>
-                        <br />
+
+
+
+                    </div>
+
+                    <div class="row mt-3">
+
+
                         <div class="col-xs-3  col-md-10">
 
                             <p>
@@ -69,6 +76,8 @@
                             </p>
 
                         </div>
+
+
                     </div>
                 }
             </div>
@@ -139,22 +148,30 @@
 
         <div class="card" id="annu">
             <div class="card-header border-0">
+                <div class="row">
+                    <div class="col-xs-3 col-md-3">
 
-                <div class="col-xs-3">
+                        @Html.Label("years", "Année:", new { @class = "control-label " })
 
-                    @Html.Label("years", "Année:", new { @class = "control-label " })
+                        @Html.DropDownList("years", ViewData["years"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
 
-                    @Html.DropDownList("years", ViewData["years"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentFilter })
-               
-
-                </div>
-                <div style="display:none" id="loadingAnnuel" class="col-xs-3">
-
-                    <div class="spinner-grow text-success" role="status">
 
                     </div>
 
                 </div>
+                
+                <div class="row mt-3">
+
+                    <div style="display:none" id="loadingAnnuel" class="col-xs-3">
+
+                        <div class="spinner-grow text-success" role="status">
+
+                        </div>
+
+                    </div>
+
+                </div>
+                
             </div>
             <div class="card-body">
 
@@ -174,7 +191,7 @@
 
                 <div class="d-flex">
                     <p class="d-flex flex-column">
-                        <span class="text-bold text-lg">Rentabilité annuel</span>
+                        <span class="text-bold text-lg">Rentabilité annuelle</span>
                         <span><small> <span id="annuelRentaTot"> </span> </small></span>
                     </p>
 
@@ -222,7 +239,7 @@
                     
                 </div>
 
-                <div class="row">
+                <div class="row mt-3">
 
                     <div style="display:none" id="loadingMensuel" class="col-xs-3">
 
@@ -253,7 +270,7 @@
                 <div class="d-flex">
 
                     <p class="d-flex flex-column">
-                        <span class="text-bold text-lg">Rentabilité Mensuel</span>
+                        <span class="text-bold text-lg">Rentabilité Mensuelle</span>
                         <span><small>  <span id="mensuelRentaTot"> </span> </small></span>
                     </p>
 
@@ -293,7 +310,7 @@
                 </div>
 
                       
-                <div class="row">
+                <div class="row mt-3">
 
                     <div style="display:none" id="loadingQutodien" class="col-xs-3  col-md-3">
 
@@ -323,7 +340,7 @@
                         <div class="d-flex">
 
                             <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">Traitement Quotidien</span>
+                                <span class="text-bold text-lg">Rentabilité quotidienne</span>
                                 <span><small> <span id="quotidienRentaTot"> </span> </small></span>
                             </p>
 
@@ -954,7 +971,5 @@
             })
 
     }
-
-
 
 </script>

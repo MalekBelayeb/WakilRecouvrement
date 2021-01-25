@@ -9,10 +9,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/themes/base/css")
     <title>Al-Wakil Recouvrement</title>
-
-
-
 </head>
 @{ 
 
@@ -416,10 +416,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- ./wrapper -->
     <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
+
+
+
     @Scripts.Render("~/bundles/jquery")
-    @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @Styles.Render("~/Content/themes/base/css")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/adminlte/js")

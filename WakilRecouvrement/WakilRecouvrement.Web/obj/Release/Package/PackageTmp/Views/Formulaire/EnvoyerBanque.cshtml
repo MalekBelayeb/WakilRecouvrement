@@ -45,8 +45,44 @@
 
             </div>
 
+            <div class="col-xs-3  col-md-3">
+
+                @Html.Label("type", "Filtre:", new { @class = "control-label " })
+
+                @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
+
+            </div>
+
+
+
         </div>
 
+        <div class="row mt-3">
+
+            <div id="jdate" style="display:none" class="col-xs-3 col-md-3 ">
+
+                <label for="debutDate">Date:</label>
+                <input class="form-control" name="jourdate" id="jourdate" type="date">
+
+
+            </div>
+
+            <div id="ddate" style="display:none" class="col-xs-3 col-md-3 ">
+
+                <label for="debutDate">Date de début:</label>
+                <input class="form-control" name="debutDate" id="debutdate" type="date">
+
+
+            </div>
+
+            <div id="fdate" style="display:none" class="col-xs-3 col-md-3">
+
+                <label for="finDate">Date de fin:</label>
+                <input class="form-control" name="finDate" id="findate" type="date">
+
+            </div>
+
+        </div>
 
             <br />
             <div class="messages"></div>
@@ -122,6 +158,10 @@
 
 <script>
 
+    document.getElementById('debutdate').valueAsDate = new Date();
+    document.getElementById('findate').valueAsDate = new Date();
+    document.getElementById('jourdate').valueAsDate = new Date();
+
     function showLoading() {
 
         document.getElementById("submitLoading").style.display = "block";
@@ -133,6 +173,57 @@
             $.noConflict();
 
             var Table = DemoDatatable(false);
+
+
+
+
+            $("#type").change(function () {
+
+
+                if (document.getElementById("type").value == "P_ALL") {
+
+                    document.getElementById("ddate").style.display = "none"
+                    document.getElementById("fdate").style.display = "none"
+                    document.getElementById("jdate").style.display = "none"
+
+                } else if (document.getElementById("type").value == "P_INTERVAL") {
+
+                    document.getElementById("ddate").style.display = "block"
+                    document.getElementById("fdate").style.display = "block"
+                    document.getElementById("jdate").style.display = "none"
+
+
+                } else if (document.getElementById("type").value == "P_DATE") {
+
+                    document.getElementById("jdate").style.display = "block"
+                    document.getElementById("ddate").style.display = "none"
+                    document.getElementById("fdate").style.display = "none"
+
+                }
+
+                Table = DemoDatatable(false);
+
+            })
+
+
+            $("#jourdate").change(function () {
+
+                Table = DemoDatatable(false);
+
+            })
+
+            $("#debutdate").change(function () {
+
+                Table = DemoDatatable(false);
+
+            })
+                
+            $("#findate").change(function () {
+
+                Table = DemoDatatable(false);
+
+            })
+
 
             $("#numLot").change(function () {
 
@@ -153,10 +244,6 @@
 
             })
 
-
-
-
-
         });
 
 
@@ -176,7 +263,7 @@
                     "url": '@Url.Action("EnvoyerBanqueLoadData", "Formulaire")',
                     "type": "POST",
                     "datatype": "json",
-                    "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), objet: $("#form_objet").val(), email: $("#form_message").val(), send: send, to: $("#form_email").val() }
+                    "data": { numLot: $("#numLot").val(), traite: $("#traite").val(), type: $("#type").val(), debutdate: $("#debutdate").val(), findate: $("#findate").val(), jourdate: $("#jourdate").val(), objet: $("#form_objet").val(), email: $("#form_message").val(), send: send, to: $("#form_email").val() }
 
                 },
                 "columns": [
