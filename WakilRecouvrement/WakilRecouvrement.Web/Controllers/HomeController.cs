@@ -16,13 +16,20 @@ namespace WakilRecouvrement.Web.Controllers
     public class HomeController : Controller
     {
 
-   
-        public HomeController()
-        {
-         
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception); 
         }
 
+        public HomeController()
+        {
+
+        }
 
         public ActionResult AccountList()
         {
@@ -176,6 +183,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                     List<HomeViewModel> result = new List<HomeViewModel>();
                     List<Lot> lots = new List<Lot>();
+
+                   
                     string[] lotsLst = { };
 
                     lots = LotService.GetAll().ToList();

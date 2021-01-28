@@ -18,13 +18,18 @@ namespace WakilRecouvrement.Web.Controllers
     public class AffectationController : Controller
     {
 
-     
-        public AffectationController()
+
+        public int id = 0;
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
         {
-            
-      
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
         }
-        
+
         public ActionResult ChoisirLot()
         {
 

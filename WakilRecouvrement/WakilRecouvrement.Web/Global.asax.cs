@@ -22,6 +22,7 @@ namespace WakilRecouvrement.Web
             BundleTable.EnableOptimizations = true;
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            log4net.Config.XmlConfigurator.Configure();
 
 
             //JobScheduler.StartAsync().GetAwaiter().GetResult();

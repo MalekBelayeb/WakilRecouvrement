@@ -30,9 +30,18 @@ namespace WakilRecouvrement.Web.Controllers
 
         public int id = 0;
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public FormulaireController()
         {
-        
+
         }
 
         public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
@@ -299,7 +308,6 @@ namespace WakilRecouvrement.Web.Controllers
                     }
 
                     ViewBag.currentFilterNumLot = numLot;
-
 
 
                     if (traite != null)

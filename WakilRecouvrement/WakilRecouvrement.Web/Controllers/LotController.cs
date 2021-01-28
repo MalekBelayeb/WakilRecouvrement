@@ -27,6 +27,14 @@ namespace WakilRecouvrement.Web.Controllers
         public int dup = 0;
         public int up = 0;
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
 
         public LotController()
         {
