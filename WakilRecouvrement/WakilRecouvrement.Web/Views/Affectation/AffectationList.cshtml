@@ -143,6 +143,9 @@
             Nom Client
         </th>
         <th>
+            Emploi
+        </th>
+        <th>
             Solde Debiteur
         </th>
 
@@ -232,7 +235,7 @@
 <tr class="@classStyle">
 
     <td>
-        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }, null)
+        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite }, null)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Lot.NumLot)
@@ -322,6 +325,9 @@
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Lot.NomClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Emploi)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)

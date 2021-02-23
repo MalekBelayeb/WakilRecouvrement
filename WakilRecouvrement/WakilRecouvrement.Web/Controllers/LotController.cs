@@ -17,6 +17,7 @@ using PagedList;
 using WakilRecouvrement.Web.Models;
 using WakilRecouvrement.Data;
 using MyFinance.Data.Infrastructure;
+using System.Text.RegularExpressions;
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -80,8 +81,8 @@ namespace WakilRecouvrement.Web.Controllers
                         string conString = string.Empty;
 
                         //nekhdhou num mtaa lot men esm l fichier ex: Lot 11 => 11 
-                        //string numLot = string.Join(string.Empty, Regex.Matches(PostedFile.FileName, @"\d+").OfType<Match>().Select(m => m.Value));
-                        string numLot = filename.Split('_')[1];
+                        string numLot = string.Join(string.Empty, Regex.Matches(PostedFile.FileName, @"\d+").OfType<Match>().Select(m => m.Value));
+                        //string numLot = filename.Split('_')[1];
 
                         //Nthaabtou eli l client selectiona fichier excel moush haja okhra makanesh nabaathoulou erreur
                         if (PostedFile.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -139,6 +140,16 @@ namespace WakilRecouvrement.Web.Controllers
                                         string argAdresse = "Adresse";
                                         string argType = "Type";
                                         string argNumero = "Numero";
+                                        string argEmploi = "Travail";
+                                       
+                                     /*   string Compte1Arg = "Compte1";
+                                        string Compte2Arg = "Compte2";
+                                        string Nom1Arg = "Nom1";
+                                        string Nom2Arg = "Nom2";*/
+
+                                     /*   List<ClientCompte> ccList1 = new List<ClientCompte>();
+                                        List<ClientCompte> ccList2 = new List<ClientCompte>();
+                                     */
 
 
                                         foreach (DataRow row in dt.Rows)
@@ -153,132 +164,228 @@ namespace WakilRecouvrement.Web.Controllers
                                             string Adresse = "";
                                             string Type = "";
                                             string Numero = "";
+                                            string Emploi = "";
+
+                                           /* string Compte1 = "";
+                                            string Compte2 = "";
+                                            string Nom1= "";
+                                            string Nom2= "";*/
+
+
+                                            //updateEmploi(row["Compte"].ToString(), row["Travail"].ToString());
+
+/*
+
+                                            try
+                                            {
+                                                Compte1 = row[Compte1Arg].ToString();
+                                            }
+                                            catch (ArgumentException e)
+                                            {
+                                                ModelState.AddModelError("Importer", "La colonne " + Compte1Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                return View("ImportLot");
+                                            }
+
+                                            try
+                                            {
+                                                Compte2 = row[Compte2Arg].ToString();
+                                            }
+                                            catch (ArgumentException e)
+                                            {
+                                                ModelState.AddModelError("Importer", "La colonne " + Compte2Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                return View("ImportLot");
+                                            }
+
+
+ */
+ 
+                                            
+                                          /*  
+                                            try
+                                            {
+                                                Nom1 = row[Nom1Arg].ToString();
+                                            }
+                                            catch (ArgumentException e)
+                                            {
+                                                ModelState.AddModelError("Importer", "La colonne " + Nom1Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                return View("ImportLot");
+                                            }
+
+
+                                            try
+                                            {
+                                                Nom2 = row[Nom2Arg].ToString();
+                                            }
+                                            catch (ArgumentException e)
+                                            {
+                                                ModelState.AddModelError("Importer", "La colonne " + Nom2Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                return View("ImportLot");
+                                            }
+
+                                            ClientCompte c1 = new ClientCompte()
+                                            {
+
+                                                Nom = Nom1,
+                                                Compte = Compte1
+
+                                            };
+                                            ClientCompte c2 = new ClientCompte()
+                                            {
+
+                                                Nom = Nom2,
+                                                Compte = Compte2
+
+                                            };*/
+                                        
+/*
+                                            ccList1.Add(c1);
+                                            ccList2.Add(c2);
+                                            */
+
+
+                                            //Debug.WriteLine(row["Travail"].ToString());
+                                            //updateEmploi(row["Compte"].ToString(), row["Travail"].ToString());
+
 
                                             //On verifier aala koll colonne eli l fichier excel il respecte bien le syntaxe mtaa koll colonne bel try/catch 
                                             //O nsobou l information/donné fi variable
                                             try
-                                            {
-                                                IdClient = row[argId].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
+                                             {
+                                                 IdClient = row[argId].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argId + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                                ModelState.AddModelError("Importer", "La colonne " + argId + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 NomClient = row[argNomClient].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argNomClient + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                NomClient = row[argNomClient].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argNomClient + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 Compte = row[argCompte].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argCompte + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                Compte = row[argCompte].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argCompte + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 CompteDebiteur = row[argCompteDebiteur].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argCompteDebiteur + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                CompteDebiteur = row[argCompteDebiteur].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argCompteDebiteur + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 TelPortable = row[argTelPortable].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argTelPortable + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                TelPortable = row[argTelPortable].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argTelPortable + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 TelFixe = row[argTelFixe].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argTelFixe + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
 
-                                            try
-                                            {
-                                                TelFixe = row[argTelFixe].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argTelFixe + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
+                                             }
 
-                                            }
+                                             try
+                                             {
+                                                 Agence = row[argAgence].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argAgence + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                Agence = row[argAgence].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argAgence + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 Adresse = row[argAdresse].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argAdresse + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
+                                             }
 
-                                            try
-                                            {
-                                                Adresse = row[argAdresse].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argAdresse + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
+                                             try
+                                             {
+                                                 Type = row[argType].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argType + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
 
-                                            try
-                                            {
-                                                Type = row[argType].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argType + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
+                                             }
 
-                                            }
+                                             try
+                                             {
+                                                 Emploi = row[argEmploi].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argEmploi + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
 
-                                            try
-                                            {
-                                                Numero = row[argNumero].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + argNumero + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
+                                             }
 
-                                            }
+                                             try
+                                             {
+                                                 Numero = row[argNumero].ToString();
+                                             }
+                                             catch (ArgumentException e)
+                                             {
+                                                 ModelState.AddModelError("Importer", "La colonne " + argNumero + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
+                                                 return View("ImportLot");
 
+                                             }
+                                             
 
+                                            
+                                                                                        Lot Lot = new Lot()
+                                                                                        {
+                                                                                            NumLot = numLot,
+                                                                                            IDClient = IdClient,
+                                                                                            Compte = Compte,
+                                                                                            NomClient = NomClient,
+                                                                                            SoldeDebiteur = CompteDebiteur.Replace("-", ""),
+                                                                                            TelPortable = TelPortable,
+                                                                                            TelFixe = TelFixe,
+                                                                                            DescIndustry = Agence,
+                                                                                            Adresse = Adresse,
+                                                                                            Type = Type,
+                                                                                            Numero = Numero,
+                                                                                            Emploi = Emploi
 
-                                            Lot Lot = new Lot()
-                                            {
-                                                NumLot = numLot,
-                                                IDClient = IdClient,
-                                                Compte = Compte,
-                                                NomClient = NomClient,
-                                                SoldeDebiteur = CompteDebiteur.Replace("-", ""),
-                                                TelPortable = TelPortable,
-                                                TelFixe = TelFixe,
-                                                DescIndustry = Agence,
-                                                Adresse = Adresse,
-                                                Type = Type,
-                                                Numero = Numero,
-
-                                            };
-
+                                                                                        };
+                                            
                                             //On verifie est ce que l client hedha aana menou fel base ouala le
+
+
+                                            
                                             if (LotService.Get(l => l.Compte.Equals(Compte)) != null)
                                             {
                                                 //Ken aana menou nshoufou ken identique ouala le
@@ -287,6 +394,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                 //sinon ken maanesh menou on l'ajouter fel base
                                                 //Benesba l ViewData rahom des flag lel affichage 
                                                 Lot lot = LotService.Get(l => l.Compte.Equals(Compte));
+
 
                                                 Debug.WriteLine(Compte);
 
@@ -307,11 +415,13 @@ namespace WakilRecouvrement.Web.Controllers
                                                     {
                                                         ViewData["up"] = "1";
                                                     }
-                                                    lot.NumLot = Lot.NumLot;
-                                                    lot.NomClient = Lot.NomClient;
+
+                                                    //lot.NumLot = Lot.NumLot;
+                                                   
+                                                    /*lot.NomClient = Lot.NomClient;
                                                     lot.TelPortable = Lot.TelPortable;
                                                     lot.TelFixe = Lot.TelFixe;
-                                                    lot.Fax = Lot.Fax;
+                                                    lot.Emploi = Lot.Emploi;
                                                     lot.SoldeDebiteur = Lot.SoldeDebiteur;
                                                     lot.DescIndustry = Lot.DescIndustry;
                                                     lot.Adresse = Lot.Adresse;
@@ -319,12 +429,14 @@ namespace WakilRecouvrement.Web.Controllers
                                                     lot.Numero = Lot.Numero;
                                                     lot.PostCode = Lot.PostCode;
 
-                                                    LotService.Update(lot);
+                                                    LotService.Update(lot);*/
+                                                
                                                 }
 
                                             }
                                             else
                                             {
+
                                                 x++;
                                                 ViewData["nb"] = x;
 
@@ -340,10 +452,44 @@ namespace WakilRecouvrement.Web.Controllers
 
                                         }
 
+                                        /*
+                                        ccList1 = ccList1.Where(c => c.Compte != "").ToList();
+                                        ccList2 = ccList2.Where(c => c.Compte != "").ToList();
+
+                                        */
+                                        List<ClientCompte> newList = new List<ClientCompte>();
+                                        /*
+                                        foreach(ClientCompte c in ccList1)
+                                        {
+
+                                            if(!ccList2.Contains(c))
+                                            {
+
+                                                newList.Add(c);
+
+                                            }
+                                            else
+                                            {
+
+                                            }
+
+                                        }*/
+
+                                      
+                                        /*
+                                        
+                                        string path1 = GetFolderName() + "/" + "Diff" + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+                                        */
+
                                         ViewData["nbTotal"] = dt.Rows.Count;
                                         ViewData["finished"] = "1";
                                         LotService.Commit();
 
+                                        /*
+                                        Debug.WriteLine(newList.Count);
+
+                                        GenerateExcel(GenerateDatatableFromJoinedList(newList), path1);
+                                        */
                                     }
                                 }
                             }
@@ -366,7 +512,172 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-          
+  
+        }
+
+
+        public string GetFolderName()
+        {
+            string folderName = Server.MapPath("~/Uploads/Updates");
+            if (!Directory.Exists(folderName))
+            {
+                Directory.CreateDirectory(folderName);
+
+            }
+
+            return folderName;
+        }
+
+
+        public DataTable GenerateDatatableFromJoinedList(List<ClientCompte> list)
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    LotService LotService = new LotService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    EmployeService EmpService = new EmployeService(UOW);
+
+                    List<ClientCompte> newList = new List<ClientCompte>();
+                    DataTable dataTable = new DataTable();
+
+                    newList = list.Select(j =>
+                     new ClientCompte
+                     {
+
+                         Nom =j.Nom,
+                         Compte = j.Compte
+               
+                     }).ToList();
+
+                    dataTable.Columns.Add("Nom", typeof(string));
+                    dataTable.Columns.Add("Compte", typeof(string));
+           
+                    foreach (ClientCompte c in newList)
+                    {
+
+                        DataRow row = dataTable.NewRow();
+                        row["Nom"] = c.Nom;
+                        row["Compte"] = c.Compte;
+                        dataTable.Rows.Add(row);
+
+                    }
+
+                    Debug.WriteLine("---->"+dataTable.Rows.Count);
+
+                    return dataTable;
+
+                }
+            }
+        }
+
+
+
+        public void Traitement()
+        {
+
+
+
+
+        }
+
+        public static void GenerateExcel(DataTable dataTable, string path)
+        {
+            dataTable.TableName = "Table1";
+
+            DataSet dataSet = new DataSet();
+            dataSet.Tables.Add(dataTable);
+            
+            // create a excel app along side with workbook and worksheet and give a name to it
+            Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
+            Microsoft.Office.Interop.Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
+            Microsoft.Office.Interop.Excel.Range xlRange = xlWorksheet.UsedRange;
+
+            foreach (DataTable table in dataSet.Tables)
+            {
+                //Add a new worksheet to workbook with the Datatable name
+                // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+                Microsoft.Office.Interop.Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+
+                
+                excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
+
+                excelWorkSheet.Name = table.TableName;
+
+                // add all the columns
+                for (int i = 1; i < table.Columns.Count + 1; i++)
+                {
+                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+                    excelWorkSheet.Cells[1, i].Font.Bold = true;
+                    excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                    excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                    excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                    excelWorkSheet.Cells[1, i].Borders.Weight = 2;
+                    excelWorkSheet.Cells[1, i].Font.Size = 14;
+                    excelWorkSheet.Cells[1, i].ColumnWidth = 22;
+                }
+
+                // add all the rows
+                for (int j = 0; j < table.Rows.Count; j++)
+                {
+                    for (int k = 0; k < table.Columns.Count; k++)
+                    {
+
+                        excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
+                        excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
+                        excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
+                    }
+                }
+            }
+            // excelWorkBook.Save(); -> this will save to its default location
+            
+            
+            Debug.WriteLine("----->"+path);
+             
+
+            excelWorkBook.SaveAs(path); // -> this will do the custom
+            excelWorkBook.Close();
+            excelApp.Quit();
+        }
+
+        public void updateEmploi (string compte,string emploi)
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    LotService LotService = new LotService(UOW);
+
+                   
+                    Lot lot = LotService.Get(l => l.Compte == compte);
+
+                    if(lot !=null)
+                    {
+
+                        lot.Emploi = emploi;
+                        Debug.WriteLine(lot.Compte);
+                        LotService.Commit();
+
+                    }
+                    else
+                    {
+                        Debug.WriteLine("no no ===>"+ compte);
+
+                    }
+
+                }
+            }
+
         }
 
         public ActionResult deleteLot(int id, string currentFilter, string currentNumLot, string currentPage)
@@ -460,7 +771,7 @@ namespace WakilRecouvrement.Web.Controllers
                                      ,
                                       DescIndustry = a.DescIndustry
                                      ,
-                                      Fax = a.Fax
+                                      Emploi = a.Emploi
                                      ,
                                       IDClient = a.IDClient
 
@@ -638,7 +949,7 @@ namespace WakilRecouvrement.Web.Controllers
                     newlot.Adresse = cavm.Lot.Adresse;
                     newlot.Compte = cavm.Lot.Compte;
                     newlot.DescIndustry = cavm.Lot.DescIndustry;
-                    newlot.Fax = cavm.Lot.Fax;
+                    newlot.Emploi = cavm.Lot.Emploi;
                     newlot.IDClient = cavm.Lot.IDClient;
                     newlot.NomClient = cavm.Lot.NomClient;
                     newlot.NumLot = cavm.Lot.NumLot;

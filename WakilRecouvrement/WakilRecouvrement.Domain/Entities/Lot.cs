@@ -11,7 +11,6 @@ namespace WakilRecouvrement.Domain.Entities
 {
     public class Lot
     {
-
         public int LotId{get;set;}
 
         public string NumLot { get; set; }
@@ -34,7 +33,7 @@ namespace WakilRecouvrement.Domain.Entities
         [ScaffoldColumn(false)]
         public bool TelFixeFN { get; set; }
 
-        public string Fax { get; set; }
+        public string Emploi { get; set; }
 
         public string SoldeDebiteur { get; set; }
 
@@ -56,7 +55,7 @@ namespace WakilRecouvrement.Domain.Entities
                    NomClient == lot.NomClient &&
                    TelPortable == lot.TelPortable &&
                    TelFixe == lot.TelFixe &&
-                   Fax == lot.Fax &&
+                   Emploi == lot.Emploi &&
                    SoldeDebiteur == lot.SoldeDebiteur &&
                    DescIndustry == lot.DescIndustry &&
                    Adresse == lot.Adresse &&

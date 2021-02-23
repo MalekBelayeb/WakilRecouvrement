@@ -639,6 +639,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                     }
                 }
+
                 excelWorkSheet.Cells[table.Rows.Count+2, 5] = "Total";
                 excelWorkSheet.Cells[table.Rows.Count+2, 5].Font.Size = 14;
                 excelWorkSheet.Cells[table.Rows.Count+2, 5].Font.Bold = true;

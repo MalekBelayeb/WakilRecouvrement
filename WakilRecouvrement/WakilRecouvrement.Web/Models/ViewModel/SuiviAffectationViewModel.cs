@@ -20,7 +20,7 @@ namespace WakilRecouvrement.Web.Models.ViewModel
 
         public string TelFixe { get; set; }
 
-        public string Fax { get; set; }
+        public string Emploi { get; set; }
 
         public string SoldeDebiteur { get; set; }
 

@@ -830,6 +830,7 @@ namespace WakilRecouvrement.Web.Controllers
                     }
                     else
                     {
+
                         ClientAffecteViewModel cavm = (from f in FormulaireService.GetAll()
                                                        join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                                        where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
@@ -841,7 +842,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                                                        }).FirstOrDefault();
 
-                        
                         if(cavm!=null)
                         {
                             Formulaire.MontantDebMAJ = cavm.Formulaire.MontantDebMAJ;
