@@ -244,11 +244,15 @@ namespace WakilRecouvrement.Web.Controllers
 
 
                                             //Debug.WriteLine(row["Travail"].ToString());
-                                            //updateEmploi(row["Compte"].ToString(), row["Travail"].ToString());
+                                            updateEmploi(row["ID"].ToString(), row["Travail"].ToString());
 
 
                                             //On verifier aala koll colonne eli l fichier excel il respecte bien le syntaxe mtaa koll colonne bel try/catch 
                                             //O nsobou l information/donné fi variable
+                                           
+                                            
+                                            /*
+                                            
                                             try
                                              {
                                                  IdClient = row[argId].ToString();
@@ -381,7 +385,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                             Emploi = Emploi
 
                                                                                         };
-                                            
+                                            */
                                             //On verifie est ce que l client hedha aana menou fel base ouala le
 
 
@@ -394,7 +398,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                 //sinon ken maanesh menou on l'ajouter fel base
                                                 //Benesba l ViewData rahom des flag lel affichage 
                                                 Lot lot = LotService.Get(l => l.Compte.Equals(Compte));
-
+                                                /*
 
                                                 Debug.WriteLine(Compte);
 
@@ -418,7 +422,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                                                     //lot.NumLot = Lot.NumLot;
                                                    
-                                                    /*lot.NomClient = Lot.NomClient;
+                                                    lot.NomClient = Lot.NomClient;
                                                     lot.TelPortable = Lot.TelPortable;
                                                     lot.TelFixe = Lot.TelFixe;
                                                     lot.Emploi = Lot.Emploi;
@@ -429,10 +433,10 @@ namespace WakilRecouvrement.Web.Controllers
                                                     lot.Numero = Lot.Numero;
                                                     lot.PostCode = Lot.PostCode;
 
-                                                    LotService.Update(lot);*/
+                                                    LotService.Update(lot);
                                                 
                                                 }
-
+                                            */
                                             }
                                             else
                                             {
@@ -444,7 +448,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                 {
                                                     ViewData["noDup"] = "1";
                                                 }
-                                                LotService.Add(Lot);
+                                                //LotService.Add(Lot);
                                                 //AffecterClient(Lot, filename);
 
                                             }
@@ -659,7 +663,7 @@ namespace WakilRecouvrement.Web.Controllers
                     LotService LotService = new LotService(UOW);
 
                    
-                    Lot lot = LotService.Get(l => l.Compte == compte);
+                    Lot lot = LotService.Get(l => l.IDClient == compte);
 
                     if(lot !=null)
                     {
@@ -958,7 +962,7 @@ namespace WakilRecouvrement.Web.Controllers
                     newlot.TelFixe = cavm.Lot.TelFixe;
                     newlot.TelPortable = cavm.Lot.TelPortable;
                     newlot.Type = cavm.Lot.Type;
-
+                    newlot.Emploi = cavm.Lot.Emploi;
                     LotService.Update(newlot);
                     LotService.Commit();
 
@@ -1016,13 +1020,19 @@ namespace WakilRecouvrement.Web.Controllers
         [HttpPost]
         public ActionResult addLot(Lot lot,int agent)
         {
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
+
+                    Debug.WriteLine(lot);
+
                     LotService LotService = new LotService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
+
+                    LotService.Add(lot);
+                    LotService.Commit();
+
                     Affectation affectation = new Affectation
                     {
                         DateAffectation = DateTime.Now,
