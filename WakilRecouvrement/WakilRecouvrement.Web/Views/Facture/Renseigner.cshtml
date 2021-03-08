@@ -28,7 +28,14 @@
 
                 </div>
 
+                
+                <div class="col-xs-3  col-md-3">
 
+                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+
+                </div>
 
                 <div class="col-xs-3 col-md-3 ">
 

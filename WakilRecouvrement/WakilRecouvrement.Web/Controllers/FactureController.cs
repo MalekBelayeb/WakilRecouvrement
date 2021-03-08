@@ -518,7 +518,7 @@ namespace WakilRecouvrement.Web.Controllers
             paragraphBody1.Range.InsertParagraphAfter();
 
             Word.Paragraph paragraphBody2 = document.Content.Paragraphs.Add(missing);
-            paragraphBody2.Range.Text = "في إطار تكليفنا لمساعدتكم على التواصل لتسوية وضعية دينكم تجاه مصرف الزيتونة فرع مركزي والمتعلق بحسابكم البنكي الخاص، نرجو منكم التوجه إلى الفرع المذكور أعلاه أو الاتصال بالشركة لإيجاد أفضل الحلول المناسبة التي تضمن لكم أحسن طريقة لتطهير دينكم";
+            paragraphBody2.Range.Text = "في إطار تكليفنا لمساعدتكم على التواصل لتسوية وضعية دينكم تجاه مصرف الزيتونة والمتعلق بحسابكم البنكي الخاص، نرجو منكم التوجه إلى الفرع المذكور أعلاه أو الاتصال بالشركة لإيجاد أفضل الحلول المناسبة التي تضمن لكم أحسن طريقة لتطهير دينكم";
             paragraphBody2.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
             paragraphBody2.Range.Font.NameBi = "Arial";
             paragraphBody2.Range.Font.SizeBi = 20;
@@ -706,7 +706,23 @@ namespace WakilRecouvrement.Web.Controllers
                 return false;
             }
         }
+        public IEnumerable<SelectListItem> AgentListForDropDown(EmployeService EmpService)
+        {
 
+            List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
+
+            agents.ForEach(l =>
+            {
+                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
+            });
+
+            return listItems;
+
+
+        }
         public ActionResult Renseigner(int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -716,8 +732,10 @@ namespace WakilRecouvrement.Web.Controllers
 
                     LettreService lettreService = new LettreService(UOW);
                     LotService LotService = new LotService(UOW);
+                    EmployeService EmployeService = new EmployeService(UOW);
                     List<Lettre> lettreList = lettreService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
                     ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
 
 
                     ViewBag.total = lettreList.Count();
@@ -856,7 +874,7 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public ActionResult ExtraireLettreAction(string numLot,string debutDate,string finDate)
+        public ActionResult ExtraireLettreAction(string numLot,string debutDate,string finDate,string agent)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
@@ -866,7 +884,10 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                     LotService LotService = new LotService(UOW);
                     LettreService lettreService = new LettreService(UOW);
+                    EmployeService EmployeService = new EmployeService(UOW);
+
                     ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
 
                     string lettreDir = GetFolderNameForLettre();
                     DateTime startDate = DateTime.Parse(debutDate);
@@ -888,8 +909,10 @@ namespace WakilRecouvrement.Web.Controllers
                     }
 
                     List<LettreContent> lettreJoinedList = new List<LettreContent>();
+                    
                     if (numLot == "0")
                     {
+
                          lettreJoinedList = (from f in FormulaireService.GetAll()
                                                                 join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                                                 join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -903,23 +926,89 @@ namespace WakilRecouvrement.Web.Controllers
                                                                     Compte = l.Compte
 
                                                                 }).ToList();
+
+                        if (int.Parse(agent) != 0)
+                        {
+                            lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && a.EmployeId == int.Parse(agent)
+                                                select new LettreContent
+                                                {
+                                                    NumLot = l.NumLot,
+                                                    Adresse = l.Adresse,
+                                                    NomClient = l.NomClient,
+                                                    Agence = l.DescIndustry,
+                                                    Compte = l.Compte
+
+                                                }).ToList();
+
+                        }
+                        else
+                        {
+                            lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId)
+                                                select new LettreContent
+                                                {
+                                                    NumLot = l.NumLot,
+                                                    Adresse = l.Adresse,
+                                                    NomClient = l.NomClient,
+                                                    Agence = l.DescIndustry,
+                                                    Compte = l.Compte
+
+                                                }).ToList();
+
+                        }
+
                     }
                     else
                     {
-                        lettreJoinedList = (from f in FormulaireService.GetAll()
-                                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                            join l in LotService.GetAll() on a.LotId equals l.LotId
-                                            where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot))
-                                            select new LettreContent
-                                            {
-                                                NumLot = l.NumLot,
-                                                Adresse = l.Adresse,
-                                                NomClient = l.NomClient,
-                                                Agence = l.DescIndustry,
-                                                Compte = l.Compte
 
-                                            }).ToList();
+                        if (int.Parse(agent) != 0)
+                        {
+
+                            lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot)) && a.EmployeId == int.Parse(agent)
+                                                select new LettreContent
+                                                {
+
+                                                    NumLot = l.NumLot,
+                                                    Adresse = l.Adresse,
+                                                    NomClient = l.NomClient,
+                                                    Agence = l.DescIndustry,
+                                                    Compte = l.Compte,
+                                                    IdAgent = a.EmployeId + ""
+
+                                                }).ToList();
+
+                        }
+                        else
+                        {
+
+                            lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot))
+                                                select new LettreContent
+                                                {
+
+                                                    NumLot = l.NumLot,
+                                                    Adresse = l.Adresse,
+                                                    NomClient = l.NomClient,
+                                                    Agence = l.DescIndustry,
+                                                    Compte = l.Compte,
+                                                    IdAgent = a.EmployeId + ""
+
+                                                }).ToList();
+                        }
+                      
                     }
+
+                  
 
                     int x = 0;
                     ViewBag.total = lettreJoinedList.Count();
