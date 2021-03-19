@@ -1701,6 +1701,8 @@ namespace WakilRecouvrement.Web.Controllers
                     
                     if (valid == false)
                     {
+
+                        Debug.WriteLine("qqqq");
                         DeleteFromulaire(Formulaire, FormulaireService);
                         return Json(new { });
                     }
@@ -2541,7 +2543,8 @@ namespace WakilRecouvrement.Web.Controllers
         public void DeleteFromulaire(Formulaire formulaire,FormulaireService FormulaireService)
         {
                     formulaire.Status = Status.NON_VERIFIE;
-                    FormulaireService.Update(formulaire);                
+                    FormulaireService.Update(formulaire);
+                FormulaireService.Commit();
         }
 
         public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)

@@ -18,3 +18,8 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.erererkk.resources
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.erererkkff.resources
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eers.resources
+C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eeeerdff.resources
+C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eeerszss.resources
+C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eeerszsshhh.resources
+C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eersssaa.resources
+C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Release\WakilRecouvrement.Data.Migrations.eersssaa1.resources
