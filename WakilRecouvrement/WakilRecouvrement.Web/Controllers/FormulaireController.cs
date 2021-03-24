@@ -492,10 +492,7 @@ namespace WakilRecouvrement.Web.Controllers
                     return View(JoinedList.ToPagedList(pageNumber, pageSize));
 
                 }
-            }
-
-
-                    
+            }       
         }
 
         public IEnumerable<SelectListItem> NumLotListForDropDown(LotService LotService)

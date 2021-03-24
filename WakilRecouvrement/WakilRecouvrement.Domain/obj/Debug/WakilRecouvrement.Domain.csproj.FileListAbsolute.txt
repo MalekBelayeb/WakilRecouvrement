@@ -10,3 +10,15 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.csproj.CopyComplete
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.dll
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\WakilRecouvrement.Domain.dll.config
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\WakilRecouvrement.Domain.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\WakilRecouvrement.Domain.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\EntityFramework.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\EntityFramework.SqlServer.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\EntityFramework.xml
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Debug\EntityFramework.SqlServer.xml
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.csprojAssemblyReference.cache
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.csproj.CoreCompileInputs.cache
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.csproj.CopyComplete
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Debug\WakilRecouvrement.Domain.pdb

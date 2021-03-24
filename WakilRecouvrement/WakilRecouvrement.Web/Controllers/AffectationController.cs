@@ -3,6 +3,7 @@ using MyFinance.Data.Infrastructure;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Web;
@@ -51,6 +52,192 @@ namespace WakilRecouvrement.Web.Controllers
             }
                     
         }
+
+
+        public ActionResult ChoisirAgent()
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+                    EmployeService EmpService = new EmployeService(UOW);
+                    RoleService RoleService = new RoleService(UOW);
+
+                    var agents = (from e in EmpService.GetAll()
+                                  join r in RoleService.GetAll() on e.RoleId equals r.RoleId
+                                  where e.IsVerified = true && r.role == "agent"
+                                  select new
+                                  {
+                                      Emp = e
+
+                                  }).Select(e => e.Emp).ToList();
+
+                    return View(agents);
+
+                }
+            }
+
+
+
+        }
+
+
+
+        /*  public bool isReaffectable(int idAff, FormulaireService FormulaireService, AffectationService AffectationService, LotService LotService)
+          {
+              List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+              JoinedList = (from f in FormulaireService.GetAll()
+                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                            join l in LotService.GetAll() on a.LotId equals l.LotId
+                            where f.AffectationId == idAff
+
+                            select new ClientAffecteViewModel
+                            {
+
+                                Formulaire = f,
+                                Affectation = a,
+                                Lot = l,
+
+                            }).Where(j=>j.Formulaire.EtatClient == Note.A_VERIFIE || j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE).ToList();
+
+
+              if(JoinedList.Count == 0)
+              {
+                  return true;
+              }
+              else
+              {
+                  return false;
+              }
+
+          }*/
+
+
+        public IEnumerable<SelectListItem> AgentListForDropDown(string idEmp,EmployeService EmpService)
+        {
+
+            List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.EmployeId+"" != idEmp  && emp.IsVerified == true).ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+
+            agents.ForEach(l =>
+            {
+                listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
+            });
+
+            return listItems;
+
+
+        }
+
+        public ActionResult reaffecterClients(string empId,string agent,string numLot,string affec, int? page, string currentFilterNumLot)
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    DateTime dateGold = DateTime.Now.AddDays(-4).Date;
+                    string usernameAgent = "";
+                    ViewBag.dateGold = dateGold.ToString("dd/MM/yyyy");
+                    
+                    ViewBag.empId = empId;
+                    if (numLot == null)
+                        numLot = currentFilterNumLot;
+                    ViewBag.numLot = numLot;
+
+                    LotService LotService = new LotService(UOW);
+                    EmployeService EmpService = new EmployeService(UOW);
+                    
+                    if (empId != null)
+                         usernameAgent  = EmpService.GetById(int.Parse(empId)).Username;
+                    ViewBag.agent = usernameAgent;
+
+                    ViewData["list"] = new SelectList(NumLotListForDropDownForReaffecter(LotService), "Value", "Text");
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(empId, EmpService), "Value", "Text");
+
+                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    
+                    if (numLot != null)
+                    {
+                        //page = 1;
+                        //ViewBag.page = page;
+                    }
+                    else
+                    {
+                        numLot = currentFilterNumLot;
+                    }
+
+                    ViewBag.currentFilterNumLot = numLot;
+
+                    JoinedList = (from e in EmpService.GetAll()
+                                  join a in AffectationService.GetAll() on e.EmployeId equals a.EmployeId
+                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+                                  where a.DateAffectation<=dateGold && l.NumLot.Equals(numLot) && !a.Formulaires.Any(f => f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && e.EmployeId+"" == empId
+
+                                  select new ClientAffecteViewModel
+                                  {
+                                      Agent = e.Username,
+                                      AffectationId = a.AffectationId,
+                                      Affectation = a,
+                                      Lot = l,
+
+                                  }).ToList();
+
+                    ViewBag.total = JoinedList.Count();
+
+                    if (affec == "1")
+                    {
+                    
+                        //Debug.WriteLine("Affecter nouveau agent");
+                        //Debug.WriteLine(JoinedList.Count());
+
+                        if(agent!=null)
+                        {
+                            foreach (ClientAffecteViewModel cavm in JoinedList)
+                            {
+
+                                cavm.Affectation.AncienAgent = usernameAgent;
+                                cavm.Affectation.EmployeId = int.Parse(agent);
+                                cavm.Affectation.DateAffectation = DateTime.Now;
+                                AffectationService.Update(cavm.Affectation);
+
+                            }
+                            AffectationService.Commit();
+
+                            JoinedList = (from e in EmpService.GetAll()
+                                          join a in AffectationService.GetAll() on e.EmployeId equals a.EmployeId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          where a.DateAffectation <= dateGold && l.NumLot.Equals(numLot) && !a.Formulaires.Any(f => f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && e.EmployeId + "" == empId
+
+                                          select new ClientAffecteViewModel
+                                          {
+                                              Agent = e.Username,
+                                              AffectationId = a.AffectationId,
+                                              Affectation = a,
+                                              Lot = l,
+
+                                          }).ToList();
+
+                            ViewBag.total = JoinedList.Count();
+
+
+                        }
+                        
+                    }
+
+                    int pageSize = 10;
+                    int pageNumber = (page ?? 1);
+
+                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
+                }
+            }
+
+       }
+
 
         public ActionResult AffecterAgent(int numLot)
         {
@@ -536,9 +723,23 @@ namespace WakilRecouvrement.Web.Controllers
             });
 
             return listItems;
-
         }
 
+        public IEnumerable<SelectListItem> NumLotListForDropDownForReaffecter(LotService LotService)
+        {
+
+            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+
+            List<Lot> Lots = LotService.GetAll().ToList();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+
+
+            Lots.DistinctBy(l => l.NumLot).ForEach(l => {
+                listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
+            });
+
+            return listItems;
+        }
 
         [HttpPost]
         public ActionResult LoadData(string numLot, string traite)

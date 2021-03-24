@@ -17,7 +17,9 @@ namespace WakilRecouvrement.Domain.Entities
         public DateTime DateAffectation { get; set; }
 
         public string AffectePar { get; set; }
-     
+
+        public string AncienAgent { get; set; }
+
         public int LotId { get; set; }
         public virtual Lot Lot { get; set; }
 
@@ -25,7 +27,6 @@ namespace WakilRecouvrement.Domain.Entities
         public virtual Employe Employe {get;set;}
 
         public virtual ICollection<Formulaire> Formulaires { get; set; }    
-
 
 
     }

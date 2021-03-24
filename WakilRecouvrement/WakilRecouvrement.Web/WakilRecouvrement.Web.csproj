@@ -819,6 +819,8 @@
     <Content Include="Views\Formulaire\SuiviTraiement.cshtml" />
     <Content Include="Views\Facture\genererFacture.cshtml" />
     <Content Include="Views\Facture\Renseigner.cshtml" />
+    <Content Include="Views\Affectation\ChoisirAgent.cshtml" />
+    <Content Include="Views\Affectation\reaffecterClients.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

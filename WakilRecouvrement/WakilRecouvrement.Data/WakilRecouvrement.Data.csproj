@@ -59,41 +59,13 @@
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Infrastructure\RepositoryBase.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
-    <Compile Include="Migrations\202012300506573_ererer.cs" />
-    <Compile Include="Migrations\202012300506573_ererer.designer.cs">
-      <DependentUpon>202012300506573_ererer.cs</DependentUpon>
+    <Compile Include="Migrations\202103221524346_eer.cs" />
+    <Compile Include="Migrations\202103221524346_eer.designer.cs">
+      <DependentUpon>202103221524346_eer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012300509300_erererkk.cs" />
-    <Compile Include="Migrations\202012300509300_erererkk.designer.cs">
-      <DependentUpon>202012300509300_erererkk.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012300604492_erererkkff.cs" />
-    <Compile Include="Migrations\202012300604492_erererkkff.designer.cs">
-      <DependentUpon>202012300604492_erererkkff.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202101100152538_eers.cs" />
-    <Compile Include="Migrations\202101100152538_eers.designer.cs">
-      <DependentUpon>202101100152538_eers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102212022424_eeeerdff.cs" />
-    <Compile Include="Migrations\202102212022424_eeeerdff.designer.cs">
-      <DependentUpon>202102212022424_eeeerdff.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102222054475_eeerszss.cs" />
-    <Compile Include="Migrations\202102222054475_eeerszss.designer.cs">
-      <DependentUpon>202102222054475_eeerszss.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102222104512_eeerszsshhh.cs" />
-    <Compile Include="Migrations\202102222104512_eeerszsshhh.designer.cs">
-      <DependentUpon>202102222104512_eeerszsshhh.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102232104157_eersssaa.cs" />
-    <Compile Include="Migrations\202102232104157_eersssaa.designer.cs">
-      <DependentUpon>202102232104157_eersssaa.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102232107464_eersssaa1.cs" />
-    <Compile Include="Migrations\202102232107464_eersssaa1.designer.cs">
-      <DependentUpon>202102232107464_eersssaa1.cs</DependentUpon>
+    <Compile Include="Migrations\202103241103427_eerrrt.cs" />
+    <Compile Include="Migrations\202103241103427_eerrrt.designer.cs">
+      <DependentUpon>202103241103427_eerrrt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,32 +83,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012300506573_ererer.resx">
-      <DependentUpon>202012300506573_ererer.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103221524346_eer.resx">
+      <DependentUpon>202103221524346_eer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012300509300_erererkk.resx">
-      <DependentUpon>202012300509300_erererkk.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012300604492_erererkkff.resx">
-      <DependentUpon>202012300604492_erererkkff.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202101100152538_eers.resx">
-      <DependentUpon>202101100152538_eers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102212022424_eeeerdff.resx">
-      <DependentUpon>202102212022424_eeeerdff.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102222054475_eeerszss.resx">
-      <DependentUpon>202102222054475_eeerszss.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102222104512_eeerszsshhh.resx">
-      <DependentUpon>202102222104512_eeerszsshhh.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102232104157_eersssaa.resx">
-      <DependentUpon>202102232104157_eersssaa.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102232107464_eersssaa1.resx">
-      <DependentUpon>202102232107464_eersssaa1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103241103427_eerrrt.resx">
+      <DependentUpon>202103241103427_eerrrt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
