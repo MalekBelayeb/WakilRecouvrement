@@ -1,0 +1,281 @@
+﻿
+@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+@using (Html.BeginForm("reaffecterClients", "Affectation", FormMethod.Post, new { onsubmit = "showLoading()" }))
+{
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h2>Chercher des clients à réaffecter</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilterNumLot = ViewBag.currentFilterNumLot })
+
+                </div>
+
+
+                <input style="display:none" value="@ViewBag.empId" name="empId" id="empId">
+                <input style="display:none" value="0" name="affec" id="affec">
+
+            </div>
+
+
+            <br />
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="card-footer text-muted">
+
+
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) gelé(s)</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+@if (ViewBag.total != 0)
+{
+
+    using (Html.BeginForm("reaffecterClients", "Affectation", FormMethod.Post, new { onsubmit = "showLoading2()" }))
+    {
+
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+
+                <h2>Choisir le nouveau agent</h2>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-xs-3  col-md-3">
+
+                        @Html.Label("agent", "Nouveau agent:", new { @class = "control-label " })
+
+                        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
+
+                    </div>
+
+
+                    <input style="display:none" value="@ViewBag.empId" name="empId" id="empId">
+                    <input style="display:none" value="@ViewBag.numLot" name="numLot" id="numLot">
+                    <input style="display:none" value="1" name="affec" id="affec">
+
+                </div>
+
+
+                <br />
+                <div class="row">
+
+                    <div class="col-xs-3  col-md-10">
+
+
+                        <p>
+                            <input id="submitBtn2" type="submit" class="btn btn-primary" value="Affecter" />
+
+                            <button style="display:none" id="submitLoading2" class="btn btn-primary" type="button" disabled>
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                <span class="sr-only">Loading...</span>
+                            </button>
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h4>Tous les client gelés avant le @ViewBag.dateGold </h4>
+            <h6>Agent: @ViewBag.agent</h6>
+
+        </div>
+
+        <div class="card-body">
+
+
+            <table class="table table-bordered table-condensed table-responsive" style="display:table">
+                <tr>
+                    <th>
+                        Hist.
+                    </th>
+                    <th>
+                        Num Lot
+                    </th>
+
+                    <th>
+                        Derniere affectation le:
+                    </th>
+
+                    <th>
+                        Ancien agent
+                    </th>
+
+                    <th>
+                        Agent actuel
+                    </th>
+
+                    <th>
+                        Compte
+                    </th>
+                    <th>
+                        IDClient
+                    </th>
+                    <th>
+                        Nom Client
+                    </th>
+                    <th>
+                        Solde Debiteur
+                    </th>
+
+                    <th>
+                        Tel Portable
+                    </th>
+
+                    <th>
+                        Tel Fixe
+                    </th>
+
+
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+
+                        <td>
+                            @Html.ActionLink("Historique", "HistoriqueClient","Formulaire", new { id = item.Affectation.AffectationId },null)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.NumLot)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Affectation.DateAffectation)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Affectation.AncienAgent)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Agent)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.Compte)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.IDClient)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.NomClient)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+                        </td>
+
+                    </tr>
+                }
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+<script>
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+    function showLoading2() {
+
+        document.getElementById("submitLoading2").style.display = "block";
+        document.getElementById("submitBtn2").style.display = "none";
+
+    }
+
+</script>
+
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("reaffecterClients",
+    new { page, currentFilterNumLot = ViewBag.currentFilterNumLot, empId = ViewBag.empId }))
+

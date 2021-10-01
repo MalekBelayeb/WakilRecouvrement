@@ -142,10 +142,7 @@ namespace WakilRecouvrement.Web.Controllers
                                         string argNumero = "Numero";
                                         string argEmploi = "Travail";
                                        
-                                     /*   string Compte1Arg = "Compte1";
-                                        string Compte2Arg = "Compte2";
-                                        string Nom1Arg = "Nom1";
-                                        string Nom2Arg = "Nom2";*/
+                                        
 
                                      /*   List<ClientCompte> ccList1 = new List<ClientCompte>();
                                         List<ClientCompte> ccList2 = new List<ClientCompte>();
@@ -166,76 +163,11 @@ namespace WakilRecouvrement.Web.Controllers
                                             string Numero = "";
                                             string Emploi = "";
 
-                                           /* string Compte1 = "";
-                                            string Compte2 = "";
-                                            string Nom1= "";
-                                            string Nom2= "";*/
+                                         
 
 
                                             //updateEmploi(row["Compte"].ToString(), row["Travail"].ToString());
 
-/*
-
-                                            try
-                                            {
-                                                Compte1 = row[Compte1Arg].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + Compte1Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
-
-                                            try
-                                            {
-                                                Compte2 = row[Compte2Arg].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + Compte2Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
-
-
- */
- 
-                                            
-                                          /*  
-                                            try
-                                            {
-                                                Nom1 = row[Nom1Arg].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + Nom1Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
-
-
-                                            try
-                                            {
-                                                Nom2 = row[Nom2Arg].ToString();
-                                            }
-                                            catch (ArgumentException e)
-                                            {
-                                                ModelState.AddModelError("Importer", "La colonne " + Nom2Arg + " n'appartient pas à la table Excel, verifier les espaces cachés et les majuscules.");
-                                                return View("ImportLot");
-                                            }
-
-                                            ClientCompte c1 = new ClientCompte()
-                                            {
-
-                                                Nom = Nom1,
-                                                Compte = Compte1
-
-                                            };
-                                            ClientCompte c2 = new ClientCompte()
-                                            {
-
-                                                Nom = Nom2,
-                                                Compte = Compte2
-
-                                            };*/
                                         
 /*
                                             ccList1.Add(c1);
@@ -244,14 +176,14 @@ namespace WakilRecouvrement.Web.Controllers
 
 
                                             //Debug.WriteLine(row["Travail"].ToString());
-                                            updateEmploi(row["ID"].ToString(), row["Travail"].ToString());
+                                           // updateEmploi(row["ID"].ToString(), row["Travail"].ToString());
 
 
                                             //On verifier aala koll colonne eli l fichier excel il respecte bien le syntaxe mtaa koll colonne bel try/catch 
                                             //O nsobou l information/donné fi variable
                                            
                                             
-                                            /*
+                                            
                                             
                                             try
                                              {
@@ -385,7 +317,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                             Emploi = Emploi
 
                                                                                         };
-                                            */
+                                            
                                             //On verifie est ce que l client hedha aana menou fel base ouala le
 
 
@@ -398,7 +330,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                 //sinon ken maanesh menou on l'ajouter fel base
                                                 //Benesba l ViewData rahom des flag lel affichage 
                                                 Lot lot = LotService.Get(l => l.Compte.Equals(Compte));
-                                                /*
+                                                
 
                                                 Debug.WriteLine(Compte);
 
@@ -436,7 +368,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                     LotService.Update(lot);
                                                 
                                                 }
-                                            */
+                                            
                                             }
                                             else
                                             {
@@ -448,7 +380,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                 {
                                                     ViewData["noDup"] = "1";
                                                 }
-                                                //LotService.Add(Lot);
+                                                LotService.Add(Lot);
                                                 //AffecterClient(Lot, filename);
 
                                             }
@@ -462,8 +394,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                                         */
                                         List<ClientCompte> newList = new List<ClientCompte>();
-                                        /*
-                                        foreach(ClientCompte c in ccList1)
+                                        
+                                       /* foreach(ClientCompte c in ccList1)
                                         {
 
                                             if(!ccList2.Contains(c))

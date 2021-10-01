@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WakilRecouvrement.Domain.Entities.Employe>
+
+@{
+    ViewBag.Title = "";
+}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<br />
+
+
+
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <h2>Choisir un Agent</h2>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table">
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+
+                        Tous clients gelés de l'agent:  @Html.DisplayFor(modelItem => item.Username)
+
+                    </td>
+
+                    <td>
+                        
+                        @Html.ActionLink("Réaffecter", "reaffecterClients", new { empId = item.EmployeId })
+
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+
+    </div>
+
+</div>
+
+
+
+
+
