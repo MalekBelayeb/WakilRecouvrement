@@ -516,9 +516,9 @@ E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Syste
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\System.Web.WebPages.resources.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\System.Web.WebPages.Deployment.resources.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\System.Web.WebPages.Razor.resources.dll
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csprojAssemblyReference.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csproj.ResolveComReference.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csproj.CoreCompileInputs.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csproj.CopyComplete
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\obj\Debug\WakilRecouvrement.Web.csproj.AssemblyReference.cache

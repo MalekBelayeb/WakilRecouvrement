@@ -81,14 +81,33 @@ namespace WakilRecouvrement.Web.Controllers
                     List<Facture> factureList = factureService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
                     ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
-
                     ViewBag.total = factureList.Count();
 
                     int pageSize = 10;
                     int pageNumber = (page ?? 1);
 
+                    ViewBag.page = pageNumber;
+
                     return View(factureList.ToPagedList(pageNumber, pageSize));
 
+                }
+            }
+        }
+
+        public ActionResult deleteFacture(int idFacture,int currentPage)
+        {
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    LotService LotService = new LotService(UOW);
+                    FactureService factureService = new FactureService(UOW);
+
+                    Facture facture = factureService.GetById(idFacture);
+                    factureService.Delete(facture);
+                    factureService.Commit();
+                    return RedirectToAction("genererFacture", new { page = currentPage });
                 }
             }
         }
@@ -746,7 +765,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-
 
         }
 

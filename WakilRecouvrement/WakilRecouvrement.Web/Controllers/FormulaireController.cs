@@ -47,7 +47,6 @@ namespace WakilRecouvrement.Web.Controllers
         public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
         {
 
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -1380,7 +1379,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList()
                                                                                               : data.OrderBy(j => Double.Parse(j.Lot.SoldeDebiteur)).ToList();
-
                         break;
                     case "10":
                         lst = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? data.OrderByDescending(j => j.Lot.NomClient).ToList()
@@ -1416,8 +1414,6 @@ namespace WakilRecouvrement.Web.Controllers
             return false;
         }
 
-
-
         public ActionResult HistoriqueTraitements(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType,string currentPage, int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -1440,7 +1436,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                     List<ClientAffecteViewModel> JoinedList;
 
-               
                     if(page==null)
                     {
                         if(currentPage!=null)
@@ -1514,7 +1509,6 @@ namespace WakilRecouvrement.Web.Controllers
                     }
 
                     ViewBag.currentTraitDate = traitDate;
-
 
 
                     if (!String.IsNullOrEmpty(traite))
@@ -2008,7 +2002,6 @@ namespace WakilRecouvrement.Web.Controllers
                     ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
                     ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
-
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     JoinedList = (from f in FormulaireService.GetAll()
@@ -2076,6 +2069,7 @@ namespace WakilRecouvrement.Web.Controllers
                     }
 
                     Debug.WriteLine(jourdate);
+
                     if(type == "P_INTERVAL")
                     {
 
@@ -3313,8 +3307,6 @@ namespace WakilRecouvrement.Web.Controllers
                         }
 
                     }
-
-
 
                     if(Session["role"].Equals("admin"))
                     {

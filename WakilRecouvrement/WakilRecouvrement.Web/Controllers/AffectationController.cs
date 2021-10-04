@@ -416,18 +416,23 @@ namespace WakilRecouvrement.Web.Controllers
             List<SelectListItem> listItems = new List<SelectListItem>();
 
             listItems.Add(new SelectListItem { Selected = true, Text = "Nom (A-Z)", Value = "0" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde supérieur à", Value = "7" });
+            listItems.Add(new SelectListItem { Selected = true, Text = "Solde inférieur à", Value = "8" });
+
             listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. decroissant)", Value = "1" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Solde debiteur (o. croissant)", Value = "2" });
+
             listItems.Add(new SelectListItem { Selected = true, Text = "Date affectation (o. decroissant)", Value = "3" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date affectation (o. croissant)", Value = "4" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. decroissant)", Value = "5" });
             listItems.Add(new SelectListItem { Selected = true, Text = "Date traitement (o. croissant)", Value = "6" });
-
+            
+            
             return listItems;
         }
 
 
-        public ActionResult AffectationList(string numLot, string SearchString, string traite,  string currentFilter,string currentFilterNumLot,string currentFilterTraite,string CurrentSort, string sortOrder, int? page)
+        public ActionResult AffectationList(string numLot, string SearchString, string traite,  string currentFilter,string currentFilterNumLot,string currentFilterTraite,string CurrentSort,string currentSoldeFilter, string sortOrder,string soldeFilter, int? page)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -457,8 +462,8 @@ namespace WakilRecouvrement.Web.Controllers
                         sortOrder = CurrentSort;
                     }
 
-
                     ViewBag.CurrentSort = sortOrder;
+
 
                     if (SearchString != null)
                     {
@@ -493,9 +498,20 @@ namespace WakilRecouvrement.Web.Controllers
                     }
 
                     ViewBag.currentFilterTraite = traite;
+
+                    if (soldeFilter != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        soldeFilter = currentSoldeFilter;
+                    }
+
+                    ViewBag.currentSoldeFilter = soldeFilter;
+      
                     ViewBag.page = page;
                     // page = 8 & CurrentSort = 5 & currentFilterNumLot = 6 & currentFilterTraite = SAUF
-
 
                     Employe emp = EmpService.GetEmployeByUername(Session["username"] + "");
 
@@ -580,7 +596,6 @@ namespace WakilRecouvrement.Web.Controllers
                                       select new ClientAffecteViewModel
                                       {
                                           Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
-                                          //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
 
                                           Affectation = a,
                                           Lot = l,
@@ -655,6 +670,55 @@ namespace WakilRecouvrement.Web.Controllers
                             JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
                             break;
 
+                        case "7":
+
+
+                            if (soldeFilter != null)
+                            {
+                                if (soldeFilter != "")
+                                {
+                                    if (int.TryParse(soldeFilter, out int filter))
+                                    {
+                                        try
+                                        {
+                                            JoinedList = JoinedList.Where(j => double.Parse(j.Lot.SoldeDebiteur) > filter).OrderBy(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
+                                            
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            break;
+                        
+                        case "8":
+
+                            if (soldeFilter != null)
+                            {
+                                if (soldeFilter != "")
+                                {
+                                    if (int.TryParse(soldeFilter, out int filter))
+                                    {
+
+                                        try
+                                        {
+                                            JoinedList = JoinedList.Where(j => double.Parse(j.Lot.SoldeDebiteur) < filter).OrderByDescending(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+                                    }
+                                }
+                            }
+                            //JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+
+                            break;
 
                         default:
 

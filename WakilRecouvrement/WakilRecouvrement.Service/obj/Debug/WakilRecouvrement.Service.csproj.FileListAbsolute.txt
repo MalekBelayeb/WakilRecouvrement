@@ -35,8 +35,8 @@ E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\bin\Debu
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\bin\Debug\WakilRecouvrement.Domain.dll.config
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\bin\Debug\EntityFramework.xml
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\bin\Debug\EntityFramework.SqlServer.xml
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.csprojAssemblyReference.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.csproj.CoreCompileInputs.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.csproj.CopyComplete
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Service\obj\Debug\WakilRecouvrement.Service.csproj.AssemblyReference.cache

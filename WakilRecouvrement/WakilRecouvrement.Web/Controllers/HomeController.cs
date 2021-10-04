@@ -31,6 +31,41 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
+        public IEnumerable<SelectListItem> AgentListForDropDown(EmployeService EmpService)
+        {
+
+            Employe userConnected = EmpService.GetEmployeByUername(Session["username"] + "");
+
+            if (userConnected.RoleId == 2 )
+            {
+                List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
+                List<SelectListItem> listItems = new List<SelectListItem>();
+
+                listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
+
+                agents.ForEach(l =>
+                {
+                    listItems.Add(new SelectListItem {  Text = l.Username, Value = l.Username + "" });
+                });
+
+                return listItems;
+            }
+            else
+            {
+
+                List<SelectListItem> listItems = new List<SelectListItem>();
+
+                listItems.Add(new SelectListItem { Selected = true, Text = userConnected.Username, Value = userConnected.Username + "" });
+                listItems.Add(new SelectListItem { Text = "Tous les agents", Value = "0" });
+
+                return listItems;
+
+            }
+          
+
+
+        }
+
         public ActionResult AccountList()
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -117,9 +152,6 @@ namespace WakilRecouvrement.Web.Controllers
                 }
             }
 
-
-          
-
         }
 
         [HttpPost]
@@ -165,9 +197,8 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
         
-        public ActionResult Index()
+        public ActionResult Index(string agent)
         {
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -180,22 +211,62 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService FormulaireService = new FormulaireService(UOW);
 
                     List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
+                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
                     List<HomeViewModel> result = new List<HomeViewModel>();
                     List<Lot> lots = new List<Lot>();
 
-                   
                     string[] lotsLst = { };
 
                     lots = LotService.GetAll().ToList();
-                    lotsLst = lots.DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
+
 
                     List<Affectation> Affectations = new List<Affectation>();
                     List<Formulaire> Formulaires = new List<Formulaire>();
                     string[] agents = { };
 
-                    Affectations = AffectationService.GetAll().ToList();
+                   
+                    Employe emp = EmpService.GetEmployeByUername(agent + "");
+
+                    if(emp == null)
+                    {
+                       emp = EmpService.GetEmployeByUername(Session["Username"] + "");
+                    }
+
+                    if (agent != "0")
+                    {
+                       
+                        if (emp.RoleId == 1)
+                        {
+                            Affectations = AffectationService.GetMany(a => a.EmployeId == emp.EmployeId).ToList();
+                        }
+                        else if (emp.RoleId == 2)
+                        {
+                            Affectations = AffectationService.GetAll().ToList();
+                        }
+
+                    }
+                    else
+                    {
+
+                        Affectations = AffectationService.GetAll().ToList();
+
+                    }
+
+
+
+
+
                     Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
+
+                    lotsLst = (from a in Affectations
+                               join l in lots on a.LotId equals l.LotId
+                            select new ClientAffecteViewModel
+                            {
+
+                                Lot = l 
+
+                            }).Select(j=>j.Lot).DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
 
                     foreach (string numlot in lotsLst)
                     {
@@ -232,7 +303,6 @@ namespace WakilRecouvrement.Web.Controllers
                         float nbTraite = traiteList.Count();
                         string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
 
-
                         HomeViewModel homeViewModel = new HomeViewModel
                         {
                             agents = agentsStr,
@@ -241,11 +311,12 @@ namespace WakilRecouvrement.Web.Controllers
                             numLot = numlot,
                             avancement = avgLot.Replace(",", ".")
                         };
+
                         result.Add(homeViewModel);
 
                     }
 
-                    return View(result);
+                    return View(result.OrderBy(j=>double.Parse(j.avancement.Replace(".", ","))));
 
                 }
             }

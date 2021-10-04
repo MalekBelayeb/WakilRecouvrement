@@ -23,13 +23,12 @@ E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\bin\Debug\W
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\bin\Debug\WakilRecouvrement.Domain.dll.config
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\bin\Debug\EntityFramework.xml
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\bin\Debug\EntityFramework.SqlServer.xml
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csprojAssemblyReference.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.CoreCompileInputs.cache
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.CopyComplete
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.pdb
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.eer.resources
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.GenerateResource.cache
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.eerrrt.resources
 C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.eerrrw.resources
 C:\Users\ADMIN\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.GenerateResource.cache
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.csproj.AssemblyReference.cache
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Data\obj\Debug\WakilRecouvrement.Data.Migrations.eerrrw.resources

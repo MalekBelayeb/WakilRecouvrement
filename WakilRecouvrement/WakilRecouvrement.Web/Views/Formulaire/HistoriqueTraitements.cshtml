@@ -78,9 +78,6 @@
 
                 </div>
 
-
-
-
             </div>
 
             <br />
@@ -89,7 +86,6 @@
             <div class="row">
 
                 <div class="col-xs-3  col-md-10">
-
 
                     <p>
                         <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
@@ -125,9 +121,6 @@
 
 <table class="table table-bordered table-condensed table-responsive" style="display:table">
     <tr>
-
-
-        
 
         <th>
 
@@ -208,6 +201,7 @@
 
             @if (item.IsDeletable)
             {
+
                 @Html.ActionLink("Supp.", "deleteHistVerifie", new { id = item.Formulaire.FormulaireId, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType = ViewBag.currentType, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent, currentTraitDate = ViewBag.currentTraitDate, currentPage = ViewBag.page }, new { @class = "text-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" });
 
             }
