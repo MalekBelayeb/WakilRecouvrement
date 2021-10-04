@@ -526,10 +526,8 @@ namespace WakilRecouvrement.Web.Controllers
                                           {
                                               Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
                                               //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
-
                                               Affectation = a,
                                               Lot = l,
-
 
                                           }).DistinctBy(a => a.Affectation.AffectationId).ToList();
 
@@ -648,6 +646,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                             try
                             {
+                                
                                 JoinedList = JoinedList.OrderBy(s => double.Parse(s.Lot.SoldeDebiteur)).ToList();
 
                             }
@@ -677,16 +676,16 @@ namespace WakilRecouvrement.Web.Controllers
                             {
                                 if (soldeFilter != "")
                                 {
-                                    if (int.TryParse(soldeFilter, out int filter))
+                                    if (double.TryParse(soldeFilter, out double filter))
                                     {
                                         try
                                         {
-                                            JoinedList = JoinedList.Where(j => double.Parse(j.Lot.SoldeDebiteur) > filter).OrderBy(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
+                                            JoinedList = JoinedList.Where(j => double.TryParse(j.Lot.SoldeDebiteur, out double soldedeb) && soldedeb > filter).OrderBy(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
                                             
                                         }
-                                        catch (Exception)
+                                        catch (Exception e)
                                         {
-
+                                            Debug.WriteLine(e.Message);
                                         }
 
                                     }
@@ -701,16 +700,17 @@ namespace WakilRecouvrement.Web.Controllers
                             {
                                 if (soldeFilter != "")
                                 {
-                                    if (int.TryParse(soldeFilter, out int filter))
+                                    if (double.TryParse(soldeFilter, out double filter))
                                     {
 
                                         try
                                         {
-                                            JoinedList = JoinedList.Where(j => double.Parse(j.Lot.SoldeDebiteur) < filter).OrderByDescending(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
+                                            JoinedList = JoinedList.Where(j => double.TryParse(j.Lot.SoldeDebiteur, out double soldedeb) && soldedeb < filter).OrderByDescending(j=> double.Parse(j.Lot.SoldeDebiteur)).ToList();
 
                                         }
-                                        catch (Exception)
+                                        catch (Exception e)
                                         {
+                                            Debug.WriteLine(e.Message);
 
                                         }
                                     }
