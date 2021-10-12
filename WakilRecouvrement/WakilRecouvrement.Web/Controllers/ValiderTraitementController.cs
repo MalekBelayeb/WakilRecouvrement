@@ -58,6 +58,8 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
 
+
+
                     if (page == null)
                     {
                         if (currentPage != null)

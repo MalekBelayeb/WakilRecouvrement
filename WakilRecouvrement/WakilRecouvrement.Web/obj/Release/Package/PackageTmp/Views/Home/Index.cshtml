@@ -3,72 +3,109 @@
 @{
     ViewBag.Title = "Al-Wakil Recouvrement";
 }
+<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
 
 <h2>Connecté en tant que @Session["username"]</h2>
 
 <br />
-
-<!-- Default box -->
+    <!-- Default box -->
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Avancement par lot</h3>
+
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+
+            <div class="row">
+
+                <div class="col-xs-3 col-md-6">
+                    <h1 class="card-title"><strong>Avancement par lot</strong></h1>
+
+                </div>
+
+                <div class="col-xs-6 col-md-3">
+                    @Html.Label("agent", "Séléctionner un agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", onchange = "this.form.submit();" })
+
+                </div>
+
+            </div>
+        }
+
     </div>
-    
-    <div class="card-body p-0">
-        <table class="table table-striped projects">
-            <thead>
-                <tr>
 
-                    <th style="width: 20%">
-                        Lots
-                    </th>
-                    <th style="width: 30%">
-                        Agents
-                    </th>
-                    <th>
-                        Avancement
-                    </th>
+    @if (ViewBag.total > 0)
+    {
 
-                </tr>
-            </thead>
-            <tbody>
+        <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                    <tr>
 
+                        <th style="width: 20%">
+                            Lots
+                        </th>
+                        <th style="width: 30%">
+                            Agents
+                        </th>
+                        <th>
+                            Avancement
+                        </th>
 
-
-                @foreach (var item in Model)
-                {
-                <tr>
-
-                    <td>
-                        <a>
-                           Lot @Html.DisplayFor(modelItem => item.numLot)
-                        </a>
-                        <br />
-                        <small>
-                            @Html.DisplayFor(modelItem => item.nbTraite) / @Html.DisplayFor(modelItem => item.nbAffTotal) (Affectations)
-                        </small>
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.agents)
-                    </td>
-
-                    <td class="project_progress">
-                        <div class="progress progress-sm">
-                            <div class="progress-bar bg-green" role="progressbar" aria-volumenow="57" aria-volumemin="0" aria-volumemax="100" style="width: @Html.DisplayFor(modelItem => item.avancement)%">
-                            </div>
-                        </div>
-                        <small>
-                            @Html.DisplayFor(modelItem => item.avancement) % Terminé
-                        </small>
-                    </td>
+                    </tr>
+                </thead>
+                <tbody>
 
 
-                </tr>
-                }
-                    
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                <a>
+                                    Lot @Html.DisplayFor(modelItem => item.numLot)
+                                </a>
+                                <br />
+                                <small>
+                                    @Html.DisplayFor(modelItem => item.nbTraite) / @Html.DisplayFor(modelItem => item.nbAffTotal) (Affectations)
+                                </small>
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.agents)
+                            </td>
+
+                            <td class="project_progress">
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-green" role="progressbar" aria-volumenow="57" aria-volumemin="0" aria-volumemax="100" style="width: @Html.DisplayFor(modelItem => item.avancement)%">
+                                    </div>
+                                </div>
+                                <small>
+                                    @Html.DisplayFor(modelItem => item.avancement) % Terminé
+                                </small>
+                            </td>
+
+
+                        </tr>
+                    }
+
                 </tbody>
-        </table>
-    </div>
-    <!-- /.card-body -->
+            </table>
+        </div>
+    }
+
+
+    @if (ViewBag.total == 0)
+    {
+<div class="text-center">
+    <img src="~/adminlte/img/logowakil.jpg" alt="Al-Wakil Recouvrement" style="width: 50%; height: 50% ">
+   
 </div>
+    }
+
+
+</div>
+
+
+

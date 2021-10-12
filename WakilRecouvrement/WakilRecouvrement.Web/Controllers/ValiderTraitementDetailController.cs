@@ -128,8 +128,8 @@ namespace WakilRecouvrement.Web.Controllers
             Debug.WriteLine("----"+ FormulaireId);
             string path = Server.MapPath("~/Uploads/Recu/") + FormulaireId;
             
-            string uri = HttpContext.Request.Url.AbsoluteUri.Replace(HttpContext.Request.Url.LocalPath, "/WakilRecouvrement/" + "/Uploads/Recu/" + FormulaireId) + "/";
-            
+            string uri = HttpContext.Request.Url.Scheme + "://" + HttpContext.Request.Url.Host + ":" + HttpContext.Request.Url.Port + "/WakilRecouvrement/" + "/Uploads/Recu/" + FormulaireId + "/";
+
             List<string> urlImages = new List<string>();
             if (Directory.Exists(path))
             {
@@ -140,6 +140,7 @@ namespace WakilRecouvrement.Web.Controllers
                     urlImages.Add(uri + imgName);
 
                 }
+
             }
             Debug.WriteLine(urlImages.Count());
 
