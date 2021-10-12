@@ -107,6 +107,10 @@
             <tr>
 
                 <th>
+                    
+                </th>
+
+                <th>
                     Date Extrait
                 </th>
                 <th>
@@ -129,7 +133,10 @@
 
 
         <tr class="p-3 mb-2 bg-white text-dark">
-
+            
+            <td>
+                @Html.ActionLink("Supp.", "deleteFacture", new { idFacture = item.FactureId , currentPage = ViewBag.page }, new { @class = "text-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" })
+            </td>
 
             <td>
                 @Html.DisplayFor(modelItem => item.DateExtrait)
@@ -157,7 +164,7 @@
             </td>
             <td>
 
-                @if (item.FacturePathName!=null)
+                @if (item.FacturePathName != null)
                 {
                     @Html.ActionLink(item.FacturePathName, "downloadFactureAnnexe", "Facture", new { FileName = item.FacturePathName }, null)
 

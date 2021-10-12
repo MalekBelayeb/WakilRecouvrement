@@ -1261,9 +1261,9 @@ namespace WakilRecouvrement.Web.Controllers
         public IEnumerable<SelectListItem> TraiteTypeForValiderListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Text = "Tous les traitements", Value = "P_ALL" });
-            listItems.Add(new SelectListItem { Text = "Par interval de temps", Value = "P_INTERVAL" });
             listItems.Add(new SelectListItem { Text = "Par date", Value = "P_DATE" });
+            listItems.Add(new SelectListItem { Text = "Par interval de temps", Value = "P_INTERVAL" });
+            listItems.Add(new SelectListItem { Text = "Tous les traitements", Value = "P_ALL" });
 
             return listItems;
         }
@@ -2015,7 +2015,7 @@ namespace WakilRecouvrement.Web.Controllers
                                       Lot = l,
                                       Affectation = a
 
-                                  }).Where(j => ((j.Formulaire.Status == Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE) && j.Formulaire.NotifieBanque == false)).ToList();
+                                  }).Where(j => ((j.Formulaire.Status == Status.VERIFIE || (j.Formulaire.EtatClient == Note.A_VERIFIE && j.Formulaire.Status == Status.EN_COURS)))).ToList();
 
                     string subject = "";
                     string body = "";
@@ -2125,19 +2125,16 @@ namespace WakilRecouvrement.Web.Controllers
                         if (!string.IsNullOrEmpty(search) &&
                             !string.IsNullOrWhiteSpace(search))
                         {
+                            
                             JoinedList = JoinedList.Where(j =>
 
-                                j.Lot.Numero.ToString().Contains(search)
-                            || j.Lot.Adresse.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.IDClient.ToString().Contains(search)
+                             j.Lot.IDClient.ToString().Contains(search)
                             || j.Lot.Compte.ToString().Contains(search)
                             || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.DescIndustry.ToString().ToLower().Contains(search.ToLower())
-                            || j.Formulaire.MontantVerseDeclare.ToString().ToLower().Contains(search.ToLower())
 
                                 ).ToList();
+                        
                         }
-
 
                         JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
 

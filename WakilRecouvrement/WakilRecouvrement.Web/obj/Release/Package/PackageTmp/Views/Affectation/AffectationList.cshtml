@@ -52,7 +52,6 @@
 
             <div class="col-xs-3 col-md-3">
 
-
                 @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
 
                 @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
@@ -64,7 +63,17 @@
 
                 @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
 
-                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control"  })
+
+
+            </div>
+
+            <div id="soldeFilterDiv" style="display:none" class="col-xs-3 col-md-3">
+
+                    
+                @Html.Label("soldeFilter", "Solde en DT:", new { @class = "control-label " })
+
+                @Html.TextBox("soldeFilter", ViewBag.currentSoldeFilter as string, new { @class = "form-control", currentFilter = ViewBag.currentSoldeFilter })
 
 
             </div>
@@ -125,7 +134,7 @@
             Etat
         </th>
         <th>
-            Date
+            Date RDV
         </th>
         <th>
             Note
@@ -235,7 +244,8 @@
 <tr class="@classStyle">
 
     <td>
-        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite }, null)
+        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, 
+       NumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite }, null)
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.Lot.NumLot)
@@ -357,6 +367,28 @@
 
 <script>
 
+    var sortType = document.getElementById("sortOrder")
+    var soldeFilterDiv = document.getElementById("soldeFilterDiv")
+    var soldeFilterTextBox = document.getElementById("soldeFilter")
+    console.log(soldeFilterTextBox.value)
+    if (soldeFilterTextBox.value != "") {
+        soldeFilterDiv.style.display = 'block';
+    }
+
+    sortType.onchange = function () {
+
+        var value = sortType.value
+
+        if (value == "7" || value == "8") {
+
+            soldeFilterDiv.style.display = 'block';
+
+        } else {
+
+            soldeFilterDiv.style.display = 'none';
+        }
+
+    }
 
     function showLoading() {
 
@@ -365,10 +397,13 @@
 
     }
 
+
+
+
 </script>
 
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("AffectationList",
-    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }))
+    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentSoldeFilter = ViewBag.currentSoldeFilter, currentFilterNumLot= ViewBag.currentFilterNumLot, currentFilterTraite= ViewBag.currentFilterTraite }))
 
