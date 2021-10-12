@@ -1,16 +1,14 @@
-﻿@model WakilRecouvrement.Domain.Entities.Formulaire
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ViewModel.ValiderTraitementViewModel>
+@using PagedList.Mvc;
 
-@{
-    ViewBag.Title = "";
-    var imagePath = @"~\Uploads\Recu\";
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
-}
 
 <script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
 <script src="~/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
 
 <script src="~/Scripts/bootstrap.js"></script>
-  
+
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
 
@@ -21,11 +19,8 @@
 
 <script src="~/Scripts/dataTables.bootstrap4.min.js"></script>
 
-
 <script src="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.js"></script>
 <link rel="stylesheet" href="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.css" />
-
-
 
 
 <div class="card">
@@ -37,41 +32,81 @@
 
     <div class="card-body">
 
-        <div class="row">
-            
-            <div class="col-xs-3">
+        @using (Html.BeginForm("ValiderTraitement", "Formulaire", FormMethod.Post, new { onsubmit = "showLoading()" }))
+        {
 
-                @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+            <div class="row">
 
-                @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control" })
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentTraite })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
+
+                </div>
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+
+                </div>
+
+                <br />
+
+            </div>
+            <div class="row">
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+                    @Html.TextBox("SearchString", ViewBag.currentFilter as string, new { @class = "form-control" })
+
+                </div>
+                <div id="dateTraitement" style="display:none" class="col-xs-3 col-md-3">
+
+                    <label for="traitDate">Type:</label>
+                    <input class="form-control" name="traitDate" value="@ViewBag.currentTraitDate" id="traitDate" type="date">
+
+                </div>
 
             </div>
 
-            <div class="col-xs-3 col-md-3">
+            <div class="row">
 
-                @Html.Label("traite", "Etat:", new { @class = "control-label " })
+                <div class="col-xs-3  col-md-10">
 
-                @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control" })
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
 
             </div>
 
-            <div class="col-xs-3 col-md-3">
-                @Html.Label("agent", "Agent:", new { @class = "control-label " })
-
-                @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control" })
-
-            </div>
-
-            
-
-        </div>
-
+        }
     </div>
     <div class="card-footer text-muted">
         <span>
             Total:
         </span>
-        <span><strong id="nbTotal"></strong></span>
+        <span><strong> @ViewBag.total </strong></span>
 
     </div>
     <span id="page" hidden></span>
@@ -125,12 +160,11 @@
     <thead>
         <tr>
 
-            <th>Num Lot</th>
             <th>Verification</th>
-            <th>Recu</th>
+            <th>Num Lot</th>
             <th>Etat Client</th>
-            <th>Note</th>
             <th>Montant Versé/Déclaré </th>
+            <th>Note</th>
 
             <th>Traité le:</th>
             <th>Agent</th>
@@ -143,6 +177,53 @@
         </tr>
     </thead>
     <tbody>
+       
+      
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.NumLot)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Etat)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MontantVerseDeclare)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.descAutre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TraiteLe)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.Compte)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.IDClient)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.NomClient)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+                    </td>
+
+                </tr>
+            
+        }
+
+
     </tbody>
 </table>
 
@@ -153,23 +234,19 @@
 
 <script>
 
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+
     $(document).ready(function () {
         $.noConflict();
 
-
-
-        /*
-        $('.filter-container').filterizr({ gutterPixels: 3 });
-        $('.btn[data-filter]').on('click', function () {
-            $('.btn[data-filter]').removeClass('active');
-            $(this).addClass('active');
-        });
-        */
-
-
-
         var Table = DemoDatatable();
-        
+
 
         $("#importFile").hide()
 
@@ -198,11 +275,11 @@
 
         })
 
-        $("#agent").change(function () {
+      /*  $("#agent").change(function () {
 
             Table = DemoDatatable();
 
-        })
+        })*/
 
         function validerTraitement(id, valid) {
             $.ajax({
@@ -212,7 +289,7 @@
                 data: { id: id, valid: valid },
                 success: function (data) {
 
-                    Table.draw(false)                    
+                    Table.draw(false)
 
                 }
             });
@@ -229,7 +306,7 @@
                 success: function (data) {
 
 
-                    Table.draw(false)                    
+                    Table.draw(false)
 
                 }
             });
@@ -238,17 +315,17 @@
 
 
 
-        $(document).on('click', 'tbody  .verifie', function () {
+       /* $(document).on('click', 'tbody  .verifie', function () {
 
             var data_row = Table.row($(this).closest('tr')).data();
 
             validerTraitement(data_row["FormulaireId"], true)
 
-        });
+        });*/
 
 
 
-        $(document).on('click', 'tbody  .reject', function () {
+        /*$(document).on('click', 'tbody  .reject', function () {
             var data_row = Table.row($(this).closest('tr')).data();
             if (confirm("Ceci implique la suppression de l'operation, êtes vous sur de vouloir continuer ?  ")) {
 
@@ -256,22 +333,20 @@
 
             }
 
-        });
+        });*/
 
 
-        $(document).on('click', 'tbody  .validerA_VERIFIE', function () {
+       /* $(document).on('click', 'tbody  .validerA_VERIFIE', function () {
             var data_row = Table.row($(this).closest('tr')).data();
 
             validerTraitementVerification(data_row["FormulaireId"], true, $("#montant").val() )
 
-        });
+        });*/
 
+        //if (@ViewBag.IDClient != "0") {
 
-
-        if (@ViewBag.IDClient != "0") {
-
-            Table.search(@ViewBag.IDClient).draw();
-        }
+          //  Table.search(@ViewBag.IDClient).draw();
+       // }
 
 
     });
@@ -280,7 +355,7 @@
 
 
 
-    function DemoDatatable() {
+   /* function DemoDatatable() {
 
         var table = $("#demodata").DataTable({
 
@@ -326,7 +401,7 @@
                             el.innerHTML = "<a data-toggle='lightbox' runat='server' href=''></a>"
                             el.firstChild.innerHTML = "Reçu (" + row["NBRecu"]+")"
                             el.firstChild.setAttribute("data-gallery", 'gallery' + row["FormulaireId"])
-                            
+
                               for (var i = 0; i < images.length; i++) {
 
                                 if (i == 0) {
@@ -341,7 +416,7 @@
                                     newImg.setAttribute("data-toggle", 'lightbox')
                                     newImg.setAttribute("data-gallery", 'gallery' + row["FormulaireId"])
                                     newImg.setAttribute("runat", 'server')
-                                    
+
                                     //newImg.setAttribute("data-title", images[i])
                                     newImg.setAttribute('href', images[i])
                                     el.appendChild(newImg)
@@ -372,14 +447,14 @@
                 , { "data": "DescIndustry", "name": "DescIndustry", "autoWidth": true }
 
             ]
-        });
+        });*/
 
-        table.on('xhr.dt',
+       /* table.on('xhr.dt',
             function (e, settings, data, xhr) {
-                
+
                 document.getElementById("nbTotal").innerHTML = data["info"]["nbTotal"]
                 document.getElementById("page").innerHTML = data["info"]["draw"]
-            });
+            });*/
 
 
         return table;
@@ -388,10 +463,17 @@
     $(document).on('click', '[data-toggle="lightbox"]', function (event) {
         event.preventDefault();
         $(this).ekkoLightbox({
-            alwaysShowClose: true,
 
+            alwaysShowClose: true,
 
         });
     });
 
 </script>
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("ValiderTraitements",
+    new { page, currentPage = ViewBag.page, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent }))

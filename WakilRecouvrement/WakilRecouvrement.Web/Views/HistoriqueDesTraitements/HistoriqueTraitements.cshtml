@@ -1,0 +1,290 @@
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "";
+}
+
+@using (Html.BeginForm("HistoriqueTraitements", "HistoriqueDesTraitements", FormMethod.Get, new { onsubmit = "showLoading()" }))
+{
+
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h2>Historique Traitements</h2>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentTraite })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
+
+                </div>
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("agent", "Agent:", new { @class = "control-label " })
+
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentAgent })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("type", "Type:", new { @class = "control-label " })
+
+                    @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
+
+                </div>
+
+
+
+            </div>
+
+
+            <br />
+
+            <div class="row">
+
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+                    @Html.TextBox("SearchString", ViewBag.currentFilter as string, new { @class = "form-control" })
+
+                </div>
+                <div id="dateTraitement" style="display:none" class="col-xs-3 col-md-3">
+
+                    <label for="traitDate">Type:</label>
+                    <input class="form-control" name="traitDate" value="@ViewBag.currentTraitDate" id="traitDate" type="date">
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <br />
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer text-muted">
+
+
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+<table class="table table-bordered table-hover dt-responsive nowrap" style="display:table">
+    <tr>
+
+        <th>
+
+            Hist.
+
+        </th>
+
+        <th>
+            Num Lot
+        </th>
+        <th>
+            Etat
+        </th>
+        <th>
+            Traité Le:
+        </th>
+        <th>
+            Verifié Le:
+        </th>
+        <th>
+            Agent
+        </th>
+
+        <th>
+            Compte
+        </th>
+        <th>
+            IDClient
+        </th>
+        <th>
+            Nom Client
+        </th>
+        <th>
+            Solde Debiteur
+        </th>
+
+        <th>
+            Tel Portable
+        </th>
+
+        <th>
+            Tel Fixe
+        </th>
+        <th>
+            Agence
+        </th>
+        <th>
+            Adresse
+        </th>
+        <th>
+            Numero
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+
+        string classStyle = "";
+
+        if (item.Formulaire != null)
+        {
+
+            if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE)
+            {
+                //classStyle = "p-3 mb-2 bg-success text-white";
+            }
+
+        }
+
+
+        <tr class="@classStyle">
+            <td>
+
+                @Html.ActionLink("Historique", "Historique", "HistoriqueClient", new { id = item.AffectationId }, null)
+
+
+                @if (item.IsDeletable)
+                {
+
+                    @Html.ActionLink("Supp.", "deleteHistVerifie", new { id = item.Formulaire.FormulaireId, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType = ViewBag.currentType, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent, currentTraitDate = ViewBag.currentTraitDate, currentPage = ViewBag.page }, new { @class = "text-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" });
+
+                }
+
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.NumLot)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Formulaire.VerifieLe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Agent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Compte)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.IDClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.NomClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Adresse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lot.Numero)
+            </td>
+
+        </tr>
+    }
+
+</table>
+
+<script>
+
+    document.getElementById("traitDate").valueAsDate = new Date()
+
+    document.getElementById("type").onchange = function () {
+
+        if (document.getElementById("type").value == "ALL_TRAIT") {
+
+            document.getElementById("dateTraitement").style.display = "none"
+
+        } else if (document.getElementById("type").value == "DATE_TRAIT") {
+
+            document.getElementById("dateTraitement").style.display = "block"
+
+        }
+
+    }
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+</script>
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("HistoriqueTraitements",
+    new { page, currentPage = ViewBag.page, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentType = ViewBag.currentType, currentTraite = ViewBag.currentTraite, currentAgent = ViewBag.currentAgent, currentTraitDate = ViewBag.currentTraitDate }))

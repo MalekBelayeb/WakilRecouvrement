@@ -108,7 +108,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                                 Session["username"] = emp.Username;
                                 Session["role"] = emp.Role.role;
-                                return RedirectToAction("Index", "Home", new { agent = emp.Username });
+                                return RedirectToAction("Index", "Home");
 
                             }
 

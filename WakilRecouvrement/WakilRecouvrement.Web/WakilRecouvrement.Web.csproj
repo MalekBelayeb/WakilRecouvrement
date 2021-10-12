@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort>44313</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -371,12 +371,26 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AffectationController.cs" />
+    <Compile Include="Controllers\AjouterNoteClientController.cs" />
     <Compile Include="Controllers\AuthentificationController.cs" />
+    <Compile Include="Controllers\ContactBanqueController.cs" />
+    <Compile Include="Controllers\DropdownListController.cs" />
     <Compile Include="Controllers\FactureController.cs" />
     <Compile Include="Controllers\FormulaireController.cs" />
+    <Compile Include="Controllers\HistoriqueClientController.cs" />
+    <Compile Include="Controllers\HistoriqueDesTraitementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LotController.cs" />
+    <Compile Include="Controllers\MesAffectationListController.cs" />
+    <Compile Include="Controllers\MesRappelsListController.cs" />
+    <Compile Include="Controllers\MesRDVController.cs" />
+    <Compile Include="Controllers\MesTraitementsRejetesController.cs" />
     <Compile Include="Controllers\StatistiqueController.cs" />
+    <Compile Include="Controllers\SuiviMesTraitementController.cs" />
+    <Compile Include="Controllers\TousClientsAffecteController.cs" />
+    <Compile Include="Controllers\ValiderTraitementController.cs" />
+    <Compile Include="Controllers\ValiderTraitementDetailController.cs" />
+    <Compile Include="Controllers\ValiderTraitementVerifieFromExcelController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -385,6 +399,7 @@
     <Compile Include="Models\FormulaireExportable.cs" />
     <Compile Include="Models\TelFN.cs" />
     <Compile Include="Models\ViewModel\ClientCompte.cs" />
+    <Compile Include="Models\ViewModel\ContactBanqueViewModel.cs" />
     <Compile Include="Models\ViewModel\FactureContent.cs" />
     <Compile Include="Models\ViewModel\HomeViewModel.cs" />
     <Compile Include="Models\ViewModel\LettreContent.cs" />
@@ -398,6 +413,8 @@
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\LotViewModel.cs" />
     <Compile Include="Models\ValidationModelsAttribute\NotEqualAttribute.cs" />
+    <Compile Include="Models\ViewModel\TraiterDetailViewModel.cs" />
+    <Compile Include="Models\ViewModel\ValiderTraitementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -821,9 +838,24 @@
     <Content Include="Views\Facture\Renseigner.cshtml" />
     <Content Include="Views\Affectation\ChoisirAgent.cshtml" />
     <Content Include="Views\Affectation\reaffecterClients.cshtml" />
+    <Content Include="Views\ValiderTraitement\Valider.cshtml" />
+    <Content Include="Views\ValiderTraitementDetail\TraiterDetail.cshtml" />
+    <Content Include="Views\AjouterNoteClient\AjouterNote.cshtml" />
+    <Content Include="Views\MesAffectationList\MesAffectation.cshtml" />
+    <Content Include="Views\TousClientsAffecte\SuiviClient.cshtml" />
+    <Content Include="Views\HistoriqueClient\Historique.cshtml" />
+    <Content Include="Views\SuiviMesTraitement\SuiviTraitement.cshtml" />
+    <Content Include="Views\HistoriqueDesTraitements\HistoriqueTraitements.cshtml" />
+    <Content Include="Views\ContactBanque\GenererResultat.cshtml" />
+    <Content Include="Views\MesRappelsList\MesRappels.cshtml" />
+    <Content Include="Views\MesRDV\SuiviRDV.cshtml" />
+    <Content Include="Views\MesTraitementsRejetes\TraitementRejetesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\DropdownList\" />
+    <Folder Include="Views\TraitementRejetes\" />
+    <Folder Include="Views\ValiderTraitementVerifieFromExcel\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -969,6 +1001,44 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />

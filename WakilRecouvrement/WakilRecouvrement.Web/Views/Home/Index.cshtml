@@ -8,38 +8,34 @@
 <h2>Connecté en tant que @Session["username"]</h2>
 
 <br />
-
-
     <!-- Default box -->
-    <div class="card">
-        <div class="card-header">
+<div class="card">
+    <div class="card-header">
 
-            @using (Html.BeginForm("Index", "Home", FormMethod.Post))
-            {
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
 
-                <div class="row">
+            <div class="row">
 
-                    <div class="col-xs-3 col-md-6">
-                        <h3 class="card-title">Avancement par lot</h3>
-
-                    </div>
-
-                    <div class="col-xs-6 col-md-3">
-
-                        @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", onchange = "this.form.submit();" })
-
-                    </div>
+                <div class="col-xs-3 col-md-6">
+                    <h1 class="card-title"><strong>Avancement par lot</strong></h1>
 
                 </div>
-            }
 
+                <div class="col-xs-6 col-md-3">
+                    @Html.Label("agent", "Séléctionner un agent:", new { @class = "control-label " })
 
+                    @Html.DropDownList("agent", ViewBag.AgentList as SelectList, new { @class = "form-control", onchange = "this.form.submit();" })
 
+                </div>
 
+            </div>
+        }
 
-        </div>
+    </div>
 
-
+    @if (ViewBag.total > 0)
+    {
 
         <div class="card-body p-0">
             <table class="table table-striped projects">
@@ -97,14 +93,19 @@
                 </tbody>
             </table>
         </div>
-
-        <script>
-
+    }
 
 
-        </script>
+    @if (ViewBag.total == 0)
+    {
+        <div class="text-center">
+            <img src="~/adminlte/img/logowakil.jpg" alt="Responsive image" style="width: 50%; height: 50% ">
 
-    </div>
+        </div>
+    }
+
+
+</div>
 
 
 

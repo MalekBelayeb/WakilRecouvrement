@@ -65,8 +65,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                     return listItems;
 
-            
-                    
         }
 
         public ActionResult genererFacture(int? page)
@@ -129,7 +127,7 @@ namespace WakilRecouvrement.Web.Controllers
                                       Affectation = a,
                                       Lot = l,
 
-                                  }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+                                  }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
 
                     return JoinedList;
 
@@ -152,9 +150,11 @@ namespace WakilRecouvrement.Web.Controllers
 
                     DateTime startDate = DateTime.Parse(debutDate);
                     DateTime endDate = DateTime.Parse(finDate);
+                    
                     double trancheTot = 0;
                     double soldeTot = 0;
                     double tot = 0;
+
                     float revenuParOp = float.Parse(pourcentage.Replace(".", ","));
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
                     List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
@@ -166,7 +166,7 @@ namespace WakilRecouvrement.Web.Controllers
                         JoinedList = (from f in FormulaireService.GetAll()
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where f.Status == Domain.Entities.Status.VERIFIE
+                                      where f.Status == Domain.Entities.Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
                                       select new ClientAffecteViewModel
                                       {
 
@@ -174,7 +174,7 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Lot = l,
 
-                                      }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+                                      }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
 
                     }
                     else
@@ -183,7 +183,8 @@ namespace WakilRecouvrement.Web.Controllers
                         JoinedList = (from f in FormulaireService.GetAll()
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot)
+                                      where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot) && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
+                                      
                                       select new ClientAffecteViewModel
                                       {
 
@@ -191,9 +192,11 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Lot = l,
 
-                                      }).Where(j => j.Formulaire.TraiteLe.Date >= startDate.Date && j.Formulaire.TraiteLe.Date <= endDate.Date).ToList();
+                                      }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
                         
                     }
+
+                    Debug.WriteLine("tot1 " +JoinedList.Count());
 
                     foreach (ClientAffecteViewModel cvm in JoinedList)
                     {
@@ -234,8 +237,9 @@ namespace WakilRecouvrement.Web.Controllers
 
                         }
 
-
                     }
+
+                    Debug.WriteLine("tot2 " + AnnexeJoinedList.Count());
 
                     string lotsNames = "";
                     List<string> listNameLot = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).ToList();
@@ -252,7 +256,7 @@ namespace WakilRecouvrement.Web.Controllers
                         lotsNames = lots + " et " + lastlots;
                     }
 
-
+                    /*
                     tot = soldeTot + trancheTot;
                     FactureContent factureContent = new FactureContent();
                     factureContent.FacNum = factureNum;
@@ -282,7 +286,7 @@ namespace WakilRecouvrement.Web.Controllers
                     factureService.Commit();
                     GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j => j.recouvre)));
                     GeneratePDF(pathFacture, lotsNames, factureContent);
-
+                    */
                     return RedirectToAction("genererFacture", new { page = 1 });
 
                 }

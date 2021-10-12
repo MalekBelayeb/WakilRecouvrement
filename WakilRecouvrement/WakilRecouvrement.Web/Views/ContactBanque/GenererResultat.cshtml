@@ -1,0 +1,246 @@
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ViewModel.ContactBanqueViewModel>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "";
+}
+
+
+
+<div class="card">
+
+    <div class="card-header" id="headingTwo">
+
+        <h2>Traitement(s) prêt à l'envoi</h2>
+    </div>
+
+    <div class="card-body">
+
+        @using (Html.BeginForm("GenererResultat", "ContactBanque", FormMethod.Post, new { onsubmit = "showLoading()", id = "genResult" }))
+        {
+
+            <div class="row">
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentNumLot })
+
+                </div>
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("traite", "Etat:", new { @class = "control-label " })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentTraite })
+
+                </div>
+
+                <div class="col-xs-3  col-md-3">
+
+                    @Html.Label("type", "Filtre:", new { @class = "control-label " })
+
+                    @Html.DropDownList("type", ViewBag.typeTrait as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentType })
+
+                </div>
+
+
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div id="jdate" style="display:none" class="col-xs-3 col-md-3 ">
+
+                    <label for="debutDate">Date:</label>
+                    <input class="form-control" name="jourdate" value="@ViewBag.jourdate" id="jourdate" type="date">
+
+                </div>
+
+                <div id="ddate" style="display:none" class="col-xs-3 col-md-3 ">
+
+                    <label for="debutDate">Date de début:</label>
+                    <input class="form-control" name="debutDate" value="@ViewBag.debutdate" id="debutdate" type="date">
+
+                </div>
+
+                <div id="fdate" style="display:none" class="col-xs-3 col-md-3">
+
+                    <label for="finDate">Date de fin:</label>
+                    <input class="form-control" name="finDate"  value="@ViewBag.findate" id="findate" type="date">
+
+                </div>
+
+            </div>
+
+            <input hidden name="export" id="export" value="0" />
+
+            <br />
+
+            <div class="row">
+                <input id="tempVar" type="text" value="1" hidden/>
+                
+                <div class="col-md-12">
+
+                    <button id="chercher" class="btn btn-primary" type="button">
+                        Chercher
+                    </button>
+
+                    <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
+
+                    <button id="excelGen" class="btn btn-outline-secondary" type="button">
+                        Exporter en fichier excel
+                    </button>
+                    <button style="display:none" id="excelsubmitLoading" class="btn btn-outline-secondary" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
+
+                </div>
+            </div>
+
+        }
+    </div>
+    <div class="card-footer">
+
+        <span> <strong>Total: @ViewBag.total </strong> </span>
+
+
+    </div>
+
+</div>
+
+
+<table id="demodata" class="table table-striped table-bordered dt-responsive nowrap">
+    <thead>
+        <tr>
+
+            <th>NumLot</th>
+            <th>Compte </th>
+            <th>IDClient</th>
+            <th>NomClient</th>
+            <th>Etat</th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumLot)
+
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Compte)
+
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.IDClient)
+
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomClient)
+
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Etat)
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    /*
+    document.getElementById('debutdate').valueAsDate = new Date();
+    document.getElementById('findate').valueAsDate = new Date();
+    document.getElementById('jourdate').valueAsDate = new Date();
+    */
+    var type = document.getElementById("type")
+    var genererExcel = document.getElementById("excelGen")
+    var chercherbtn = document.getElementById("chercher")
+
+    var form = document.getElementById("genResult")
+    var tempVar = document.getElementById("tempVar")
+
+    function showLoading() {
+
+
+
+
+    }
+
+    function updatefiltre() {
+        if (document.getElementById("type").value == "P_ALL") {
+
+            document.getElementById("ddate").style.display = "none"
+            document.getElementById("fdate").style.display = "none"
+            document.getElementById("jdate").style.display = "none"
+
+        } else if (document.getElementById("type").value == "P_INTERVAL") {
+
+            document.getElementById("ddate").style.display = "block"
+            document.getElementById("fdate").style.display = "block"
+            document.getElementById("jdate").style.display = "none"
+
+        } else if (document.getElementById("type").value == "P_DATE") {
+
+            document.getElementById("jdate").style.display = "block"
+            document.getElementById("ddate").style.display = "none"
+            document.getElementById("fdate").style.display = "none"
+
+        }
+    }
+
+    updatefiltre()
+    type.onchange = function () {
+
+        updatefiltre()
+
+    }
+
+    genererExcel.onclick = function () {
+        document.getElementById("export").value = "2";
+        document.getElementById("excelsubmitLoading").style.display = "block";
+        document.getElementById("excelGen").style.display = "none";
+        document.getElementById("submitLoading").style.display = "none";
+        document.getElementById("chercher").style.display = "none";
+        form.submit();
+    }
+
+    chercherbtn.onclick = function () {
+
+        document.getElementById("export").value = "1";
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("chercher").style.display = "none";
+        document.getElementById("excelsubmitLoading").style.display = "none";
+        document.getElementById("excelGen").style.display = "none";
+        form.submit();
+    }
+
+
+</script>
+
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("GenererResultat",
+    new { page, currentPage = ViewBag.page, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentTraite = ViewBag.currentTraite, currentType= ViewBag.currentType, currentDebutDate = ViewBag.debutdate, currentFinDate = ViewBag.findate, currentJourDate = ViewBag.jourdate }))

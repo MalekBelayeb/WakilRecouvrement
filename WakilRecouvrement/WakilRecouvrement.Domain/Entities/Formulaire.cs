@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace WakilRecouvrement.Domain.Entities
 
         [DataType(DataType.MultilineText)]
         public string DescriptionAutre { get; set; }
+        
+        
+        public string AgentUsername { get; set; }
+
+
         [Display(Name = "Date RDV")]
 
         [DataType(DataType.DateTime)]
@@ -66,7 +72,12 @@ namespace WakilRecouvrement.Domain.Entities
         public bool NotifieBanque { get; set; }
 
         public int AffectationId { get; set; }
+        [ForeignKey("AffectationId")]
+
         public Affectation Affectation { get; set; }
-    
+
+        public virtual ICollection<RecuImage> RecuImages { get; set; }
+
+
     }
 }

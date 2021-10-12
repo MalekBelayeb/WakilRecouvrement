@@ -13,7 +13,7 @@ namespace WakilRecouvrement.Data
     {
         public WakilRecouvContext():base("name= WRConnectionStrings")
         {
-            //this.Configuration.LazyLoadingEnabled = false;
+            this.Configuration.LazyLoadingEnabled = true;
         }
         
         public DbSet<Employe> Employes { get; set; }
@@ -21,12 +21,15 @@ namespace WakilRecouvrement.Data
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Formulaire> Formulaires { get; set; }
         public DbSet<Affectation> Affectationss { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<RecuImage> RecuImages { get; set; }
+
         public DbSet<Facture> Facture { get; set; }
         public DbSet<Lettre> Lettre { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            
+            
             modelBuilder.Conventions.Add(new DateTime2Convention());
             
         }
