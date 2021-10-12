@@ -33,6 +33,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -65,12 +83,12 @@
     <Compile Include="IFormulaireService.cs" />
     <Compile Include="ILettreService.cs" />
     <Compile Include="ILotService.cs" />
-    <Compile Include="INotificationService.cs" />
+    <Compile Include="IRecuImage.cs" />
     <Compile Include="IRoleService.cs" />
     <Compile Include="LettreService.cs" />
     <Compile Include="LotService.cs" />
-    <Compile Include="NotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecuImageService.cs" />
     <Compile Include="RoleService.cs" />
   </ItemGroup>
   <ItemGroup>

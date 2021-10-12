@@ -180,7 +180,6 @@
     @foreach (var item in Model)
     {
 
-
         string classStyle = "";
 
         if (item.Formulaire != null)
@@ -243,8 +242,8 @@
 
 <tr class="@classStyle">
 
-    <td>
-        @Html.ActionLink("Traiter", "CreerFormulaire", "Formulaire", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, 
+    <td class="bg-gray-light">
+        @Html.ActionLink("Traiter", "AjouterNote", "AjouterNoteClient", new { @class = "btn btn-default", id = item.Affectation.AffectationId, msgError = "", pageSave = ViewBag.page, currentSort = ViewBag.CurrentSort, 
        NumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite }, null)
     </td>
     <td>
@@ -254,7 +253,6 @@
         @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
     </td>
     <td>
-
 
         @if (item.Formulaire == null)
         {
@@ -396,9 +394,6 @@
         document.getElementById("submitBtn").style.display = "none";
 
     }
-
-
-
 
 </script>
 

@@ -1,0 +1,389 @@
+﻿@model PagedList.IPagedList<WakilRecouvrement.Web.Models.ClientAffecteViewModel>
+
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "";
+}
+
+
+@using (Html.BeginForm("MesAffectation", "MesAffectationList", FormMethod.Post, new { onsubmit = "showLoading()" }))
+{
+
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+
+            <h2>Traiter les affectations</h2>
+
+        </div>
+
+        <div class="card-body">
+
+
+            <div class="row">
+
+
+                <div class="col-xs-3  col-md-3">
+
+
+                    @Html.Label("numLot", "Lot:", new { @class = "control-label " })
+
+                    @Html.DropDownList("numLot", ViewData["list"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterNumLot })
+
+                </div>
+
+
+                <div class="col-xs-3  col-md-6">
+
+                    @Html.Label("traite", "Etat:", new { @class = "control-label" })
+
+                    @Html.DropDownList("traite", ViewBag.TraiteList as SelectList, new { @class = "form-control", currentFilter = ViewBag.currentFilterTraite })
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <div class="row">
+
+                <div class="col-xs-3 col-md-3">
+
+                    @Html.Label("sortOrder", "Trier par:", new { @class = "control-label " })
+
+                    @Html.DropDownList("sortOrder", ViewData["sortOrder"] as SelectList, new { @class = "form-control", currentFilter = ViewBag.CurrentSort })
+
+                </div>
+
+                <div class="col-xs-3 col-md-6">
+
+
+                    @Html.Label("SearchString", "Chercher:", new { @class = "control-label " })
+
+                    @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+
+
+                </div>
+
+                <div id="soldeFilterDiv" style="display:none" class="col-xs-3 col-md-3">
+
+
+                    @Html.Label("soldeFilter", "Solde en DT:", new { @class = "control-label " })
+
+                    @Html.TextBox("soldeFilter", ViewBag.currentSoldeFilter as string, new { @class = "form-control", currentFilter = ViewBag.currentSoldeFilter })
+
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <div class="row">
+
+                <div class="col-xs-3  col-md-10">
+
+                    <p>
+                        <input id="submitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                        <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer text-muted">
+
+            <div class="col-xs-4">
+
+                <span><strong>@ViewBag.total</strong> Client(s) trouvés</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+
+<table class="table table-bordered table-hover dt-responsive nowrap" style="display:table">
+    <tr>
+
+        <th>
+
+            Trait.
+
+        </th>
+
+        <th>
+            Num Lot
+        </th>
+        <th>
+            Etat
+        </th>
+        <th>
+            Traite Le:
+        </th>
+        <th>
+            Solde Déb restant
+        </th>
+        <th>
+            Solde Débiteur
+        </th>
+        <th>
+            Compte
+        </th>
+        <th>
+            IDClient
+        </th>
+        <th>
+            Nom Client
+        </th>
+        <th>
+            Emploi
+        </th>
+
+
+        <th>
+            Tel Portable
+        </th>
+
+        <th>
+            Tel Fixe
+        </th>
+        <th>
+            Agence
+        </th>
+        <th>
+            Adresse
+        </th>
+        <th>
+            Numero
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        string classStyle = "";
+
+        if (item.Formulaire != null)
+        {
+
+            if ((item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE && item.Formulaire.Status == WakilRecouvrement.Domain.Entities.Status.VERIFIE) || (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.SOLDE_TRANCHE && item.Formulaire.Status == WakilRecouvrement.Domain.Entities.Status.VERIFIE))
+            {
+                classStyle = "table-success";
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.FAUX_NUM || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.REFUS_PAIEMENT)
+            {
+                classStyle = "table-danger";
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RAPPEL || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.INJOIGNABLE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.NRP || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RACCROCHE || item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.AUTRE)
+            {
+
+                //classStyle = "table-light";
+
+            }
+            else if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.A_VERIFIE)
+            {
+
+                classStyle = "table-info";
+
+            }
+            else
+            {
+                //classStyle = "table-light";
+            }
+
+        }
+        else
+        {
+            //classStyle = "p-3 mb-2 bg-white text-dark";
+        }
+
+
+        string TelPortableFnClassStyle = "";
+        string TelFixeFnClassStyle = "";
+
+        if (item.Lot.TelPortableFN)
+        {
+            TelPortableFnClassStyle = "bg-secondary";
+        }
+        else
+        {
+            TelPortableFnClassStyle = "";
+
+        }
+
+        if (item.Lot.TelFixeFN)
+        {
+            TelFixeFnClassStyle = "bg-secondary";
+
+        }
+        else
+        {
+            TelFixeFnClassStyle = "";
+
+        }
+
+<tr class="@classStyle">
+
+    <td class="">
+        @Html.ActionLink("Traiter", "AjouterNote", "AjouterNoteClient", new
+        {
+            @class = "btn btn-default",
+            id = item.AffectationId,
+            msgError = "",
+            pageSave = ViewBag.page,
+            currentSort = ViewBag.CurrentSort,
+       NumLot = ViewBag.currentFilterNumLot,
+            currentFilterTraite = ViewBag.currentFilterTraite
+        }, null)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NumLot)
+    </td>
+    <td>
+        @if (item.Formulaire == null)
+        {
+        }
+        else
+        {
+            if (item.Formulaire.EtatClient == WakilRecouvrement.Domain.Entities.Note.RDV)
+            {
+                if (item.Formulaire.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                {
+                    <text></text>
+                }
+                else
+                {
+                    <span>RDV le:</span><small> @Html.DisplayFor(modelItem => item.Formulaire.DateRDV) </small>
+                }
+            }
+            else
+            {
+                @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+
+            }
+        }
+
+
+    </td>
+
+    <td>
+
+        @if (item.Formulaire == null)
+        {
+            <text></text>
+        }
+        else
+        {
+            if (item.Formulaire.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+            {
+                <text></text>
+            }
+            else
+            {
+                @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+            }
+        }
+
+
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Formulaire.MontantDebMAJ)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.SoldeDebiteur)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Compte)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.IDClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.NomClient)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Emploi)
+    </td>
+
+    <td class="@TelPortableFnClassStyle">
+        @Html.DisplayFor(modelItem => item.Lot.TelPortable)
+    </td>
+    <td class="@TelFixeFnClassStyle">
+        @Html.DisplayFor(modelItem => item.Lot.TelFixe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.DescIndustry)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Adresse)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lot.Numero)
+    </td>
+
+</tr>
+    }
+
+</table>
+
+<br />
+
+<script>
+
+    var sortType = document.getElementById("sortOrder")
+    var soldeFilterDiv = document.getElementById("soldeFilterDiv")
+    var soldeFilterTextBox = document.getElementById("soldeFilter")
+    console.log(soldeFilterTextBox.value)
+    if (soldeFilterTextBox.value != "") {
+        soldeFilterDiv.style.display = 'block';
+    }
+
+    sortType.onchange = function () {
+
+        var value = sortType.value
+
+        if (value == "7" || value == "8") {
+
+            soldeFilterDiv.style.display = 'block';
+
+        } else {
+
+            soldeFilterDiv.style.display = 'none';
+        }
+
+    }
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+
+
+
+
+</script>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("MesAffectation",
+    new { page, CurrentSort = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentSoldeFilter = ViewBag.currentSoldeFilter, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterTraite = ViewBag.currentFilterTraite }))
+

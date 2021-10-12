@@ -8,7 +8,7 @@ using WakilRecouvrement.Domain.Entities;
 
 namespace WakilRecouvrement.Service
 {
-    interface INotificationService : IService<Notification>
+    interface IRecuImage : IService<RecuImage>
     {
     }
 }

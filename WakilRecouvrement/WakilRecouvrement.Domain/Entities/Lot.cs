@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -47,7 +48,11 @@ namespace WakilRecouvrement.Domain.Entities
 
         public string PostCode { get; set; }
 
-      
+
+        public int? FormulaireId { get; set; }
+        [ForeignKey("FormulaireId")]
+        public virtual Formulaire Formulaire { get; set; }
+
 
         public override bool Equals(object obj)
         {

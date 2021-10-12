@@ -1,0 +1,433 @@
+﻿@model IEnumerable<WakilRecouvrement.Web.Models.ViewModel.TraiterDetailViewModel>
+
+<link rel="stylesheet" href="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.css">
+<script src="~/adminlte/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <h2>Client à traiter </h2>
+
+    </div>
+
+    <div class="card-body">
+        <table class="table table-bordered table-condensed table-responsive" style="display:table">
+            <tr>
+
+                <th>Num Lot</th>
+                <th>Etat Client</th>
+                <th>Montant Versé/Déclaré </th>
+                <th>Note</th>
+
+                <th>Traité le:</th>
+                <th>Agent</th>
+                <th>Solde débiteur</th>
+                <th>Compte</th>
+                <th>IDClient</th>
+                <th>NomClient</th>
+                <th>Agence</th>
+
+            </tr>
+
+            <tr class="p-3 mb-2 bg-white text-dark">
+
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.NumLot
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Etat
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.MontantVerseDeclare
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.descAutre
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.TraiteLe
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Username
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.SoldeDebiteur
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.Compte
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.IDClient
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.NomClient
+                </td>
+                <td>
+                    @ViewBag.ValiderTraitementViewModel.Lot.DescIndustry
+                </td>
+
+            </tr>
+
+
+        </table>
+    </div>
+</div>
+
+<br />
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <h2>Reçu (@ViewBag.nbRecuImage)</h2>
+
+    </div>
+
+    <div class="card-body">
+
+        @if (ViewBag.nbRecuImage > 0)
+                    {
+                        if (@ViewBag.recuImages != null)
+                        {
+                            try
+                            {
+                                int x = 0;
+                                List<string> recuImages = Json.Decode<List<string>>(@ViewBag.recuImages);
+                                foreach (string recu in recuImages)
+                                {
+                                    x++;
+                        <a href='@recu' data-toggle='lightbox' data-title='@x' data-gallery='gallery'><img src='@recu' class='img-fluid mb-2' alt='@x' /></a>
+
+                    }
+
+        }
+                catch (Exception e)
+        {
+
+
+        }
+            }
+
+        }
+
+
+    </div>
+</div>
+
+
+<br />
+
+<br />
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <h2>Vérification </h2>
+
+    </div>
+
+    <div class="card-body">
+
+        @if (ViewBag.ValiderTraitementViewModel.Etat == "A_VERIFIE")
+        {
+
+
+            <div class="col-xl-8 ">
+
+                @using (Html.BeginForm("ValiderEtat", "ValiderTraitementDetail", FormMethod.Post, new { onsubmit = "verifierOnSubmit()" }))
+                {
+
+                    <input id="valid" name="valid" value="1" hidden />
+                    <input id="id" name="id" value="@ViewBag.ValiderTraitementViewModel.FormulaireId" hidden />
+
+                    <label id="montantInput" for="example-datetime-local-input"> Montant en DT: </label>
+                    <input name="montantInput" class="form-control col-md-6 " type="number" step="0.001" value="0.0" id="montantInput">
+
+                    <br />
+                    <div class="cols ">
+
+                        <input id="verifiersubmitBtn" type="submit" value="Valider" class="btn btn-success" />
+
+                        <button style="display:none" id="verifiersubmitLoading" class="btn btn-success" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+
+                    </div>
+
+
+                }
+                <br />
+                @using (Html.BeginForm("ValiderEtat", "ValiderTraitementDetail", FormMethod.Post, new { onsubmit = "rejeterOnSubmit()" }))
+                {
+
+
+                    <input id="valid" name="valid" value="0" hidden />
+
+                    <input id="id" name="id" value="@ViewBag.ValiderTraitementViewModel.FormulaireId" hidden />
+
+
+
+                    <div class="cols ">
+
+                        <input id="rejetersubmitBtn" type="submit" value="Rejeter" class="btn btn-danger" />
+
+                        <button style="display:none" id="rejetersubmitLoading" class="btn btn-danger" type="button" disabled>
+
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+
+                            <span class="sr-only"> Loading...</span>
+
+                        </button>
+                    </div>
+
+
+
+                }
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        }
+        else
+        {
+            <div class="row">
+
+                @using (Html.BeginForm("ValiderEtat", "ValiderTraitementDetail", FormMethod.Post, new { onsubmit = "validerOnSubmit()" }))
+                {
+                    <div class="col-xs-3 col-md-1">
+
+                        <input id="valid" name="valid" value="1" hidden />
+                        <input id="id" name="id" value="@ViewBag.ValiderTraitementViewModel.FormulaireId" hidden />
+
+                        <input id="montant" value="0" hidden />
+
+                        <input id="validersubmitBtn" type="submit" value="Valider" class="btn btn-success" />
+
+                        <button style="display:none" id="validersubmitLoading" class="btn btn-success" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
+
+                    </div>
+                }
+
+
+
+                @using (Html.BeginForm("ValiderEtat", "ValiderTraitementDetail", FormMethod.Post, new { onsubmit = "rejeterOnSubmit()" }))
+                {
+
+
+                    <input id="valid" name="valid" value="0" hidden />
+
+                    <input id="id" name="id" value="@ViewBag.ValiderTraitementViewModel.FormulaireId" hidden />
+
+                    <div class="col-xs-3 col-md-1">
+
+                        <input id="rejetersubmitBtn" type="submit" value="Rejeter" class="btn btn-danger" />
+
+
+                        <button style="display:none" id="rejetersubmitLoading" class="btn btn-danger" type="button" disabled>
+
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+
+                            <span class="sr-only"> Loading...</span>
+
+                        </button>
+
+
+                    </div>
+
+                }
+
+
+            </div>
+
+
+        }
+
+
+    </div>
+</div>
+
+
+<br />
+
+
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+
+        <h2>Historique d'activités</h2>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered table-condensed table-responsive">
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.EtatClient)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.DateRDV)
+                </th>
+
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.MontantDebInitial)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.MontantDebMAJ)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.MontantVerseDeclare)
+                </th>
+
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.DescriptionAutre)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.TraiteLe)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.VerifieLe)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Formulaire.Status)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.Formulaire.EtatClient)
+
+                    </td>
+
+                    <td>
+
+
+                        @if (item.Formulaire.DateRDV.ToString().Equals("01/01/0001 00:00:00"))
+                        {
+                            <text></text>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Formulaire.DateRDV)
+                        }
+
+
+                    </td>
+
+
+                    <td>
+
+
+                        @Html.DisplayFor(modelItem => item.Formulaire.MontantDebInitial)
+
+
+                    </td>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.Formulaire.MontantDebMAJ)
+
+                    </td>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.Formulaire.MontantVerseDeclare)
+
+                    </td>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.Formulaire.DescriptionAutre)
+
+                    </td>
+                    <td>
+                        @if (item.Formulaire.TraiteLe.ToString().Equals("01/01/0001 00:00:00"))
+                        {
+                            <text></text>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Formulaire.TraiteLe)
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.Formulaire.VerifieLe.ToString().Equals("01/01/0001 00:00:00"))
+                        {
+                            <text></text>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Formulaire.VerifieLe)
+                        }
+                    </td>
+                    <td>
+                        @if (item.Formulaire.Status.ToString().Equals("NON_VERIFIE"))
+                        {
+                            <text>Non verifié</text>
+                        }
+                        else if (item.Formulaire.Status.ToString().Equals("VERIFIE"))
+                        {
+                            <text>Verifié</text>
+
+                        }
+                        else if (item.Formulaire.Status.ToString().Equals("EN_COURS"))
+                        {
+                            <text>En attente...</text>
+                        }
+                    </td>
+
+                </tr>
+            }
+
+        </table>
+
+
+    </div>
+</div>
+
+<script>
+
+    function verifierOnSubmit() {
+
+        document.getElementById("verifiersubmitLoading").style.display = "block";
+        document.getElementById("verifiersubmitBtn").style.display = "none";
+
+    }
+
+    function validerOnSubmit() {
+
+        document.getElementById("validersubmitLoading").style.display = "block";
+        document.getElementById("validersubmitBtn").style.display = "none";
+
+    }
+
+    function rejeterOnSubmit() {
+
+        document.getElementById("rejetersubmitLoading").style.display = "block";
+        document.getElementById("rejetersubmitBtn").style.display = "none";
+
+    }
+
+</script>

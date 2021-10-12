@@ -10,3 +10,14 @@ C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvr
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.csproj.CopyComplete
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.dll
 C:\Users\Admin\Documents\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\WakilRecouvrement.Domain.dll.config
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\WakilRecouvrement.Domain.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\WakilRecouvrement.Domain.pdb
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\EntityFramework.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\EntityFramework.SqlServer.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\EntityFramework.xml
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\bin\Release\EntityFramework.SqlServer.xml
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.csproj.CoreCompileInputs.cache
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.csproj.CopyComplete
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.dll
+E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Domain\obj\Release\WakilRecouvrement.Domain.pdb

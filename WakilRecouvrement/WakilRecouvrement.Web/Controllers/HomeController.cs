@@ -35,32 +35,41 @@ namespace WakilRecouvrement.Web.Controllers
         {
 
             Employe userConnected = EmpService.GetEmployeByUername(Session["username"] + "");
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem { Selected = true, Text = "", Value = "-1" });
 
-            if (userConnected.RoleId == 2 )
-            {
-                List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
-                List<SelectListItem> listItems = new List<SelectListItem>();
-
-                listItems.Add(new SelectListItem { Selected = true, Text = "Tous les agents", Value = "0" });
-
-                agents.ForEach(l =>
+            if (userConnected != null)
                 {
-                    listItems.Add(new SelectListItem {  Text = l.Username, Value = l.Username + "" });
-                });
+                if (userConnected.RoleId == 2)
+                {
 
-                return listItems;
+                    List<Employe> agents = EmpService.GetMany(emp => emp.Role.role.Equals("agent") && emp.IsVerified == true).ToList();
+
+                    listItems.Add(new SelectListItem {Text = "Tous les agents", Value = "0" });
+
+                    agents.ForEach(l =>
+                    {
+                        listItems.Add(new SelectListItem { Text = l.Username, Value = l.Username + "" });
+                    });
+
+                    return listItems;
+                }
+                else
+                {
+
+
+                    listItems.Add(new SelectListItem { Text = userConnected.Username, Value = userConnected.Username + "" });
+                    listItems.Add(new SelectListItem { Text = "Tous les agents", Value = "0" });
+
+                    return listItems;
+
+                }
             }
             else
             {
-
-                List<SelectListItem> listItems = new List<SelectListItem>();
-
-                listItems.Add(new SelectListItem { Selected = true, Text = userConnected.Username, Value = userConnected.Username + "" });
-                listItems.Add(new SelectListItem { Text = "Tous les agents", Value = "0" });
-
                 return listItems;
-
             }
+            
           
 
 
@@ -129,9 +138,6 @@ namespace WakilRecouvrement.Web.Controllers
                 }
             }
 
-
-
-         
         }
 
 
@@ -214,108 +220,113 @@ namespace WakilRecouvrement.Web.Controllers
                     ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
                     List<HomeViewModel> result = new List<HomeViewModel>();
-                    List<Lot> lots = new List<Lot>();
+                    Debug.WriteLine("agent "+agent);
 
-                    string[] lotsLst = { };
-
-                    lots = LotService.GetAll().ToList();
-
-
-                    List<Affectation> Affectations = new List<Affectation>();
-                    List<Formulaire> Formulaires = new List<Formulaire>();
-                    string[] agents = { };
-
-                   
-                    Employe emp = EmpService.GetEmployeByUername(agent + "");
-
-                    if(emp == null)
+                    if(string.IsNullOrEmpty(agent)==false)
                     {
-                       emp = EmpService.GetEmployeByUername(Session["Username"] + "");
-                    }
-
-                    if (agent != "0")
-                    {
-                       
-                        if (emp.RoleId == 1)
+                        if (agent != "-1")
                         {
-                            Affectations = AffectationService.GetMany(a => a.EmployeId == emp.EmployeId).ToList();
-                        }
-                        else if (emp.RoleId == 2)
-                        {
-                            Affectations = AffectationService.GetAll().ToList();
-                        }
 
-                    }
-                    else
-                    {
+                            List<Lot> lots = new List<Lot>();
 
-                        Affectations = AffectationService.GetAll().ToList();
+                            string[] lotsLst = { };
 
-                    }
+                            lots = LotService.GetAll().ToList();
+
+                            List<Affectation> Affectations = new List<Affectation>();
+                            List<Formulaire> Formulaires = new List<Formulaire>();
+                            string[] agents = { };
 
 
+                            Employe emp = EmpService.GetEmployeByUername(agent + "");
 
+                            if (emp == null)
+                            {
+                                emp = EmpService.GetEmployeByUername(Session["Username"] + "");
+                            }
 
-
-                    Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
-
-                    lotsLst = (from a in Affectations
-                               join l in lots on a.LotId equals l.LotId
-                            select new ClientAffecteViewModel
+                            if (agent != "0")
                             {
 
-                                Lot = l 
+                                if (emp.RoleId == 1)
+                                {
+                                    Affectations = AffectationService.GetMany(a => a.EmployeId == emp.EmployeId).ToList();
+                                }
+                                else if (emp.RoleId == 2)
+                                {
+                                    Affectations = AffectationService.GetAll().ToList();
+                                }
 
-                            }).Select(j=>j.Lot).DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
+                            }
+                            else
+                            {
 
-                    foreach (string numlot in lotsLst)
-                    {
+                                Affectations = AffectationService.GetAll().ToList();
 
-                        lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
+                            }
 
-                        traiteList = (from f in Formulaires
-                                      join a in Affectations on f.AffectationId equals a.AffectationId
-                                      join l in lots on a.LotId equals l.LotId
-                                      select new ClientAffecteViewModel
-                                      {
+                            Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
 
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
+                            lotsLst = (from a in Affectations
+                                       join l in lots on a.LotId equals l.LotId
+                                       select new ClientAffecteViewModel
+                                       {
 
-                                      }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+                                           Lot = l
 
-                        var agentLinq = (from a in Affectations
-                                         join l in lots on a.LotId equals l.LotId
-                                         select new ClientAffecteViewModel
-                                         {
+                                       }).Select(j => j.Lot).DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
 
-                                             Affectation = a
+                            foreach (string numlot in lotsLst)
+                            {
 
-                                         });
+                                lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
+
+                                traiteList = (from f in Formulaires
+                                              join a in Affectations on f.AffectationId equals a.AffectationId
+                                              join l in lots on a.LotId equals l.LotId
+                                              select new ClientAffecteViewModel
+                                              {
+
+                                                  Formulaire = f,
+                                                  Affectation = a,
+                                                  Lot = l,
+
+                                              }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+                                var agentLinq = (from a in Affectations
+                                                 join l in lots on a.LotId equals l.LotId
+                                                 select new ClientAffecteViewModel
+                                                 {
+
+                                                     Affectation = a
+
+                                                 });
 
 
-                        agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
+                                agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
 
-                        string agentsStr = string.Join(", ", agents);
+                                string agentsStr = string.Join(", ", agents);
 
-                        float nbAffTotal = agentLinq.Count();
-                        float nbTraite = traiteList.Count();
-                        string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
+                                float nbAffTotal = agentLinq.Count();
+                                float nbTraite = traiteList.Count();
+                                string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
 
-                        HomeViewModel homeViewModel = new HomeViewModel
-                        {
-                            agents = agentsStr,
-                            nbAffTotal = nbAffTotal + "",
-                            nbTraite = nbTraite + "",
-                            numLot = numlot,
-                            avancement = avgLot.Replace(",", ".")
-                        };
+                                HomeViewModel homeViewModel = new HomeViewModel
+                                {
+                                    agents = agentsStr,
+                                    nbAffTotal = nbAffTotal + "",
+                                    nbTraite = nbTraite + "",
+                                    numLot = numlot,
+                                    avancement = avgLot.Replace(",", ".")
+                                };
 
-                        result.Add(homeViewModel);
+                                result.Add(homeViewModel);
 
+                            }
+                        }
+                        
                     }
-
+                    ViewBag.total = result.Count();
                     return View(result.OrderBy(j=>double.Parse(j.avancement.Replace(".", ","))));
 
                 }

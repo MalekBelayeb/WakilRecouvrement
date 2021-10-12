@@ -1,5 +1,4 @@
-﻿using ClosedXML.Excel;
-using Microsoft.Ajax.Utilities;
+﻿using Microsoft.Ajax.Utilities;
 using MyFinance.Data.Infrastructure;
 using PagedList;
 using System;
@@ -21,6 +20,7 @@ using WakilRecouvrement.Service;
 using WakilRecouvrement.Web.Models;
 using WakilRecouvrement.Web.Models.ViewModel;
 using Excel = Microsoft.Office.Interop.Excel;
+
 
 namespace WakilRecouvrement.Web.Controllers
 {
@@ -44,62 +44,62 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
-        {
+        //public ActionResult CreerFormulaire(string id, string msgError,string pageSave,string currentSort,string currentFilterNumLot,string currentFilterTraite)
+        //{
 
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-
-
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
 
 
-                    ViewBag.page = pageSave;
-                    ViewBag.CurrentSort = currentSort;
-                    ViewBag.currentFilterNumLot = currentFilterNumLot;
-                    ViewBag.currentFilterTraite = currentFilterTraite;
-
-                    ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
-                    ViewBag.id = id;
-                    ViewBag.affectation = AffectationService.GetById(long.Parse(id));
-                    ViewBag.errormsg = msgError;
-
-                    ViewBag.TelFN = (from a in AffectationService.GetAll()
-                                     join l in LotService.GetAll() on a.LotId equals l.LotId
-                                     where a.AffectationId == long.Parse(id)
-                                     select new TelFN
-                                     {
-                                         TelPortableFN = l.TelPortableFN,
-                                         TelFixeFN = l.TelFixeFN,
-                                         TelPortable = l.TelPortable,
-                                         TelFixe = l.TelFixe
-
-                                     }).FirstOrDefault();
-
-                    string soldeDeb = (from a in AffectationService.GetAll()
-                                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                                       where a.AffectationId == long.Parse(id)
-                                       select new
-                                       {
-                                           SoldeDeb = l.SoldeDebiteur
-
-                                       }).FirstOrDefault().SoldeDeb;
-
-                    ViewBag.soldeDeb = soldeDeb.IfNullOrWhiteSpace("0").Replace(',', '.');
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
 
-                    return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
-                }
-            }
+        //            ViewBag.page = pageSave;
+        //            ViewBag.CurrentSort = currentSort;
+        //            ViewBag.currentFilterNumLot = currentFilterNumLot;
+        //            ViewBag.currentFilterTraite = currentFilterTraite;
+
+        //            ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
+        //            ViewBag.id = id;
+        //            ViewBag.affectation = AffectationService.GetById(long.Parse(id));
+        //            ViewBag.errormsg = msgError;
+
+        //            ViewBag.TelFN = (from a in AffectationService.GetAll()
+        //                             join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                             where a.AffectationId == long.Parse(id)
+        //                             select new TelFN
+        //                             {
+        //                                 TelPortableFN = l.TelPortableFN,
+        //                                 TelFixeFN = l.TelFixeFN,
+        //                                 TelPortable = l.TelPortable,
+        //                                 TelFixe = l.TelFixe
+
+        //                             }).FirstOrDefault();
+
+        //            string soldeDeb = (from a in AffectationService.GetAll()
+        //                               join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                               where a.AffectationId == long.Parse(id)
+        //                               select new
+        //                               {
+        //                                   SoldeDeb = l.SoldeDebiteur
+
+        //                               }).FirstOrDefault().SoldeDeb;
+
+        //            ViewBag.soldeDeb = soldeDeb.IfNullOrWhiteSpace("0").Replace(',', '.');
+
+
+        //            return View(FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList().Where(f => f.AffectationId == int.Parse(id)));
+        //        }
+        //    }
                
-        }
+        //}
 
 
 
@@ -197,302 +197,305 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
+        //public ActionResult HistoriqueClient(int id)
+        //{
+
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
+
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
+                    
+        //            List<ClientAffecteViewModel> clientAffecteViewModels = (from f in FormulaireService.GetAll()
+        //                                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                                                    join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+
+        //                                                                    where a.AffectationId == id
+        //                                                                    select new ClientAffecteViewModel
+        //                                                                    {
+        //                                                                        Formulaire = f,
+        //                                                                        Affectation = a,
+        //                                                                        Agent = e.Username
+
+        //                                                                    }).ToList();
+                    
+        //            ViewBag.username = clientAffecteViewModels.Select(c=>c.Agent).FirstOrDefault();
+        //            ViewBag.id = id+"";
+
+        //            return View(clientAffecteViewModels);
+
+        //        }
+        //    }
+  
+        //}
+
 
        
 
+        //public ActionResult SuiviClient(string numLot,string SearchString,string traite,string agent,string currentFilterAgent, string currentFilter, string sortOrder,string CurrentSort,string currentFilterNumLot,string currentFilterTraite, int? page)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-
-        public ActionResult HistoriqueClient(int id)
-        {
-
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
                     
-                    List<ClientAffecteViewModel> clientAffecteViewModels = (from f in FormulaireService.GetAll()
-                                                                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                                            join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
-                                                                            where a.AffectationId == id
-                                                                            select new ClientAffecteViewModel
-                                                                            {
-                                                                                Formulaire = f,
-                                                                                Affectation = a,
-                                                                                Agent = e.Username
+        //            ViewBag.CurrentSort = sortOrder;
 
-                                                                            }).ToList();
+        //            List<ClientAffecteViewModel> JoinedList;
+
+        //            ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+        //            ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
+        //            ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
+        //            ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
                     
-                    ViewBag.username = clientAffecteViewModels.Select(c=>c.Agent).FirstOrDefault();
-                    ViewBag.id = id+"";
-
-                    return View(clientAffecteViewModels);
-
-                }
-            }
-  
-        }
-
-        public ActionResult SuiviClient(string numLot,string SearchString,string traite,string agent,string currentFilterAgent, string currentFilter, string sortOrder,string CurrentSort,string currentFilterNumLot,string currentFilterTraite, int? page)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-                    
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
-
-                    ViewBag.CurrentSort = sortOrder;
-
-                    List<ClientAffecteViewModel> JoinedList;
-
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(TraiteListForDropDown(), "Value", "Text");
-                    ViewData["sortOrder"] = new SelectList(SortOrderSuiviClientForDropDown(), "Value", "Text");
-
-                    if (sortOrder != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        sortOrder = CurrentSort;
-                    }
-
-
-                    ViewBag.CurrentSort = sortOrder;
-
-                    if (SearchString != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        SearchString = currentFilter;
-                    }
-
-                    ViewBag.CurrentFilter = SearchString;
-
-                    if (agent != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        agent = currentFilterAgent;
-                    }
-
-                    ViewBag.currentFilterAgent = agent;
-
-
-                    if (numLot != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        numLot = currentFilterNumLot;
-                    }
-
-                    ViewBag.currentFilterNumLot = numLot;
-
-
-                    if (traite != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        traite = currentFilterTraite;
-                    }
-
-                    ViewBag.currentFilterTraite = traite;
-
-                    if (!String.IsNullOrEmpty(traite))
-                    {
-
-                        if (traite == "ALL")
-                        {
-
-                            JoinedList = (from a in AffectationService.GetAll()
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
-                                              // Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username
-
-                                          }).DistinctBy(a => a.Affectation.AffectationId).ToList();
-
-
-                        }
-                        else if (traite == "SAUF")
-                        {
-
-                            JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username
-
-                                          }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" != "SOLDE" && f.Formulaire.EtatClient + "" != "FAUX_NUM").ToList();
-                        }
-                        else
-                        {
-                            JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username
-
-                                          }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" == traite).ToList();
-                        }
-
-                    }
-                    else
-                    {
-
-                        JoinedList = (from a in AffectationService.GetAll()
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                      select new ClientAffecteViewModel
-                                      {
-                                          Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
-                                          //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
-                                          Affectation = a,
-                                          Lot = l,
-                                          Agent = e.Username
+        //            //updateLotFormulaire(LotService,FormulaireService,AffectationService,EmpService);
 
-                                      }).DistinctBy(a => a.Affectation.AffectationId).ToList();
-                    }
+        //            if (sortOrder != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                sortOrder = CurrentSort;
+        //            }
+
+
+        //            ViewBag.CurrentSort = sortOrder;
+
+        //            if (SearchString != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                SearchString = currentFilter;
+        //            }
+
+        //            ViewBag.CurrentFilter = SearchString;
 
+        //            if (agent != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                agent = currentFilterAgent;
+        //            }
+
+        //            ViewBag.currentFilterAgent = agent;
+
+
+        //            if (numLot != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                numLot = currentFilterNumLot;
+        //            }
+
+        //            ViewBag.currentFilterNumLot = numLot;
+
+
+        //            if (traite != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                traite = currentFilterTraite;
+        //            }
+
+        //            ViewBag.currentFilterTraite = traite;
+
+
+
+
+        //            if (!String.IsNullOrEmpty(traite))
+        //            {
+
+        //                if (traite == "ALL")
+        //                {
+
+        //                    JoinedList = (from a in AffectationService.GetAll()
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+
+        //                                  select new ClientAffecteViewModel
+        //                                  {
 
-                    if (!String.IsNullOrEmpty(agent))
-                    {
-                        if (int.Parse(agent) != 0)
-                        {
-                            JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-                        }
+        //                                      Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
+        //                                      // Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username
+
+        //                                  }).DistinctBy(a => a.Affectation.AffectationId).ToList();
+
+
+        //                }
+        //                else if (traite == "SAUF")
+        //                {
+
+        //                    JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  select new ClientAffecteViewModel
+        //                                  {
+
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username
+
+        //                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" != "SOLDE" && f.Formulaire.EtatClient + "" != "FAUX_NUM").ToList();
+        //                }
+        //                else
+        //                {
+        //                    JoinedList = (from f in FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe)
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  select new ClientAffecteViewModel
+        //                                  {
+
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username
+
+        //                                  }).DistinctBy(d => d.Formulaire.AffectationId).Where(f => f.Formulaire.EtatClient + "" == traite).ToList();
+        //                }
+
+        //            }
+        //            else
+        //            {
+
+        //                JoinedList = (from a in AffectationService.GetAll()
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                              join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                              select new ClientAffecteViewModel
+        //                              {
+        //                                  Formulaire = FormulaireService.GetMany(f => f.AffectationId == a.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault(),
+        //                                  //Formulaire = a.Formulaires.OrderByDescending(o => o.TraiteLe).FirstOrDefault(),
+        //                                  Affectation = a,
+        //                                  Lot = l,
+        //                                  Agent = e.Username
 
-                    }
+        //                              }).DistinctBy(a => a.Affectation.AffectationId).ToList();
+        //            }
 
-                    if (!String.IsNullOrEmpty(numLot))
-                    {
-                        if (numLot.Equals("0") == false)
-                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
 
-                    }
+        //            if (!String.IsNullOrEmpty(agent))
+        //            {
+        //                if (int.Parse(agent) != 0)
+        //                {
+        //                    JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+        //                }
 
-                    if (!String.IsNullOrEmpty(SearchString))
-                    {
-                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //            }
 
-                                               ).ToList();
-                    }
+        //            if (!String.IsNullOrEmpty(numLot))
+        //            {
+        //                if (numLot.Equals("0") == false)
+        //                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
 
+        //            }
 
+        //            if (!String.IsNullOrEmpty(SearchString))
+        //            {
+        //                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
 
+        //                                       ).ToList();
+        //            }
 
 
-                    switch (sortOrder)
-                    {
-                        case "0":
-                            JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
-                            break;
-                        case "1":
-                            try
-                            {
-                                JoinedList = JoinedList.OrderByDescending(s => s.Lot.SoldeDebiteur).ToList();
 
-                            }
-                            catch (Exception)
-                            {
 
-                            }
-                            break;
 
-                        case "2":
+        //            switch (sortOrder)
+        //            {
+        //                case "0":
+        //                    JoinedList = JoinedList.OrderBy(s => s.Lot.NomClient).ToList();
+        //                    break;
+        //                case "1":
+        //                    try
+        //                    {
+        //                        JoinedList = JoinedList.OrderByDescending(s => s.Lot.SoldeDebiteur).ToList();
 
-                            try
-                            {
-                                JoinedList = JoinedList.OrderBy(s => s.Lot.SoldeDebiteur).ToList();
+        //                    }
+        //                    catch (Exception)
+        //                    {
 
-                            }
-                            catch (Exception)
-                            {
+        //                    }
+        //                    break;
 
-                            }
+        //                case "2":
 
+        //                    try
+        //                    {
+        //                        JoinedList = JoinedList.OrderBy(s => s.Lot.SoldeDebiteur).ToList();
 
-                            break;
-                        case "3":
-                            JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
-                            break;
-                        case "4":
-                            JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
-                            break;
-                        case "5":
-                            JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
-                            break;
-                        case "6":
-                            JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
-                            break;
+        //                    }
+        //                    catch (Exception)
+        //                    {
 
+        //                    }
 
-                        default:
 
+        //                    break;
+        //                case "3":
+        //                    JoinedList = JoinedList.OrderByDescending(s => s.Affectation.DateAffectation).ToList();
+        //                    break;
+        //                case "4":
+        //                    JoinedList = JoinedList.OrderBy(s => s.Affectation.DateAffectation).ToList();
+        //                    break;
+        //                case "5":
+        //                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderByDescending(s => s.Formulaire.TraiteLe).ToList();
+        //                    break;
+        //                case "6":
+        //                    JoinedList = JoinedList.Where(s => s.Formulaire != null).OrderBy(s => s.Formulaire.TraiteLe).ToList();
+        //                    break;
 
-                            break;
-                    }
 
+        //                default:
 
-                    ViewBag.total = JoinedList.Count();
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
+        //                    break;
+        //            }
 
-                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
 
-                }
-            }       
-        }
+        //            ViewBag.total = JoinedList.Count();
+
+        //            int pageSize = 10;
+        //            int pageNumber = (page ?? 1);
+
+        //            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+
+        //        }
+        //    }       
+        //}
 
         public IEnumerable<SelectListItem> NumLotListForDropDown(LotService LotService)
         {
@@ -561,21 +564,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
-        public IEnumerable<SelectListItem> TraiteListSuiviTraitForDropDown()
-        {
-            List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem { Selected = true, Text = "Tous les clients traités", Value = "ALL" });
-
-            foreach (var n in Enum.GetValues(typeof(Note)))
-            {
-
-                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
-
-            }
-
-
-            return listItems;
-        }
+       
 
         public IEnumerable<SelectListItem> TraiteListSuiviTraitHistoriqueForDropDown()
         {
@@ -608,311 +597,312 @@ namespace WakilRecouvrement.Web.Controllers
         }
 
 
-        public IEnumerable<SelectListItem> TraiteListForDropDownForCreation()
-        {
-            List<SelectListItem> listItems = new List<SelectListItem>();
+        //public IEnumerable<SelectListItem> TraiteListForDropDownForCreation()
+        //{
+        //    List<SelectListItem> listItems = new List<SelectListItem>();
 
-            foreach (var n in Enum.GetValues(typeof(Note)))
-            {
+        //    foreach (var n in Enum.GetValues(typeof(Note)))
+        //    {
 
-                listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
+        //        listItems.Add(new SelectListItem { Text = n.ToString(), Value = n.ToString() });
 
-            }
-
-
-            return listItems;
-        }
-
-        [HttpPost]
-        public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase[] PostedFile,string pageSave,string CurrentSortSave, string currentFilterNumLotSave,string currentFilterTraiteSave)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
+        //    }
 
 
-                    ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
+        //    return listItems;
+        //}
 
-                    Formulaire Formulaire = new Formulaire();
-                    ViewBag.errormsg = "";
+        //[HttpPost]
+        //public ActionResult CreerFormulaireNote(string id, string DescriptionAutre, string EtatClient, string RDVDateTime, string RappelDateTime, string soldetranche, HttpPostedFileBase[] PostedFile,string pageSave,string CurrentSortSave, string currentFilterNumLotSave,string currentFilterTraiteSave)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
+
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+
+
+        //            ViewBag.TraiteList = new SelectList(TraiteListForDropDownForCreation(), "Value", "Text");
+
+        //            Formulaire Formulaire = new Formulaire();
+        //            ViewBag.errormsg = "";
                     
-                    switch ((Note)Enum.Parse(typeof(Note), EtatClient))
-                    {
-                        case Note.INJOIGNABLE:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.Status = Status.VERIFIE;
+        //            switch ((Note)Enum.Parse(typeof(Note), EtatClient))
+        //            {
+        //                case Note.INJOIGNABLE:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.Status = Status.VERIFIE;
 
-                            Formulaire.EtatClient = Note.INJOIGNABLE;
+        //                    Formulaire.EtatClient = Note.INJOIGNABLE;
 
-                            break;
-                        case Note.NRP:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.Status = Status.VERIFIE;
+        //                    break;
+        //                case Note.NRP:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.Status = Status.VERIFIE;
 
-                            Formulaire.EtatClient = Note.NRP;
+        //                    Formulaire.EtatClient = Note.NRP;
 
-                            break;
-                        case Note.RACCROCHE:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
+        //                    break;
+        //                case Note.RACCROCHE:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
 
-                            Formulaire.EtatClient = Note.RACCROCHE;
+        //                    Formulaire.EtatClient = Note.RACCROCHE;
 
-                            break;
-                        case Note.RDV:
+        //                    break;
+        //                case Note.RDV:
 
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.EtatClient = Note.RDV;
-                            Formulaire.DateRDV = DateTime.Parse(RDVDateTime);
-                            Formulaire.Status = Status.VERIFIE;
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.EtatClient = Note.RDV;
+        //                    Formulaire.DateRDV = DateTime.Parse(RDVDateTime);
+        //                    Formulaire.Status = Status.VERIFIE;
 
-                            break;
+        //                    break;
 
-                        case Note.REFUS_PAIEMENT:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.Status = Status.VERIFIE;
+        //                case Note.REFUS_PAIEMENT:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.Status = Status.VERIFIE;
 
-                            Formulaire.EtatClient = Note.REFUS_PAIEMENT;
+        //                    Formulaire.EtatClient = Note.REFUS_PAIEMENT;
 
-                            break;
-                        case Note.SOLDE:
+        //                    break;
+        //                case Note.SOLDE:
 
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.EtatClient = Note.SOLDE;
-                            Formulaire.Status = Status.EN_COURS;
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.EtatClient = Note.SOLDE;
+        //                    Formulaire.Status = Status.EN_COURS;
 
-                            if (soldetranche.IndexOf('.') != -1)
-                            {
-                                soldetranche = soldetranche.Replace('.', ',');
-                            }
+        //                    if (soldetranche.IndexOf('.') != -1)
+        //                    {
+        //                        soldetranche = soldetranche.Replace('.', ',');
+        //                    }
 
-                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace(Formulaire.MontantDebInitial+""));
+        //                    Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace(Formulaire.MontantDebInitial+""));
 
-                            break;
-                        case Note.FAUX_NUM:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.Status = Status.VERIFIE;
+        //                    break;
+        //                case Note.FAUX_NUM:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.Status = Status.VERIFIE;
 
-                            Formulaire.EtatClient = Note.FAUX_NUM;
+        //                    Formulaire.EtatClient = Note.FAUX_NUM;
 
-                            break;
-                        case Note.A_VERIFIE:
+        //                    break;
+        //                case Note.A_VERIFIE:
 
-                            Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.AffectationId = int.Parse(id);
 
-                            Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.TraiteLe = DateTime.Now;
 
-                            Formulaire.EtatClient = Note.A_VERIFIE;
+        //                    Formulaire.EtatClient = Note.A_VERIFIE;
 
-                            Formulaire.ContacteBanque = false;
+        //                    Formulaire.ContacteBanque = false;
 
-                            Formulaire.Status = Status.EN_COURS;
+        //                    Formulaire.Status = Status.EN_COURS;
 
-                            break;
-                        case Note.AUTRE:
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.EtatClient = Note.AUTRE;
-                            Formulaire.TraiteLe = DateTime.Now;
-                            break;
-                        case Note.RAPPEL:
+        //                    break;
+        //                case Note.AUTRE:
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.EtatClient = Note.AUTRE;
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    break;
+        //                case Note.RAPPEL:
 
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.Status = Status.VERIFIE;
-                            Formulaire.RappelLe = DateTime.Parse(RappelDateTime);
-                            Formulaire.EtatClient = Note.RAPPEL;
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.Status = Status.VERIFIE;
+        //                    Formulaire.RappelLe = DateTime.Parse(RappelDateTime);
+        //                    Formulaire.EtatClient = Note.RAPPEL;
 
-                            break;
-                        case Note.SOLDE_TRANCHE:
+        //                    break;
+        //                case Note.SOLDE_TRANCHE:
 
-                            Formulaire.AffectationId = int.Parse(id);
-                            Formulaire.TraiteLe = DateTime.Now;
-                            Formulaire.EtatClient = Note.SOLDE_TRANCHE;
-                            Formulaire.Status = Status.EN_COURS;
+        //                    Formulaire.AffectationId = int.Parse(id);
+        //                    Formulaire.TraiteLe = DateTime.Now;
+        //                    Formulaire.EtatClient = Note.SOLDE_TRANCHE;
+        //                    Formulaire.Status = Status.EN_COURS;
 
-                            if (soldetranche.IndexOf('.') != -1)
-                            {
-                                soldetranche = soldetranche.Replace('.', ',');
-                            }
+        //                    if (soldetranche.IndexOf('.') != -1)
+        //                    {
+        //                        soldetranche = soldetranche.Replace('.', ',');
+        //                    }
 
                             
-                            Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace("0"));
+        //                    Formulaire.MontantVerseDeclare = double.Parse(soldetranche.IfNullOrWhiteSpace("0"));
 
-                            break;
-                    }
+        //                    break;
+        //            }
 
-                    Formulaire.DescriptionAutre = DescriptionAutre;
-                    Formulaire.NotifieBanque = false;
+        //            Formulaire.DescriptionAutre = DescriptionAutre;
+        //            Formulaire.NotifieBanque = false;
 
-                    var nbVerfie = (from f in FormulaireService.GetAll()
-                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                    where a.AffectationId == int.Parse(id) && f.Status == Status.EN_COURS && f.EtatClient == Note.A_VERIFIE
-                                    select new ClientAffecteViewModel
-                                    {
-                                        Formulaire = f,
-                                        Affectation = a
-                                    }).Count();
+                    
 
-                    var nbSolde = (from f in FormulaireService.GetAll()
-                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                    where a.AffectationId == int.Parse(id) && f.EtatClient == Note.SOLDE
-                                    select new ClientAffecteViewModel
-                                    {
-                                        Formulaire = f,
-                                        Affectation = a
-                                    }).Count();
+        //            var nbSolde = (from f in FormulaireService.GetAll()
+        //                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                            where a.AffectationId == int.Parse(id) && f.EtatClient == Note.SOLDE
+        //                            select new ClientAffecteViewModel
+        //                            {
+        //                                Formulaire = f,
+        //                                Affectation = a
+        //                            }).Count();
+
+        //            if(nbSolde>=1)
+        //            {
+        //                return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Client est deja soldé !" });
+        //            }
+
+        //            if (Formulaire.EtatClient == Note.A_VERIFIE)
+        //            {
+
+        //                var nbVerfie = (from f in FormulaireService.GetAll()
+        //                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                where a.AffectationId == int.Parse(id) && f.Status == Status.EN_COURS && f.EtatClient == Note.A_VERIFIE
+        //                                select new ClientAffecteViewModel
+        //                                {
+        //                                    Formulaire = f,
+        //                                    Affectation = a
+        //                                }).Count();
+
+        //                if (nbVerfie >= 1)
+        //                {
+        //                    return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Une verification est deja en attente !" });
+        //                }
+        //            }
+
+        //            FormulaireService.Add(Formulaire);
+        //            FormulaireService.Commit();
+
+        //            Lot Joinedlot = (from f in FormulaireService.GetAll()
+        //                             join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                             join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                             where f.FormulaireId == Formulaire.FormulaireId
+        //                             select new Lot
+        //                             {
+
+        //                                 Compte = l.Compte,
+        //                                 IDClient = l.IDClient,
+        //                                 NumLot = l.NumLot,
+        //                                 SoldeDebiteur = l.SoldeDebiteur
+
+        //                             }).FirstOrDefault();
 
 
+        //            if (Joinedlot.SoldeDebiteur == "" || Joinedlot.SoldeDebiteur == null)
+        //            {
+        //                Joinedlot.SoldeDebiteur = "0";
+        //            }
 
-                    if(nbSolde>=1)
-                    {
-                        return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Client est deja soldé !" });
-                    }
+        //            if (Joinedlot.SoldeDebiteur.IndexOf('.') != -1)
+        //            {
+        //                Joinedlot.SoldeDebiteur = Joinedlot.SoldeDebiteur.Replace('.', ',');
+        //            }
 
-                    if (Formulaire.EtatClient == Note.A_VERIFIE)
-                    {
-                        if (nbVerfie >= 1)
-                        {
-                            return RedirectToAction("CreerFormulaire", new { id = id, msgError = "Une verification est deja en attente !" });
-                        }
-                    }
+        //            Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
 
-                    FormulaireService.Add(Formulaire);
-                    FormulaireService.Commit();
+        //            if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
+        //            {
 
-                    Lot Joinedlot = (from f in FormulaireService.GetAll()
-                                     join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                     join l in LotService.GetAll() on a.LotId equals l.LotId
-                                     where f.FormulaireId == Formulaire.FormulaireId
-                                     select new Lot
-                                     {
+        //                Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
 
-                                         Compte = l.Compte,
-                                         IDClient = l.IDClient,
-                                         NumLot = l.NumLot,
-                                         SoldeDebiteur = l.SoldeDebiteur
+        //            }
+        //            else
+        //            {
 
-                                     }).FirstOrDefault();
+        //                ClientAffecteViewModel cavm = (from f in FormulaireService.GetAll()
+        //                                               join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                               where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
+        //                                               orderby f.MontantDebMAJ ascending
+        //                                               select new ClientAffecteViewModel
+        //                                               {
+        //                                                   Formulaire = f,
+        //                                                   Affectation = a
 
+        //                                               }).FirstOrDefault();
 
-                    if (Joinedlot.SoldeDebiteur == "" || Joinedlot.SoldeDebiteur == null)
-                    {
-                        Joinedlot.SoldeDebiteur = "0";
-                    }
+        //                if(cavm!=null)
+        //                {
+        //                    Formulaire.MontantDebMAJ = cavm.Formulaire.MontantDebMAJ;
+        //                }
+        //                else
+        //                {
+        //                    Formulaire.MontantDebMAJ = 0;
+        //                }
 
-                    if (Joinedlot.SoldeDebiteur.IndexOf('.') != -1)
-                    {
-                        Joinedlot.SoldeDebiteur = Joinedlot.SoldeDebiteur.Replace('.', ',');
-                    }
+        //            }
 
-                    Formulaire.MontantDebInitial = double.Parse(Joinedlot.SoldeDebiteur);
+        //            FormulaireService.Update(Formulaire);
+        //            FormulaireService.Commit();
 
-                    if (FormulaireService.GetAll().Where(f => f.AffectationId == int.Parse(id)).Count() == 1)
-                    {
+        //            if (PostedFile != null)
+        //            {
+        //                if (PostedFile.Length > 0)
+        //                {
 
-                        Formulaire.MontantDebMAJ = double.Parse(Joinedlot.SoldeDebiteur);
+        //                    foreach (HttpPostedFileBase postedFile in PostedFile)
+        //                    {
+        //                        if (postedFile == null)
+        //                            return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
+        //                    }
 
-                    }
-                    else
-                    {
+        //                    string filePath = string.Empty;
+        //                    string path = Server.MapPath("~/Uploads/Recu/");
 
-                        ClientAffecteViewModel cavm = (from f in FormulaireService.GetAll()
-                                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                       where a.AffectationId == int.Parse(id) && f.MontantDebMAJ != 0
-                                                       orderby f.MontantDebMAJ ascending
-                                                       select new ClientAffecteViewModel
-                                                       {
-                                                           Formulaire = f,
-                                                           Affectation = a
+        //                    if (!Directory.Exists(path))
+        //                    {
+        //                        Directory.CreateDirectory(path);
+        //                    }
 
-                                                       }).FirstOrDefault();
+        //                    string recuPath = path + Formulaire.FormulaireId;
 
-                        if(cavm!=null)
-                        {
-                            Formulaire.MontantDebMAJ = cavm.Formulaire.MontantDebMAJ;
-                        }
-                        else
-                        {
-                            Formulaire.MontantDebMAJ = 0;
-                        }
+        //                    if (!Directory.Exists(recuPath))
+        //                    {
+        //                        Directory.CreateDirectory(recuPath);
+        //                    }
 
-                    }
+        //                    foreach (HttpPostedFileBase postedFile in PostedFile)
+        //                    {
+        //                        string filename = Directory.GetFiles(recuPath).Length + 1 + "_" + Joinedlot.IDClient + "_" + Joinedlot.Compte;
+        //                        filePath = recuPath + "/" + filename + Path.GetExtension(postedFile.FileName);
+        //                        postedFile.SaveAs(filePath);
+        //                    }
+        //                }
+        //            }
+        //            return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
 
-                    FormulaireService.Update(Formulaire);
-                    FormulaireService.Commit();
+        //        }
+        //    }
+        //}
 
-                    if (PostedFile != null)
-                    {
-                        if (PostedFile.Length > 0)
-                        {
+        //public ActionResult deleteHist(int idHist,int id,string msgError)
+        //{
 
-                            foreach (HttpPostedFileBase postedFile in PostedFile)
-                            {
-                                if (postedFile == null)
-                                    return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
-                            }
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                            string filePath = string.Empty;
-                            string path = Server.MapPath("~/Uploads/Recu/");
-
-                            if (!Directory.Exists(path))
-                            {
-                                Directory.CreateDirectory(path);
-                            }
-
-                            string recuPath = path + Formulaire.FormulaireId;
-
-                            if (!Directory.Exists(recuPath))
-                            {
-                                Directory.CreateDirectory(recuPath);
-                            }
-
-                            foreach (HttpPostedFileBase postedFile in PostedFile)
-                            {
-                                string filename = Directory.GetFiles(recuPath).Length + 1 + "_" + Joinedlot.IDClient + "_" + Joinedlot.Compte;
-                                filePath = recuPath + "/" + filename + Path.GetExtension(postedFile.FileName);
-                                postedFile.SaveAs(filePath);
-                            }
-                        }
-                    }
-                    return RedirectToAction("AffectationList", "Affectation", new { traite = currentFilterTraiteSave, numLot = currentFilterNumLotSave, sortOrder = CurrentSortSave, page = pageSave });
-
-                }
-            }
-        }
-
-        public ActionResult deleteHist(int idHist,int id,string msgError)
-        {
-
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
                   
-                    FormulaireService.Delete(FormulaireService.GetById(idHist));
-                    FormulaireService.Commit();
+        //            FormulaireService.Delete(FormulaireService.GetById(idHist));
+        //            FormulaireService.Commit();
 
-                    return RedirectToAction("CreerFormulaire", "Formulaire", new { id = id, msgError = msgError });
+        //            return RedirectToAction("CreerFormulaire", "Formulaire", new { id = id, msgError = msgError });
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
 
-        public ActionResult deleteHistVerifie(int id,string currentFilter ,string currentNumLot ,string currentType ,string currentTraite ,string currentAgent ,string currentTraitDate,string currentPage )
+        /*public ActionResult deleteHistVerifie(int id,string currentFilter ,string currentNumLot ,string currentType ,string currentTraite ,string currentAgent ,string currentTraitDate,string currentPage )
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -928,7 +918,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-        }
+        }*/
 
         [HttpPost]
         public ActionResult GetFormulaires(int id)
@@ -960,22 +950,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-        public string GetEtat(Formulaire formulaire)
-        {
-
-
-            if (formulaire == null)
-            {
-                return "";
-            }
-            else
-            {
-
-                return formulaire.IfNotNull(i => i.EtatClient).ToString();
-
-            }
-
-        }
+      
         public string GetTraiteLe(Affectation affectation)
         {
 
@@ -1004,54 +979,12 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public ActionResult ValiderTraitement()
-        {
-
-
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
-
-                    string path = Server.MapPath("~/Uploads/Recu/");
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    LotService LotService = new LotService(UOW);
-                    EmployeService EmployeService = new EmployeService(UOW);
-
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
-
-                    if (TempData["IDClient"] == null)
-                    {
-                        ViewBag.IDClient = "0";
-                    }
-                    else
-                    {
-                        ViewBag.IDClient = TempData["IDClient"];
-                    }
-
-                    return View();
-
-                }
-            }
-
-
-        }
-
-
-
         public string getUsernameAgent(int idAff)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
+                
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
                     AffectationService AffectationService = new AffectationService(UOW);
@@ -1071,11 +1004,11 @@ namespace WakilRecouvrement.Web.Controllers
             }   
         }
 
-
+        /*
         [HttpPost]
-        public ActionResult ValiderTraitement(bool IsValid, string numLot, string traite, string agent)
+        public ActionResult ValiderTraitement(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string currentPage, int? page)
         {
-
+            
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
@@ -1085,38 +1018,102 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
-                    string status = "";
-                    if (IsValid == true)
-                        status = "VERIFIE";
-                    if (IsValid == false)
-                        status = "EN_COURS";
 
+
+                    if (page == null)
+                    {
+                        if (currentPage != null)
+                            page = int.Parse(currentPage);
+                    }
+
+                    ViewBag.page = page;
+
+                    if (SearchString != null)
+                    {
+                        // page = 1;
+                    }
+                    else
+                    {
+                        SearchString = currentFilter;
+                    }
+
+                    ViewBag.currentFilter = SearchString;
+
+                    if (numLot != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        numLot = currentNumLot;
+                    }
+
+                    ViewBag.currentNumLot = numLot;
+
+                    if (traite != null)
+                    {
+                        //page = 1;
+                    }
+                    else
+                    {
+                        traite = currentTraite;
+                    }
+
+                    ViewBag.currentTraite = traite;
+
+                    if (agent != null)
+                    {
+                        ///page = 1;
+                    }
+                    else
+                    {
+                        agent = currentAgent;
+                    }
+
+                    ViewBag.currentAgent = agent;
 
                     List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
                     ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
-                    if (IsValid == false)
-                        ViewBag.TraiteList = new SelectList(TraiteValidationListForDropDown(), "Value", "Text");
-                    if (IsValid == true)
-                        ViewBag.TraiteList = new SelectList(TraiteValidationValideListForDropDown(), "Value", "Text");
-
                     ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
-                    if (traite.Equals("ALL"))
-                    {
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                      select new ClientAffecteViewModel
-                                      {
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a,
-                                          Agent = e.Username
 
-                                      }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
+                    if (!String.IsNullOrEmpty(traite))
+                    {
+                        if (traite.Equals("ALL"))
+                        {
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+                                          select new ClientAffecteViewModel
+                                          {
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a,
+                                              Agent = e.Username
+
+                                          }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
+
+                        }
+                        else
+                        {
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+
+                                          select new ClientAffecteViewModel
+                                          {
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a,
+                                              Agent = e.Username
+
+                                          }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+
+                        }
 
                     }
                     else
@@ -1125,7 +1122,6 @@ namespace WakilRecouvrement.Web.Controllers
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
                                       join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-
                                       select new ClientAffecteViewModel
                                       {
                                           Formulaire = f,
@@ -1133,121 +1129,62 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Agent = e.Username
 
-                                      }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == (Status)Enum.Parse(typeof(Status), status)).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
+                                      }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
 
                     }
 
-                    if (numLot != "0")
+                    if (!String.IsNullOrEmpty(numLot))
                     {
-                        JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
-
-                    }
-
-                    if (int.Parse(agent) != 0)
-                    {
-
-                        JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-
-                    }
-
-                    JsonResult result = new JsonResult();
-
-                    try
-                    {
-
-                        string search = Request.Form.GetValues("search[value]")[0];
-
-                        string draw = Request.Form.GetValues("draw")[0];
-                        string order = Request.Form.GetValues("order[0][column]")[0];
-                        string orderDir = Request.Form.GetValues("order[0][dir]")[0];
-                        int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
-                        int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
-
-                        if (order == "0" && orderDir == "asc")
+                        if (numLot != "0")
                         {
-                            order = "6";
-                            orderDir = "DESC";
+                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+
                         }
-                        int totalRecords = JoinedList.Count();
-
-                        if (!string.IsNullOrEmpty(search) &&
-                            !string.IsNullOrWhiteSpace(search))
-                        {
-                            JoinedList = JoinedList.Where(j =>
-
-                                j.Lot.Numero.IfNotNull(n=>n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Lot.Adresse.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Lot.IDClient.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Lot.Compte.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Lot.NomClient.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Lot.DescIndustry.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-                            || j.Formulaire.MontantVerseDeclare.IfNotNull(n => n.ToString().ToLower().Contains(search.ToLower()))
-
-                                ).ToList();
-                        }
-
-                        if (IsValid == false)
-                            JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
-                        if (IsValid == true)
-                            JoinedList = SortTableDataForHistory(order, orderDir, JoinedList);
-
-                        int recFilter = JoinedList.Count();
-
-                        JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
-
-                        var modifiedData = JoinedList.Select(j =>
-                           new
-                           {
-
-                               j.Lot.NumLot,
-                               j.Formulaire.MontantVerseDeclare,
-                               j.Lot.Compte,
-                               j.Lot.IDClient,
-                               j.Lot.NomClient,
-                               j.Lot.SoldeDebiteur,
-                               j.Lot.DescIndustry,
-                               Username = j.Agent,
-                               j.Affectation.AffectationId,
-                               VerifieLe = j.Formulaire.VerifieLe.ToString(),
-                               DateAff = j.Affectation.DateAffectation.ToString(),
-                               TraiteLe = j.Formulaire.TraiteLe.ToString("dd/MM/yyyy HH:mm:ss"),
-                               Etat = GetEtat(j.Formulaire).ToString(),
-                               FormulaireId = j.Formulaire.FormulaireId,
-                               ContactBanque = j.Formulaire.ContacteBanque,
-                               Image = getImagePath(j.Formulaire),
-                               descAutre = j.Formulaire.DescriptionAutre,
-                               NBRecu = getImagePathNB(j.Formulaire)
-                           }
-                           );
-                        int x = JoinedList.Count();
-
-                        var info = new { nbTotal = totalRecords, draw = Convert.ToInt32(draw) };
-
-                        result = this.Json(new
-                        {
-
-                            draw = Convert.ToInt32(draw),
-                            recordsTotal = totalRecords,
-                            recordsFiltered = recFilter,
-                            data = modifiedData,
-                            info = info
-
-                        }, JsonRequestBehavior.AllowGet);
-
                     }
-                    catch (Exception ex)
+                    
+                    
+                    
+                    if (!String.IsNullOrEmpty(agent))
                     {
-                        Console.Write(ex);
+                        if (int.Parse(agent) != 0)
+                        {
+
+                            JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+
+                        }
                     }
 
-                    return result;
+                    var modifiedData = JoinedList.Select(j =>
+                            new ValiderTraitementViewModel
+                            {
+
+                                Lot = j.Lot,
+                                Username = j.Agent,
+                                VerifieLe = j.Formulaire.VerifieLe.ToString(),
+                                DateAff = j.Affectation.DateAffectation.ToString(),
+                                TraiteLe = j.Formulaire.TraiteLe.ToString("dd/MM/yyyy HH:mm:ss"),
+                                Etat = GetEtat(j.Formulaire).ToString(),
+                                FormulaireId = j.Formulaire.FormulaireId,
+                                ContactBanque = j.Formulaire.ContacteBanque,
+                                MontantVerseDeclare = j.Formulaire.MontantVerseDeclare,
+                                descAutre = j.Formulaire.DescriptionAutre,
+
+                            });
+
+
+                    ViewBag.total = JoinedList.Count();
+
+                    int pageSize = 10;
+                    int pageNumber = (page ?? 1);
+
+                    return View(modifiedData.ToPagedList(pageNumber, pageSize));
 
 
                 }
             }
-
+            
         }
-
+        */
         public IEnumerable<SelectListItem> TraiteValidationListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -1258,6 +1195,8 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+
+
         public IEnumerable<SelectListItem> TraiteTypeForValiderListForDropDown()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -1402,7 +1341,7 @@ namespace WakilRecouvrement.Web.Controllers
             return lst;
         }
 
-        public bool IsDeletable(int idForm,List<Formulaire> formulaires)
+       /* public bool IsDeletable(int idForm,List<Formulaire> formulaires)
         {
             Formulaire _formulaire = new Formulaire();
             _formulaire = formulaires.OrderByDescending(f => f.TraiteLe).FirstOrDefault();
@@ -1412,226 +1351,225 @@ namespace WakilRecouvrement.Web.Controllers
                 return true;
             }
             return false;
-        }
+        }*/
 
-        public ActionResult HistoriqueTraitements(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType,string currentPage, int? page)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //public ActionResult HistoriqueTraitements(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType,string currentPage, int? page)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitHistoriqueForDropDown(), "Value", "Text");
-                    ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
+        //            ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+        //            ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
+        //            ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitHistoriqueForDropDown(), "Value", "Text");
+        //            ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
 
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
-                    List<ClientAffecteViewModel> JoinedList;
+        //            List<ClientAffecteViewModel> JoinedList;
 
-                    if(page==null)
-                    {
-                        if(currentPage!=null)
-                        page = int.Parse(currentPage);
-                    }
+        //            if(page==null)
+        //            {
+        //                if(currentPage!=null)
+        //                page = int.Parse(currentPage);
+        //            }
 
-                    ViewBag.page= page;
+        //            ViewBag.page= page;
                       
-                    if (SearchString != null)
-                    {
-                        // page = 1;
-                    }
-                    else
-                    {
-                        SearchString = currentFilter;
-                    }
+        //            if (SearchString != null)
+        //            {
+        //                // page = 1;
+        //            }
+        //            else
+        //            {
+        //                SearchString = currentFilter;
+        //            }
 
-                    ViewBag.currentFilter = SearchString;
+        //            ViewBag.currentFilter = SearchString;
 
-                    if (numLot != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        numLot = currentNumLot;
-                    }
+        //            if (numLot != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                numLot = currentNumLot;
+        //            }
 
-                    ViewBag.currentNumLot = numLot;
+        //            ViewBag.currentNumLot = numLot;
 
-                    if (type != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        type = currentType;
-                    }
+        //            if (type != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                type = currentType;
+        //            }
 
-                    ViewBag.currentType = type;
+        //            ViewBag.currentType = type;
 
-                    if (traite != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        traite = currentTraite;
-                    }
+        //            if (traite != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                traite = currentTraite;
+        //            }
 
-                    ViewBag.currentTraite = traite;
+        //            ViewBag.currentTraite = traite;
 
-                    if (agent != null)
-                    {
-                        ///page = 1;
-                    }
-                    else
-                    {
-                        agent = currentAgent;
-                    }
+        //            if (agent != null)
+        //            {
+        //                ///page = 1;
+        //            }
+        //            else
+        //            {
+        //                agent = currentAgent;
+        //            }
 
-                    ViewBag.currentAgent = agent;
+        //            ViewBag.currentAgent = agent;
 
-                    if (traitDate != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        traitDate = currentTraitDate;
-                    }
+        //            if (traitDate != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                traitDate = currentTraitDate;
+        //            }
 
-                    ViewBag.currentTraitDate = traitDate;
-
-
-                    if (!String.IsNullOrEmpty(traite))
-                    {
-
-                        if (traite == "ALL")
-                        {
-
-                            JoinedList = (from f in FormulaireService.GetAll()
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          where (f.EtatClient == Note.SOLDE || f.EtatClient== Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username,
-                                              IsDeletable = IsDeletable(f.FormulaireId,FormulaireService.GetMany(f=>f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
-
-                                          }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
-
-                        }
-
-                        else
-                        {
-                            JoinedList = (from f in FormulaireService.GetAll()
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username,
-                                              IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
-
-                                          }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
-                        }
-
-                    }
-                    else
-                    {
-
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                      where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
-                                      select new ClientAffecteViewModel
-                                      {
-
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
-                                          Agent = e.Username,
-                                          IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
-
-                                      }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
-
-                    }
+        //            ViewBag.currentTraitDate = traitDate;
 
 
+        //            if (!String.IsNullOrEmpty(traite))
+        //            {
 
-                    if (type == "DATE_TRAIT")
-                    {
+        //                if (traite == "ALL")
+        //                {
 
-                        if (!String.IsNullOrEmpty(traitDate))
-                        {
-                            DateTime d = DateTime.Parse(traitDate);
-                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
-                        }
+        //                    JoinedList = (from f in FormulaireService.GetAll()
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  where (f.EtatClient == Note.SOLDE || f.EtatClient== Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+        //                                  select new ClientAffecteViewModel
+        //                                  {
 
-                    }
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username,
+        //                                      IsDeletable = IsDeletable(f.FormulaireId,FormulaireService.GetMany(f=>f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+        //                                  }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+
+        //                }
+
+        //                else
+        //                {
+        //                    JoinedList = (from f in FormulaireService.GetAll()
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+        //                                  select new ClientAffecteViewModel
+        //                                  {
+
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username,
+        //                                      IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+        //                                  }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+        //                }
+
+        //            }
+        //            else
+        //            {
+
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                              join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                              where (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE) && f.Status == Status.VERIFIE
+        //                              select new ClientAffecteViewModel
+        //                              {
+
+        //                                  Formulaire = f,
+        //                                  Affectation = a,
+        //                                  Lot = l,
+        //                                  Agent = e.Username,
+        //                                  IsDeletable = IsDeletable(f.FormulaireId, FormulaireService.GetMany(f => f.AffectationId == a.AffectationId && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).ToList())
+
+        //                              }).OrderByDescending(f => f.Formulaire.VerifieLe).ToList();
+
+        //            }
 
 
 
-                    if (!String.IsNullOrEmpty(agent))
-                    {
-                        if (int.Parse(agent) != 0)
-                        {
-                            JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-                        }
+        //            if (type == "DATE_TRAIT")
+        //            {
 
-                    }
+        //                if (!String.IsNullOrEmpty(traitDate))
+        //                {
+        //                    DateTime d = DateTime.Parse(traitDate);
+        //                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
+        //                }
 
-                    if (!String.IsNullOrEmpty(numLot))
-                    {
-                        if (numLot.Equals("0") == false)
-                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+        //            }
 
-                    }
+        //            if (!String.IsNullOrEmpty(agent))
+        //            {
+        //                if (int.Parse(agent) != 0)
+        //                {
+        //                    JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+        //                }
 
-                    if (!String.IsNullOrEmpty(SearchString))
-                    {
-                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //            }
 
-                                               ).ToList();
-                    }
+        //            if (!String.IsNullOrEmpty(numLot))
+        //            {
+        //                if (numLot.Equals("0") == false)
+        //                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
 
-                    ViewBag.total = JoinedList.Count();
+        //            }
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
+        //            if (!String.IsNullOrEmpty(SearchString))
+        //            {
+        //                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
 
-                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
-                }
-            }
+        //                                       ).ToList();
+        //            }
 
-        }
+
+        //            ViewBag.total = JoinedList.Count();
+
+        //            int pageSize = 10;
+        //            int pageNumber = (page ?? 1);
+
+        //            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+        //        }
+        //    }
+
+        //}
 
 
         public Formulaire GetFormulaire(int affId)
@@ -1664,7 +1602,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult VerifierEtat(int id, bool valid, string montant)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -1676,7 +1614,6 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                    
-
                     var JoinedLot = from f in FormulaireService.GetAll()
                                     join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                     join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -1734,7 +1671,6 @@ namespace WakilRecouvrement.Web.Controllers
                             else if (NewSolde <= 0)
                             {
 
-
                                 Formulaire.MontantDebMAJ = 0;
 
                                 Formulaire.Status = Status.VERIFIE;
@@ -1784,7 +1720,7 @@ namespace WakilRecouvrement.Web.Controllers
 
                 }
             }
-        }
+        }*/
 
         [HttpPost]
         public ActionResult UpdateContactBanque(int id)
@@ -1817,437 +1753,469 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
-        public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list, string traite)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    List<FormulaireExportable> newList = new List<FormulaireExportable>();
-                    DataTable dataTable = new DataTable();
-
-                    if (traite.Equals("RDV"))
-                    {
-                        newList = list.Select(j =>
-                         new FormulaireExportable
-                         {
-                             NomClient = j.Lot.NomClient,
-                             Compte = j.Lot.Compte,
-                             IDClient = j.Lot.IDClient,
-                             RDV = j.Formulaire.DateRDV.ToString()
-                         }).ToList();
-
-                        dataTable.Columns.Add("IDClient", typeof(string));
-                        dataTable.Columns.Add("Compte", typeof(string));
-                        dataTable.Columns.Add("NomClient", typeof(string));
-                        dataTable.Columns.Add("RDV", typeof(string));
-
-                        foreach (FormulaireExportable c in newList)
-                        {
-
-                            DataRow row = dataTable.NewRow();
-                            row["IDClient"] = c.IDClient;
-                            row["Compte"] = c.Compte;
-                            row["NomClient"] = c.NomClient;
-                            row["RDV"] = c.RDV;
-                            dataTable.Rows.Add(row);
-
-                        }
-                    }
-                    else if (traite.Equals("SOLDE"))
-                    {
-                        newList = list.Select(j =>
-                        new FormulaireExportable
-                        {
-                            NomClient = j.Lot.NomClient,
-                            Compte = j.Lot.Compte,
-                            IDClient = j.Lot.IDClient,
-                            Versement = j.Formulaire.MontantVerseDeclare+""
-                        }
-
-                        ).ToList();
-
-                        dataTable.Columns.Add("IDClient", typeof(string));
-                        dataTable.Columns.Add("Compte", typeof(string));
-                        dataTable.Columns.Add("NomClient", typeof(string));
-                        dataTable.Columns.Add("Versement", typeof(string));
-
-                        foreach (FormulaireExportable c in newList)
-                        {
-
-                            DataRow row = dataTable.NewRow();
-                            row["IDClient"] = c.IDClient;
-                            row["Compte"] = c.Compte;
-                            row["NomClient"] = c.NomClient;
-                            row["Versement"] = c.Versement;
-                            dataTable.Rows.Add(row);
-
-                        }
-
-                    }
-                    else if (traite.Equals("A_VERIFIE"))
-                    {
-                        newList = list.Select(j =>
-                        new FormulaireExportable
-                        {
-                            NomClient = j.Lot.NomClient,
-                            Compte = j.Lot.Compte,
-                            IDClient = j.Lot.IDClient,
-                        }
-
-                        ).ToList();
-
-                        dataTable.Columns.Add("IDClient", typeof(string));
-                        dataTable.Columns.Add("Compte", typeof(string));
-                        dataTable.Columns.Add("NomClient", typeof(string));
-                        dataTable.Columns.Add("Montant", typeof(string));
-
-                        foreach (FormulaireExportable c in newList)
-                        {
-
-                            DataRow row = dataTable.NewRow();
-
-                            row["IDClient"] = c.IDClient;
-                            row["Compte"] = c.Compte;
-                            row["NomClient"] = c.NomClient;
-
-                            dataTable.Rows.Add(row);
+        //public DataTable GenerateDatatableFromJoinedList(List<ClientAffecteViewModel> list, string traite)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
+
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
+
+        //            List<FormulaireExportable> newList = new List<FormulaireExportable>();
+        //            DataTable dataTable = new DataTable();
+
+        //            if (traite.Equals("RDV"))
+        //            {
+        //                newList = list.Select(j =>
+        //                 new FormulaireExportable
+        //                 {
+        //                     NomClient = j.Lot.NomClient,
+        //                     Compte = j.Lot.Compte,
+        //                     IDClient = j.Lot.IDClient,
+        //                     RDV = j.Formulaire.DateRDV.ToString()
+        //                 }).ToList();
+
+        //                dataTable.Columns.Add("IDClient", typeof(string));
+        //                dataTable.Columns.Add("Compte", typeof(string));
+        //                dataTable.Columns.Add("NomClient", typeof(string));
+        //                dataTable.Columns.Add("RDV", typeof(string));
+
+        //                foreach (FormulaireExportable c in newList)
+        //                {
+
+        //                    DataRow row = dataTable.NewRow();
+        //                    row["IDClient"] = c.IDClient;
+        //                    row["Compte"] = c.Compte;
+        //                    row["NomClient"] = c.NomClient;
+        //                    row["RDV"] = c.RDV;
+        //                    dataTable.Rows.Add(row);
+
+        //                }
+        //            }
+        //            else if (traite.Equals("SOLDE"))
+        //            {
+        //                newList = list.Select(j =>
+        //                new FormulaireExportable
+        //                {
+        //                    NomClient = j.Lot.NomClient,
+        //                    Compte = j.Lot.Compte,
+        //                    IDClient = j.Lot.IDClient,
+        //                    Versement = j.Formulaire.MontantVerseDeclare+""
+        //                }
+
+        //                ).ToList();
+
+        //                dataTable.Columns.Add("IDClient", typeof(string));
+        //                dataTable.Columns.Add("Compte", typeof(string));
+        //                dataTable.Columns.Add("NomClient", typeof(string));
+        //                dataTable.Columns.Add("Versement", typeof(string));
+
+        //                foreach (FormulaireExportable c in newList)
+        //                {
+
+        //                    DataRow row = dataTable.NewRow();
+        //                    row["IDClient"] = c.IDClient;
+        //                    row["Compte"] = c.Compte;
+        //                    row["NomClient"] = c.NomClient;
+        //                    row["Versement"] = c.Versement;
+        //                    dataTable.Rows.Add(row);
+
+        //                }
+
+        //            }
+        //            else if (traite.Equals("A_VERIFIE"))
+        //            {
+        //                newList = list.Select(j =>
+        //                new FormulaireExportable
+        //                {
+        //                    NomClient = j.Lot.NomClient,
+        //                    Compte = j.Lot.Compte,
+        //                    IDClient = j.Lot.IDClient,
+        //                }
+
+        //                ).ToList();
+
+        //                dataTable.Columns.Add("IDClient", typeof(string));
+        //                dataTable.Columns.Add("Compte", typeof(string));
+        //                dataTable.Columns.Add("NomClient", typeof(string));
+        //                dataTable.Columns.Add("Montant", typeof(string));
+
+        //                foreach (FormulaireExportable c in newList)
+        //                {
+
+        //                    DataRow row = dataTable.NewRow();
+
+        //                    row["IDClient"] = c.IDClient;
+        //                    row["Compte"] = c.Compte;
+        //                    row["NomClient"] = c.NomClient;
+
+        //                    dataTable.Rows.Add(row);
 
-                        }
+        //                }
 
-                    }
-                    else
-                    {
-                        newList = list.Select(j =>
-                        new FormulaireExportable
-                        {
-                            NomClient = j.Lot.NomClient,
-                            Compte = j.Lot.Compte,
-                            IDClient = j.Lot.IDClient,
-                        }
+        //            }
+        //            else
+        //            {
+        //                newList = list.Select(j =>
+        //                new FormulaireExportable
+        //                {
+        //                    NomClient = j.Lot.NomClient,
+        //                    Compte = j.Lot.Compte,
+        //                    IDClient = j.Lot.IDClient,
+        //                }
 
-                        ).ToList();
+        //                ).ToList();
 
-                        dataTable.Columns.Add("IDClient", typeof(string));
-                        dataTable.Columns.Add("Compte", typeof(string));
-                        dataTable.Columns.Add("NomClient", typeof(string));
+        //                dataTable.Columns.Add("IDClient", typeof(string));
+        //                dataTable.Columns.Add("Compte", typeof(string));
+        //                dataTable.Columns.Add("NomClient", typeof(string));
 
-                        foreach (FormulaireExportable c in newList)
-                        {
+        //                foreach (FormulaireExportable c in newList)
+        //                {
 
 
-                            DataRow row = dataTable.NewRow();
-                            row["IDClient"] = c.IDClient;
-                            row["Compte"] = c.Compte;
-                            row["NomClient"] = c.NomClient;
-                            dataTable.Rows.Add(row);
+        //                    DataRow row = dataTable.NewRow();
+        //                    row["IDClient"] = c.IDClient;
+        //                    row["Compte"] = c.Compte;
+        //                    row["NomClient"] = c.NomClient;
+        //                    dataTable.Rows.Add(row);
 
-                        }
+        //                }
 
-                    }
+        //            }
 
-                    return dataTable;
+        //            return dataTable;
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
-        public ActionResult EnvoyerBanque()
-        {
+        //public ActionResult EnvoyerBanque()
+        //{
 
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
-                    LotService LotService = new LotService(UOW);
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
+        //            LotService LotService = new LotService(UOW);
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
-                    ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
+        //            ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+        //            ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+        //            ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
 
-                    return View();
+        //            return View();
 
-                }
-            }
+        //        }
+        //    }
 
 
-        }
+        //}
 
 
-        [HttpPost]
-        public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string type, string debutDate, string finDate,string jourdate, string objet, string email, bool send, string to)
-        {
+        //[HttpPost]
+        //public ActionResult EnvoyerBanqueLoadData(string traite, string numLot, string type, string debutDate, string finDate,string jourdate, string objet, string email, bool send, string to)
+        //{
 
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
 
+        //            ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+        //            ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
+        //            ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(EnvoyerTraiteListForDropDown(), "Value", "Text");
-                    ViewBag.typeTrait = new SelectList(TraiteTypeForValiderListForDropDown(), "Value", "Text");
+        //            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+        //            string subject = "";
+        //            string body = "";
+        //            string name = "";
+        //            string To = "";
 
-                    JoinedList = (from f in FormulaireService.GetAll()
-                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //            if (traite == "RDV")
+        //            {
 
-                                  select new ClientAffecteViewModel
-                                  {
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
 
-                                      Formulaire = f,
-                                      Lot = l,
-                                      Affectation = a
+        //                              select new ClientAffecteViewModel
+        //                              {
 
-                                  }).Where(j => ((j.Formulaire.Status == Status.VERIFIE || j.Formulaire.EtatClient == Note.A_VERIFIE) && j.Formulaire.NotifieBanque == false)).ToList();
+        //                                  Formulaire = f,
+        //                                  Lot = l,
+        //                                  Affectation = a
 
-                    string subject = "";
-                    string body = "";
-                    string name = "";
-                    string To = "";
+        //                              }).Where(j => j.Formulaire.Status == Status.VERIFIE  && j.Formulaire.EtatClient == Note.RDV).ToList();
 
-                    if (traite == "RDV")
-                    {
+        //                subject = EmailConstants.RDV_SUBJECT;
+        //                body = EmailConstants.RDV_BODY;
+        //                name = "RDV";
+        //                To = EmailConstants.TO;
+        //            }
+        //            else if (traite == "SOLDE")
+        //            {
 
-                        JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.RDV).ToList();
-                        subject = EmailConstants.RDV_SUBJECT;
-                        body = EmailConstants.RDV_BODY;
-                        name = "RDV";
-                        To = EmailConstants.TO;
-                    }
-                    else if (traite == "SOLDE")
-                    {
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
 
-                        JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE).ToList();
-                        subject = EmailConstants.VERSEMENT_SUBJECT;
-                        body = EmailConstants.VERSEMENT_BODY;
-                        name = "SOLDE";
-                        To = EmailConstants.TO;
+        //                              select new ClientAffecteViewModel
+        //                              {
 
-                    }
-                    else if (traite == "A_VERIFIE")
-                    {
+        //                                  Formulaire = f,
+        //                                  Lot = l,
+        //                                  Affectation = a
 
-                        JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE).ToList();
-                        subject = EmailConstants.AVERIFIE_SUBJECT;
-                        body = EmailConstants.AVERIFIE_BODY;
-                        name = "A_VERIFIE";
-                        To = EmailConstants.TO;
+        //                              }).Where(j => j.Formulaire.Status == Status.VERIFIE && (j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE) ).ToList();
+                        
+        //                Debug.WriteLine(JoinedList.Count);
 
-                    }
-                    else if (traite == "Autre")
-                    {
+        //                subject = EmailConstants.VERSEMENT_SUBJECT;
+        //                body = EmailConstants.VERSEMENT_BODY;
+        //                name = "SOLDE";
+        //                To = EmailConstants.TO;
 
-                        JoinedList = JoinedList.Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient == Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
-                        subject = EmailConstants.ENCOURS_SUBJECT;
-                        body = EmailConstants.ENCOURS_BODY;
-                        name = "EN_COURS";
-                        To = EmailConstants.TO;
+        //            }
+        //            else if (traite == "A_VERIFIE")
+        //            {
 
-                    }
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
 
+        //                              select new ClientAffecteViewModel
+        //                              {
 
-                    if (numLot != "0")
-                    {
-                        JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
-                    }
+        //                                  Formulaire = f,
+        //                                  Lot = l,
+        //                                  Affectation = a
 
-                    Debug.WriteLine(jourdate);
+        //                              }).Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE && j.Formulaire.Status == Status.EN_COURS).ToList();
 
-                    if(type == "P_INTERVAL")
-                    {
 
-                        if(debutDate!=null && debutDate!="" && finDate!="" && finDate!=null)
-                        {
-                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.TraiteLe.Date <= DateTime.Parse(finDate).Date).ToList();
-                        }
+        //                subject = EmailConstants.AVERIFIE_SUBJECT;
+        //                body = EmailConstants.AVERIFIE_BODY;
+        //                name = "A_VERIFIE";
+        //                To = EmailConstants.TO;
 
-                    }else if(type == "P_DATE")
-                    {
+        //            }
+        //            else if (traite == "Autre")
+        //            {
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
 
-                        if (jourdate != null && jourdate != "")
-                        {
-                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == DateTime.Parse(jourdate).Date).ToList();
-                        }
+        //                              select new ClientAffecteViewModel
+        //                              {
 
-                    }
+        //                                  Formulaire = f,
+        //                                  Lot = l,
+        //                                  Affectation = a
 
+        //                              }).Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient == Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT ).ToList();
 
-                    if (send == true)
-                    {
+        //                subject = EmailConstants.ENCOURS_SUBJECT;
+        //                body = EmailConstants.ENCOURS_BODY;
+        //                name = "EN_COURS";
+        //                To = EmailConstants.TO;
 
-                        string path = GetFolderName() + "/" + name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+        //            }
 
-                        GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
+        //            if (numLot != "0")
+        //            {
+        //                JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+        //            }
 
-                        SendMail(to, objet, email, path);
+        //            Debug.WriteLine(jourdate);
 
-                        foreach (var j in JoinedList)
-                        {
+        //            if(type == "P_INTERVAL")
+        //            {
 
-                            j.Formulaire.NotifieBanque = true;
-                            FormulaireService.Update(j.Formulaire);
+        //                if(debutDate!=null && debutDate!="" && finDate!="" && finDate!=null)
+        //                {
+                            
+        //                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.TraiteLe.Date <= DateTime.Parse(finDate).Date).ToList();
+        //                }
 
-                        }
-                        FormulaireService.Commit();
+        //            }else if(type == "P_DATE")
+        //            {
 
-                    }
+        //                if (jourdate != null && jourdate != "")
+        //                {
+        //                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == DateTime.Parse(jourdate).Date).ToList();
+        //                }
 
-                    JsonResult result = new JsonResult();
+        //            }
 
-                    try
-                    {
-                        string search = Request.Form.GetValues("search[value]")[0];
-                        string draw = Request.Form.GetValues("draw")[0];
-                        string order = Request.Form.GetValues("order[0][column]")[0];
-                        string orderDir = Request.Form.GetValues("order[0][dir]")[0];
-                        int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
-                        int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
 
-                        int totalRecords = JoinedList.Count();
+        //            if (send == true)
+        //            {
 
-                        if (!string.IsNullOrEmpty(search) &&
-                            !string.IsNullOrWhiteSpace(search))
-                        {
-                            JoinedList = JoinedList.Where(j =>
+        //                string path = GetFolderName() + "/" + name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
 
-                                j.Lot.Numero.ToString().Contains(search)
-                            || j.Lot.Adresse.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.IDClient.ToString().Contains(search)
-                            || j.Lot.Compte.ToString().Contains(search)
-                            || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
-                            || j.Lot.DescIndustry.ToString().ToLower().Contains(search.ToLower())
-                            || j.Formulaire.MontantVerseDeclare.ToString().ToLower().Contains(search.ToLower())
+        //                GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
 
-                                ).ToList();
-                        }
+        //                SendMail(to, objet, email, path);
 
+        //                foreach (var j in JoinedList)
+        //                {
 
-                        JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
+        //                    j.Formulaire.NotifieBanque = true;
+        //                    FormulaireService.Update(j.Formulaire);
 
-                        int recFilter = JoinedList.Count();
+        //                }
+        //                FormulaireService.Commit();
 
-                        JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
+        //            }
 
-                        var modifiedData = JoinedList.Select(j =>
-                           new
-                           {
+        //            JsonResult result = new JsonResult();
 
-                               j.Lot.NumLot,
-                               j.Lot.Compte,
-                               j.Lot.IDClient,
-                               j.Lot.NomClient,
-                               Etat = j.Formulaire.EtatClient.ToString(),
+        //            try
+        //            {
+        //                string search = Request.Form.GetValues("search[value]")[0];
+        //                string draw = Request.Form.GetValues("draw")[0];
+        //                string order = Request.Form.GetValues("order[0][column]")[0];
+        //                string orderDir = Request.Form.GetValues("order[0][dir]")[0];
+        //                int startRec = Convert.ToInt32(Request.Form.GetValues("start")[0]);
+        //                int pageSize = Convert.ToInt32(Request.Form.GetValues("length")[0]);
 
-                           }
-                           );
+        //                int totalRecords = JoinedList.Count();
 
-                        int x = totalRecords;
-                        ViewBag.x = x;
-                        var info = new { nbTotal = x, subject = subject, body = body, to = To };
+        //                if (!string.IsNullOrEmpty(search) &&
+        //                    !string.IsNullOrWhiteSpace(search))
+        //                {
+        //                    JoinedList = JoinedList.Where(j =>
 
-                        result = this.Json(new
-                        {
+        //                     j.Lot.IDClient.ToString().Contains(search)
+        //                    || j.Lot.Compte.ToString().Contains(search)
+        //                    || j.Lot.NomClient.ToString().ToLower().Contains(search.ToLower())
 
-                            draw = Convert.ToInt32(draw),
-                            recordsTotal = totalRecords,
-                            recordsFiltered = recFilter,
-                            data = modifiedData,
-                            info = info
+        //                        ).ToList();
+        //                }
 
-                        }, JsonRequestBehavior.AllowGet);
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex);
-                    }
+        //                JoinedList = SortTableDataForValidate(order, orderDir, JoinedList);
 
-                    return result;
+        //                int recFilter = JoinedList.Count();
 
-                }
-            }
+        //                JoinedList = JoinedList.Skip(startRec).Take(pageSize).ToList();
+
+        //                var modifiedData = JoinedList.Select(j =>
+        //                   new
+        //                   {
+
+        //                       j.Lot.NumLot,
+        //                       j.Lot.Compte,
+        //                       j.Lot.IDClient,
+        //                       j.Lot.NomClient,
+        //                       Etat = j.Formulaire.EtatClient.ToString(),
+
+        //                   }
+        //                   );
+
+        //                int x = totalRecords;
+        //                ViewBag.x = x;
+        //                var info = new { nbTotal = x, subject = subject, body = body, to = To };
+
+        //                result = this.Json(new
+        //                {
+
+        //                    draw = Convert.ToInt32(draw),
+        //                    recordsTotal = totalRecords,
+        //                    recordsFiltered = recFilter,
+        //                    data = modifiedData,
+        //                    info = info
+
+        //                }, JsonRequestBehavior.AllowGet);
+
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.Write(ex);
+        //            }
+
+        //            return result;
+
+        //        }
+        //    }
         
-        }
+        //}
 
 
-        public static void GenerateExcel(DataTable dataTable, string path)
-        {
+        //public static void GenerateExcel(DataTable dataTable, string path)
+        //{
             
             
-            dataTable.TableName = "Table1";
+        //    dataTable.TableName = "Table1";
 
-            DataSet dataSet = new DataSet();
-            dataSet.Tables.Add(dataTable);
-            // create a excel app along side with workbook and worksheet and give a name to it
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
+        //    DataSet dataSet = new DataSet();
+        //    dataSet.Tables.Add(dataTable);
+        //    // create a excel app along side with workbook and worksheet and give a name to it
+        //    Excel.Application excelApp = new Excel.Application();
+        //    Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
 
-            Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
-            foreach (DataTable table in dataSet.Tables)
-            {
-                //Add a new worksheet to workbook with the Datatable name
-                // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
-                Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+        //    Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
+        //    Excel.Range xlRange = xlWorksheet.UsedRange;
+        //    foreach (DataTable table in dataSet.Tables)
+        //    {
+        //        //Add a new worksheet to workbook with the Datatable name
+        //        // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+        //        Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
 
-                excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
+        //        excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
 
-                excelWorkSheet.Name = table.TableName;
+        //        excelWorkSheet.Name = table.TableName;
                 
-                // add all the columns
-                for (int i = 1; i < table.Columns.Count + 1; i++)
-                {
-                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
-                    excelWorkSheet.Cells[1, i].Font.Bold = true;
-                    excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                    excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                    excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
-                    excelWorkSheet.Cells[1, i].Borders.Weight = 2;
-                    excelWorkSheet.Cells[1, i].Font.Size = 14;
-                    excelWorkSheet.Cells[1, i].ColumnWidth = 22;
+        //        // add all the columns
+        //        for (int i = 1; i < table.Columns.Count + 1; i++)
+        //        {
+        //            excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+        //            excelWorkSheet.Cells[1, i].Font.Bold = true;
+        //            excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+        //            excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+        //            excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+        //            excelWorkSheet.Cells[1, i].Borders.Weight = 2;
+        //            excelWorkSheet.Cells[1, i].Font.Size = 14;
+        //            excelWorkSheet.Cells[1, i].ColumnWidth = 22;
 
-                }
-                // add all the rows
-                for (int j = 0; j < table.Rows.Count; j++)
-                {
-                    for (int k = 0; k < table.Columns.Count; k++)
-                    {
+        //        }
+        //        // add all the rows
+        //        for (int j = 0; j < table.Rows.Count; j++)
+        //        {
+        //            for (int k = 0; k < table.Columns.Count; k++)
+        //            {
 
-                        excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
-                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
-                        excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
-                        excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
-                    }
-                }
-            }
-            // excelWorkBook.Save(); -> this will save to its default location
+        //                excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+        //                excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+        //                excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+        //                excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+        //                excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+        //                excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
+        //                excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
+        //                excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
+        //            }
+        //        }
+        //    }
+        //    // excelWorkBook.Save(); -> this will save to its default location
 
-            excelWorkBook.SaveAs(path); // -> this will do the custom
+        //    excelWorkBook.SaveAs(path); // -> this will do the custom
 
-            excelWorkBook.Close();
-            excelApp.Quit();
-        }
+        //    excelWorkBook.Close();
+        //    excelApp.Quit();
+        //}
 
         public void SendMail(string to, string subject, string body, string path)
         {
@@ -2291,7 +2259,7 @@ namespace WakilRecouvrement.Web.Controllers
             return folderName;
         }
 
-        public string getImagePath(Formulaire formulaire)
+        /*public string getImagePath(Formulaire formulaire)
         {
             string path = Server.MapPath("~/Uploads/Recu/") + formulaire.FormulaireId;
             List<string> urlImages =new List<string>(); 
@@ -2309,7 +2277,7 @@ namespace WakilRecouvrement.Web.Controllers
                 }
                 return String.Join(",", urlImages.ToArray());
             }
-        }
+        }*/
 
         public string getImagePathNB(Formulaire formulaire)
         {
@@ -2324,7 +2292,7 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-
+        /*
         [HttpPost]
         public ActionResult UploadVerifier(HttpPostedFileBase PostedFile)
         {
@@ -2449,7 +2417,7 @@ namespace WakilRecouvrement.Web.Controllers
                     return RedirectToAction("ValiderTraitement");
                 }
             }
-        }
+        }*/
 
 
         public void VerifyClient(string idclient, string montant, FormulaireService FormulaireService, AffectationService AffectationService, LotService LotService)
@@ -2533,9 +2501,9 @@ namespace WakilRecouvrement.Web.Controllers
 
         public void DeleteFromulaire(Formulaire formulaire,FormulaireService FormulaireService)
         {
-                    formulaire.Status = Status.NON_VERIFIE;
-                    FormulaireService.Update(formulaire);
-                FormulaireService.Commit();
+               formulaire.Status = Status.NON_VERIFIE;
+               FormulaireService.Update(formulaire);
+               FormulaireService.Commit();
         }
 
         public ActionResult SuiviRDV(string numLot, string RDVType,string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)
@@ -2817,46 +2785,46 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult UpdateTelFN(int lotId,int affectationId,string portable,string fixe)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //[HttpPost]
+        //public ActionResult UpdateTelFN(int lotId,int affectationId,string portable,string fixe)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    LotService LotService = new LotService(UOW);
+        //            LotService LotService = new LotService(UOW);
 
-                    bool TelFixe = false;
-                    bool TelPortable = false;
-                    Lot lot = LotService.GetById(lotId);
-
-
-                    if (Request.Form["TelPortable"] == "on")
-                    {
-                        TelPortable = true;
-                    }
-                    if (Request.Form["TelFixe"] == "on")
-                    {
-                        TelFixe = true;
-                    }
-
-                    lot.TelFixe = fixe;
-                    lot.TelPortable = portable;
-
-                    lot.TelFixeFN = TelFixe;
-                    lot.TelPortableFN = TelPortable;
+        //            bool TelFixe = false;
+        //            bool TelPortable = false;
+        //            Lot lot = LotService.GetById(lotId);
 
 
-                    LotService.Update(lot);
-                    LotService.Commit();
+        //            if (Request.Form["TelPortable"] == "on")
+        //            {
+        //                TelPortable = true;
+        //            }
+        //            if (Request.Form["TelFixe"] == "on")
+        //            {
+        //                TelFixe = true;
+        //            }
+
+        //            lot.TelFixe = fixe;
+        //            lot.TelPortable = portable;
+
+        //            lot.TelFixeFN = TelFixe;
+        //            lot.TelPortableFN = TelPortable;
 
 
-                    return RedirectToAction("CreerFormulaire", "Formulaire", new { id = affectationId, msgError = "" });
+        //            LotService.Update(lot);
+        //            LotService.Commit();
 
-                }
-            }
-        }
+
+        //            return RedirectToAction("CreerFormulaire", "Formulaire", new { id = affectationId, msgError = "" });
+
+        //        }
+        //    }
+        //}
 
         public bool verifMesRappels(int affId,DateTime formTraiteLe, FormulaireService FormulaireService)
         {
@@ -2916,18 +2884,15 @@ namespace WakilRecouvrement.Web.Controllers
                     {
 
                         JoinedList = (from f in FormulaireService.GetMany(f => f.EtatClient == Note.RAPPEL)
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where a.Employe.Username.Equals(Session["username"])
-
+                                      join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+                                      where f.AgentUsername.Equals(Session["username"])
 
                                       select new ClientAffecteViewModel
                                       {
                                           Lot = l,
-                                          Affectation = a,
-                                          Formulaire = f
-
-                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                          Formulaire = f,
+                                            AffectationId = f.AffectationId                                         
+                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
                     }
                     else
@@ -3066,297 +3031,297 @@ namespace WakilRecouvrement.Web.Controllers
         }
          
 
-        public ActionResult TraitementRejetes(string SearchString, string currentFilter, string sortOrder, int? page)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //public ActionResult TraitementRejetes(string SearchString, string currentFilter, string sortOrder, int? page)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
 
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
-                    ViewBag.CurrentSort = sortOrder;
+        //            ViewBag.CurrentSort = sortOrder;
 
-                    if (SearchString != null)
-                    {
-                        page = 1;
-                    }
-                    else
-                    {
-                        SearchString = currentFilter;
-                    }
+        //            if (SearchString != null)
+        //            {
+        //                page = 1;
+        //            }
+        //            else
+        //            {
+        //                SearchString = currentFilter;
+        //            }
 
-                    ViewBag.CurrentFilter = SearchString;
+        //            ViewBag.CurrentFilter = SearchString;
 
-                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+        //            List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                    JoinedList = (from f in FormulaireService.GetAll()
-                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                  join l in LotService.GetAll() on a.LotId equals l.LotId
-                                  where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
+        //            JoinedList = (from f in FormulaireService.GetAll()
+        //                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                          join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                          where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
 
-                                  select new ClientAffecteViewModel
-                                  {
-                                      Lot = l,
-                                      Affectation = a,
-                                      Formulaire = f
+        //                          select new ClientAffecteViewModel
+        //                          {
+        //                              Lot = l,
+        //                              Affectation = a,
+        //                              Formulaire = f
 
-                                  }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+        //                          }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
-                    if (!String.IsNullOrEmpty(SearchString))
-                    {
-                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //            if (!String.IsNullOrEmpty(SearchString))
+        //            {
+        //                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
 
-                                               ).ToList();
-                    }
-
-
-                    ViewBag.total = JoinedList.Count();
-
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
-
-                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
-                }
-            }
-        }
+        //                                       ).ToList();
+        //            }
 
 
-        public ActionResult SuiviTraiement(string numLot,string currentNumLot, string SearchString, string currentFilter, string traite,string currentTraite, string agent,string currentAgent, string traitDate,string currentTraitDate,string type,string currentType, int? page)
-        {
-            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
-            {
-                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
-                {
+        //            ViewBag.total = JoinedList.Count();
 
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
+        //            int pageSize = 10;
+        //            int pageNumber = (page ?? 1);
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+        //            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+        //        }
+        //    }
+        //}
 
 
-                    List<ClientAffecteViewModel> JoinedList;
+        //public ActionResult SuiviTraiement(string numLot,string currentNumLot, string SearchString, string currentFilter, string traite,string currentTraite, string agent,string currentAgent, string traitDate,string currentTraitDate,string type,string currentType, int? page)
+        //{
+        //    using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+        //    {
+        //        using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+        //        {
 
-                    if (SearchString != null)
-                    {
-                        // page = 1;
-                    }
-                    else
-                    {
-                        SearchString = currentFilter;
-                    }
+        //            if (Session["username"] == null || Session["username"].ToString().Length < 1)
+        //                return RedirectToAction("Login", "Authentification");
 
-                    ViewBag.currentFilter = SearchString;
-
-
-                    if (numLot != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        numLot = currentNumLot;
-                    }
-
-                    ViewBag.currentNumLot = numLot;
-
-                    if (type != null)
-                    {
-                        //type = 1;
-                    }
-                    else
-                    {
-                        type = currentType;
-                    }
-
-                    ViewBag.currentType = type;
-
-                    if (traite != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        traite = currentTraite;
-                    }
-
-                    ViewBag.currentTraite = traite;
-
-                    if (agent != null)
-                    {
-                        ///page = 1;
-                    }
-                    else
-                    {
-                        agent = currentAgent;
-                    }
+        //            LotService LotService = new LotService(UOW);
+        //            FormulaireService FormulaireService = new FormulaireService(UOW);
+        //            AffectationService AffectationService = new AffectationService(UOW);
+        //            EmployeService EmpService = new EmployeService(UOW);
 
 
-                    ViewBag.currentAgent = agent;
+        //            List<ClientAffecteViewModel> JoinedList;
 
-                    if (traitDate != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        traitDate = currentTraitDate;
-                    }
+        //            if (SearchString != null)
+        //            {
+        //                // page = 1;
+        //            }
+        //            else
+        //            {
+        //                SearchString = currentFilter;
+        //            }
 
-                    ViewBag.currentTraitDate = traitDate;
+        //            ViewBag.currentFilter = SearchString;
 
-                    ViewBag.page = page;
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+        //            if (numLot != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                numLot = currentNumLot;
+        //            }
+
+        //            ViewBag.currentNumLot = numLot;
+
+        //            if (type != null)
+        //            {
+        //                //type = 1;
+        //            }
+        //            else
+        //            {
+        //                type = currentType;
+        //            }
+
+        //            ViewBag.currentType = type;
+
+        //            if (traite != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                traite = currentTraite;
+        //            }
+
+        //            ViewBag.currentTraite = traite;
+
+        //            if (agent != null)
+        //            {
+        //                ///page = 1;
+        //            }
+        //            else
+        //            {
+        //                agent = currentAgent;
+        //            }
+
+
+        //            ViewBag.currentAgent = agent;
+
+        //            if (traitDate != null)
+        //            {
+        //                //page = 1;
+        //            }
+        //            else
+        //            {
+        //                traitDate = currentTraitDate;
+        //            }
+
+        //            ViewBag.currentTraitDate = traitDate;
+
+        //            ViewBag.page = page;
+
+        //            ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
                     
-                    if(Session["role"].Equals("admin"))
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
-                    
-
-                    ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitForDropDown(), "Value", "Text");
-                    ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
-
-
-                    if (!String.IsNullOrEmpty(traite))
-                    {
-
-                        if (traite == "ALL")
-                        {
-
-                            JoinedList = (from f in FormulaireService.GetAll()
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username
-
-                                          }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
-
-                        }
-
-                        else
-                        {
-                            JoinedList = (from f in FormulaireService.GetAll()
-                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                          join l in LotService.GetAll() on a.LotId equals l.LotId
-                                          join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-
-                                          select new ClientAffecteViewModel
-                                          {
-
-                                              Formulaire = f,
-                                              Affectation = a,
-                                              Lot = l,
-                                              Agent = e.Username
-
-                                          }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
-                        }
-
-                    }
-                    else
-                    {
-
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-
-                                      select new ClientAffecteViewModel
-                                      {
-
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
-                                          Agent = e.Username
-
-                                      }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
-
-                    }
-
-
-
-                    if (type == "DATE_TRAIT")
-                    {
-
-                        if (!String.IsNullOrEmpty(traitDate))
-                        {
-                            DateTime d = DateTime.Parse(traitDate);
-                            JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
-                        }
-
-                    }
-
-                    if(Session["role"].Equals("admin"))
-                    {
-                        if (!String.IsNullOrEmpty(agent))
-                        {
-                            if (int.Parse(agent) != 0)
-                            {
-                                JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                                JoinedList = JoinedList.Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
-                    }
+        //            if(Session["role"].Equals("admin"))
+        //            ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
                     
 
-                    if (!String.IsNullOrEmpty(numLot))
-                    {
-                        if (numLot.Equals("0") == false)
-                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
-
-                    }
-
-                    if (!String.IsNullOrEmpty(SearchString))
-                    {
-                        JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-                                               || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
-
-                                               ).ToList();
-                    }
+        //            ViewBag.TraiteList = new SelectList(TraiteListSuiviTraitForDropDown(), "Value", "Text");
+        //            ViewBag.typeTrait = new SelectList(typeListForDropDown(), "Value", "Text");
 
 
-                    ViewBag.total = JoinedList.Count();
+        //            if (!String.IsNullOrEmpty(traite))
+        //            {
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
+        //                if (traite == "ALL")
+        //                {
 
-                    return View(JoinedList.ToPagedList(pageNumber, pageSize));
-                }
-            }
-        }
+        //                    JoinedList = (from f in FormulaireService.GetAll()
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+        //                                  select new ClientAffecteViewModel
+        //                                  {
+
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username
+
+        //                                  }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+        //                }
+
+        //                else
+        //                {
+        //                    JoinedList = (from f in FormulaireService.GetAll()
+        //                                  join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                                  join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                                  join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+
+        //                                  select new ClientAffecteViewModel
+        //                                  {
+
+        //                                      Formulaire = f,
+        //                                      Affectation = a,
+        //                                      Lot = l,
+        //                                      Agent = e.Username
+
+        //                                  }).Where(f => f.Formulaire.EtatClient + "" == traite).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+        //                }
+
+        //            }
+        //            else
+        //            {
+
+        //                JoinedList = (from f in FormulaireService.GetAll()
+        //                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+        //                              join l in LotService.GetAll() on a.LotId equals l.LotId
+        //                              join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
+
+        //                              select new ClientAffecteViewModel
+        //                              {
+
+        //                                  Formulaire = f,
+        //                                  Affectation = a,
+        //                                  Lot = l,
+        //                                  Agent = e.Username
+
+        //                              }).OrderByDescending(f => f.Formulaire.TraiteLe).ToList();
+
+        //            }
+
+
+
+        //            if (type == "DATE_TRAIT")
+        //            {
+
+        //                if (!String.IsNullOrEmpty(traitDate))
+        //                {
+        //                    DateTime d = DateTime.Parse(traitDate);
+        //                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == d.Date).ToList();
+        //                }
+
+        //            }
+
+        //            if(Session["role"].Equals("admin"))
+        //            {
+        //                if (!String.IsNullOrEmpty(agent))
+        //                {
+        //                    if (int.Parse(agent) != 0)
+        //                    {
+        //                        JoinedList = JoinedList.Where(j => j.Affectation.EmployeId == int.Parse(agent)).ToList();
+        //                    }
+
+        //                }
+        //            }
+        //            else
+        //            {
+        //                        JoinedList = JoinedList.Where(j => j.Affectation.Employe.Username.Equals(Session["username"])).ToList();
+        //            }
+                    
+
+        //            if (!String.IsNullOrEmpty(numLot))
+        //            {
+        //                if (numLot.Equals("0") == false)
+        //                    JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+
+        //            }
+
+        //            if (!String.IsNullOrEmpty(SearchString))
+        //            {
+        //                JoinedList = JoinedList.Where(s => s.Lot.Adresse.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Compte.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.DescIndustry.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.IDClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.NomClient.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.Numero.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.SoldeDebiteur.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelFixe.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+        //                                       || s.Lot.TelPortable.IfNullOrWhiteSpace("").ToLower().Contains(SearchString.ToLower())
+
+        //                                       ).ToList();
+        //            }
+
+
+        //            ViewBag.total = JoinedList.Count();
+
+        //            int pageSize = 10;
+        //            int pageNumber = (page ?? 1);
+
+        //            return View(JoinedList.ToPagedList(pageNumber, pageSize));
+        //        }
+        //    }
+        //}
 
 
 

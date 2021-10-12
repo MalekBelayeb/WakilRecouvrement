@@ -13,7 +13,7 @@ namespace WakilRecouvrement.Domain.Entities
         VERIFIE,
         [Display(Name = "En attente...")]
         EN_COURS,
-        [Display(Name = "Non verfié")]
+        [Display(Name = "Rejeté")]
         NON_VERIFIE
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,12 @@ namespace WakilRecouvrement.Domain.Entities
         public string AncienAgent { get; set; }
 
         public int LotId { get; set; }
+        [ForeignKey("LotId")]
         public virtual Lot Lot { get; set; }
 
         public int EmployeId { get; set; }
+
+        [ForeignKey("EmployeId")]
         public virtual Employe Employe {get;set;}
 
         public virtual ICollection<Formulaire> Formulaires { get; set; }    

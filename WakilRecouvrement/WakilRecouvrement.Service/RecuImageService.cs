@@ -9,13 +9,11 @@ using WakilRecouvrement.Domain.Entities;
 
 namespace WakilRecouvrement.Service
 {
-    public class NotificationService : Service<Notification>, INotificationService
+    public class RecuImageService : Service<RecuImage>, IRecuImage
     {
-
-        public NotificationService(UnitOfWork UOW) : base(UOW)
+        public RecuImageService(UnitOfWork UOW) : base(UOW)
         {
-            //UOW = new UnitOfWork(wakilRecouvContext);
-        }
 
+        }
     }
 }

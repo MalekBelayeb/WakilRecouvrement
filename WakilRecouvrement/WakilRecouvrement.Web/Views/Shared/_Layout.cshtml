@@ -40,36 +40,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <span class="badge" id="ntCnt"></span>
             </div>
 
-            <div id="divNotificaion">
+            <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+
+        @using (Html.BeginForm("SuiviClient", "TousClientsAffecte", FormMethod.Post, new { onsubmit = "showLayoutSearchLoading()" }))
+        {
+        <div class="row">
+
+                <div class="col">
+
+
+                    @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control", @placeholder = "Compte, IDClient, Nom..." })
+
+
+                </div>
+                <div class=" col-3">
+
+                    <input id="LayoutSearchsubmitBtn" type="submit" class="btn btn-primary" value="Chercher" />
+
+                    <button style="display:none" id="LayoutSearchsubmitLoading" class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                    </button>
+
+                </div>
+
 
             </div>
-
-            <!-- Navbar -->
-            <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-
-                <ul class="navbar-nav ml-auto">
-                    <!-- Messages Dropdown Menu -->
-                    <li class="nav-item dropdown">
-
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <span id="nbNotif" class="badge badge-warning navbar-badge">0</span>
-                        </a>
-
-                        <div id="notifTable" class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            }
 
 
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-                        </div>
 
-                    </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+</nav>
 
 
         }
@@ -122,6 +125,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                         <ul class="nested">
 
+
                                             <li class="nav-item">
                                                 <a href="@Url.Action("ImportLot", "Lot")" class="nav-link">
                                                     <p>Importer</p>
@@ -167,7 +171,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                             <li class="nav-item">
 
-                                                <a href="@Url.Action("ValiderTraitement","Formulaire")" class="nav-link">
+                                                <a href="@Url.Action("Valider","ValiderTraitement")" class="nav-link">
 
                                                     <p>Valider </p>
 
@@ -176,7 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             </li>
 
                                             <li class="nav-item">
-                                                <a href="@Url.Action("SuiviTraiement", "Formulaire")" class="nav-link">
+                                                <a href="@Url.Action("SuiviTraitement", "SuiviMesTraitement")" class="nav-link">
                                                     <p>Suivi</p>
                                                 </a>
                                             </li>
@@ -184,7 +188,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                             <li class="nav-item">
 
-                                                <a href="@Url.Action("HistoriqueTraitements","Formulaire")" class="nav-link">
+                                                <a href="@Url.Action("HistoriqueTraitements","HistoriqueDesTraitements")" class="nav-link">
 
                                                     <p>Historique</p>
 
@@ -213,17 +217,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                         <ul class="nested">
 
-
                                             <li class="nav-item">
 
-                                                <a href="@Url.Action("EnvoyerBanque","Formulaire")" class="nav-link">
+                                                <a href="@Url.Action("GenererResultat","ContactBanque")" class="nav-link">
 
-                                                    <p>Mail</p>
+                                                    <p>Contact</p>
 
                                                 </a>
 
                                             </li>
-
 
                                         </ul>
                                     </li>
@@ -241,7 +243,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("AffectationList", "Affectation", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
+                                    <a href="@Url.Action("MesAffectation", "MesAffectationList", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
 
                                         <p>Traiter les affectations</p>
 
@@ -252,7 +254,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("SuiviTraiement", "Formulaire", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
+                                    <a href="@Url.Action("SuiviTraitement", "SuiviMesTraitement", new { traite = "SAUF",numLot="0",sortOrder="0" })" class="nav-link">
 
                                         <p>Mes traitements</p>
 
@@ -262,19 +264,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("SuiviRDV","Formulaire",new {RDVType="RDV_J", numLot="0",sortOrder="0" })" class="nav-link">
+                                    <a href="@Url.Action("SuiviRDV","MesRDV",new {RDVType="RDV_J", numLot="0",sortOrder="0" })" class="nav-link">
 
-                                        <p>Mes RDV ( <span id="nbSuivi">0</span> ) </p>
-
-                                    </a>
-
-                                </li>
-
-                                <li class="nav-item">
-
-                                    <a href="@Url.Action("MesRappels","Formulaire",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
-
-                                        <p>Mes Rappels ( <span id="rappelNB">0</span> ) </p>
+                                        <p>Mes RDV (<span id="nbSuivi">0</span>) </p>
 
                                     </a>
 
@@ -282,9 +274,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("TraitementRejetes","Formulaire",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
+                                    <a href="@Url.Action("MesRappels","MesRappelsList",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
 
-                                        <p>Traitements rejetés ( <span id="rejetesNB">0</span> ) </p>
+                                        <p>Mes Rappels (<span id="rappelNB">0</span>) </p>
+
+                                    </a>
+
+                                </li>
+
+                                <li class="nav-item">
+
+                                    <a href="@Url.Action("TraitementRejetesList","MesTraitementsRejetes",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
+
+                                        <p>Traitements rejetés (<span id="rejetesNB">0</span>) </p>
 
                                     </a>
 
@@ -294,7 +296,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                             <li class="nav-item">
 
-                                <a href="@Url.Action("SuiviClient","Formulaire",new {traite="SAUF" })" class="nav-link">
+                                <a href="@Url.Action("SuiviClient","TousClientsAffecte",new {traite="SAUF" })" class="nav-link">
 
                                     <p>Suivi des affectations</p>
 
@@ -307,7 +309,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("Index","Statistique")" class="nav-link">
+                                    <a href="@Url.Action("Index","Statistique")" class="nav-link" style=" pointer-events: none; cursor: default;">
                                         <p>Stats et Rentabilité</p>
                                     </a>
 
@@ -323,7 +325,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 <li class="nav-item">
 
-                                    <a href="@Url.Action("Renseigner","Facture")" class="nav-link">
+                                    <a href="@Url.Action("Renseigner","Facture")" class="nav-link" style=" pointer-events: none; cursor: default;">
                                         <p>Renseigner</p>
                                     </a>
 
@@ -444,6 +446,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <script type="text/javascript">
 
+        function showLayoutSearchLoading() {
+
+            document.getElementById("LayoutSearchsubmitLoading").style.display = "block";
+            document.getElementById("LayoutSearchsubmitBtn").style.display = "none";
+
+        }
 
 
     $(document).ready(function () {
