@@ -33,11 +33,11 @@ namespace WakilRecouvrement.Web.Controllers
 
         public ActionResult ChoisirLot()
         {
-
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
+
 
                     LotService LotService = new LotService(UOW);
 

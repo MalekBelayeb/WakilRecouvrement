@@ -15,6 +15,17 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class MesTraitementsRejetesController : Controller
     {
+
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult TraitementRejetesList(string SearchString, string currentFilter, string sortOrder, int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())

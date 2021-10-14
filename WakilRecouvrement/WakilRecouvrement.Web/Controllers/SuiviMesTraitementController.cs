@@ -15,6 +15,17 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class SuiviMesTraitementController : Controller
     {
+
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult SuiviTraitement(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string traitDate, string currentTraitDate, string type, string currentType, int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())

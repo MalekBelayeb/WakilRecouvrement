@@ -46,6 +46,90 @@ namespace WakilRecouvrement.Web.Controllers
 
         }
 
+        public void correctFormulaire(string id, string valid, string montantInput)
+        {
+
+
+            using (WakilRecouvContext WakilContext = new WakilRecouvContext())
+            {
+                using (UnitOfWork UOW = new UnitOfWork(WakilContext))
+                {
+
+                    LotService LotService = new LotService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+
+                    var JoinedLot = from f in FormulaireService.GetAll()
+                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                    join l in LotService.GetAll() on a.LotId equals l.LotId
+                                    where f.FormulaireId == int.Parse(id)
+                                    select new ClientAffecteViewModel { Lot = l, Formulaire = f };
+
+                    Lot Lot = JoinedLot.Select(j => j.Lot).FirstOrDefault();
+
+                    Formulaire Formulaire = JoinedLot.Select(j => j.Formulaire).FirstOrDefault();
+
+                    if (Formulaire != null)
+                    {
+
+                        double DebMaJ = (from f in FormulaireService.GetAll()
+                                         join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                         where a.AffectationId == Formulaire.AffectationId
+                                         orderby f.MontantDebMAJ ascending
+                                         select f.MontantDebMAJ
+                                 ).FirstOrDefault();
+
+
+                       
+
+                        double.TryParse(Lot.SoldeDebiteur.Replace('.', ','), out double SoldeDebiteur);
+                        Debug.WriteLine(SoldeDebiteur);
+                        Decimal NewSolde = 0;
+
+                        if (montantInput.IsNullOrWhiteSpace() == false)
+                        {
+                            double.TryParse(montantInput.Replace('.', ','), out double montant);
+                            Formulaire.MontantVerseDeclare = montant;
+                        }
+                        else
+                        {
+                            Formulaire.MontantVerseDeclare = 0;
+                        }
+
+                        NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+
+                        if (NewSolde <= 0)
+                        {
+
+                            Formulaire.MontantDebMAJ = 0;
+
+                            //Formulaire.Status = Status.VERIFIE;
+                            //Formulaire.VerifieLe = DateTime.Now;
+                            Formulaire.EtatClient = Note.SOLDE;
+
+                        }
+                        else if (NewSolde > 0)
+                        {
+                            Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
+
+                            //Formulaire.Status = Status.VERIFIE;
+                            //Formulaire.VerifieLe = DateTime.Now;
+                            Formulaire.EtatClient = Note.SOLDE_TRANCHE;
+
+                        }
+
+
+                        FormulaireService.Update(Formulaire);
+                        FormulaireService.Commit();
+
+                    }
+
+
+                }
+            }
+
+        }
+
         public ActionResult Valider(string numLot, string currentNumLot, string SearchString, string currentFilter, string traite, string currentTraite, string agent, string currentAgent, string currentPage, int? page,string messageFromExcelVerifier)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -57,8 +141,7 @@ namespace WakilRecouvrement.Web.Controllers
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
-
-
+      
 
                     if (page == null)
                     {

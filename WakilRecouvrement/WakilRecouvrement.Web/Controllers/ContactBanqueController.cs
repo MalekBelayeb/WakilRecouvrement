@@ -20,6 +20,16 @@ namespace WakilRecouvrement.Web.Controllers
     public class ContactBanqueController : Controller
     {
 
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult GenererResultat(string traite, string currentTraite, string numLot, string currentNumLot, string type, string currentType, string debutDate, string currentDebutDate,string currentFinDate,string currentJourDate, string finDate, string jourdate, string export, string currentPage, int? page)
         {
 

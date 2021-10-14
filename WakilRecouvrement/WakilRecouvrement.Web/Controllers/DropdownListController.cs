@@ -13,6 +13,7 @@ namespace WakilRecouvrement.Web.Controllers
     public static class DropdownListController
     {
 
+
         public static IEnumerable<SelectListItem> TraiteListForDropDownForCreation()
         {
             List<SelectListItem> listItems = new List<SelectListItem>();

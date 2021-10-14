@@ -14,6 +14,16 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class MesRappelsListController : Controller
     {
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         // GET: MesRappelsList
         public ActionResult MesRappels(string numLot, string currentFilterNumLot, string CurrentSort, string RappelDate, string sortOrder, int? page)
         {
@@ -42,10 +52,10 @@ namespace WakilRecouvrement.Web.Controllers
                                       select new ClientAffecteViewModel
                                       {
                                           Lot = l,
-                                          Affectation = a,
+                                          AffectationId = a.AffectationId,
                                           Formulaire = f
 
-                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                      }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
 
                     }
                     else
@@ -63,10 +73,10 @@ namespace WakilRecouvrement.Web.Controllers
                                           select new ClientAffecteViewModel
                                           {
                                               Lot = l,
-                                              Affectation = a,
+                                              AffectationId = a.AffectationId,
                                               Formulaire = f
 
-                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
                         }
 
                     }

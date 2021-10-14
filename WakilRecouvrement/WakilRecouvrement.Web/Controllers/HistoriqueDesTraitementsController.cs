@@ -16,6 +16,17 @@ namespace WakilRecouvrement.Web.Controllers
     public class HistoriqueDesTraitementsController : Controller
     {
 
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
+
         public bool IsDeletable(int idForm, int lastIdFormulaire)
         {
 

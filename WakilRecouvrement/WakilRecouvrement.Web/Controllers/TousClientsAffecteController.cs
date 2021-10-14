@@ -18,78 +18,16 @@ namespace WakilRecouvrement.Web.Controllers
     {
 
 
-        public void updateLotFormulaire(LotService LotService, FormulaireService FormulaireService, AffectationService AffectationService, EmployeService EmpService)
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
         {
-            Debug.WriteLine("start updateLotFormulaire");
+            filterContext.ExceptionHandled = true;
 
-            List<ClientAffecteViewModel> JoinedList = (from f in FormulaireService.GetAll()
-                                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                                                       join e in EmpService.GetAll() on a.EmployeId equals e.EmployeId
-
-                                                       select new ClientAffecteViewModel
-                                                       {
-
-                                                           Affectation = a,
-                                                           Lot = l,
-
-                                                       }).DistinctBy(a => a.Affectation.AffectationId).ToList();
-
-            int x = 0;
-            int y = JoinedList.Count();
-            foreach (ClientAffecteViewModel cavm in JoinedList)
-            {
-                x++;
-                Debug.WriteLine("Progress " + x + "/" + y);
-
-                Formulaire Formulaire = FormulaireService.GetMany(f => f.AffectationId == cavm.Affectation.AffectationId).OrderByDescending(f => f.TraiteLe).FirstOrDefault();
-
-                if (Formulaire != null)
-                {
-                    Lot lot = cavm.Lot;
-                    lot.FormulaireId = Formulaire.FormulaireId;
-
-                    LotService.Update(lot);
-                }
-
-
-            }
-
-            LotService.Commit();
+            log.Error(filterContext.Exception);
         }
 
-        public void updateFormulaireAgent(LotService LotService, FormulaireService FormulaireService, AffectationService AffectationService, EmployeService EmpService)
-        {
-            Debug.WriteLine("start updateFormulaireAgent");
-
-            List<ClientAffecteViewModel> JoinedList = (from f in FormulaireService.GetAll()
-                                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                       where f.AgentUsername == "" || f.AgentUsername == null
-                                                       select new ClientAffecteViewModel
-                                                       {
-                                                           Formulaire =f,
-                                                           Affectation = a,
-
-                                                       }).DistinctBy(a => a.Affectation.AffectationId).ToList();
-
-            int x = 0;
-            int y = JoinedList.Count();
-            foreach (ClientAffecteViewModel cavm in JoinedList)
-            {
-                x++;
-                Debug.WriteLine("Progress " + x + "/" + y);
-                Debug.WriteLine("FormulaireId " + cavm.Formulaire.FormulaireId);
-
-                Formulaire formulaire = cavm.Formulaire;
-
-                formulaire.AgentUsername = cavm.Affectation.Employe.Username;
-                FormulaireService.Update(formulaire);
-                FormulaireService.Commit();
-
-
-            }
-
-        }
+       
 
         public ActionResult SuiviClient(string numLot, string SearchString, string traite, string agent, string currentFilterAgent, string currentFilter, string sortOrder, string CurrentSort, string currentFilterNumLot, string currentFilterTraite, int? page)
         {
@@ -115,7 +53,7 @@ namespace WakilRecouvrement.Web.Controllers
                     ViewBag.TraiteList = new SelectList(DropdownListController.TraiteListForDropDown(), "Value", "Text");
                     ViewData["sortOrder"] = new SelectList(DropdownListController.SortOrderSuiviTousClientForDropDown(), "Value", "Text");
 
-                    //updateFormulaireAgent(LotService,FormulaireService,AffectationService,EmpService);
+                    
 
                     if (sortOrder != null)
                     {

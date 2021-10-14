@@ -13,6 +13,17 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class HistoriqueClientController : Controller
     {
+
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult Historique(int id)
         {
 

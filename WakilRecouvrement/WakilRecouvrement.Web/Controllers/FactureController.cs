@@ -256,7 +256,7 @@ namespace WakilRecouvrement.Web.Controllers
                         lotsNames = lots + " et " + lastlots;
                     }
 
-                    /*
+                    
                     tot = soldeTot + trancheTot;
                     FactureContent factureContent = new FactureContent();
                     factureContent.FacNum = factureNum;
@@ -286,7 +286,8 @@ namespace WakilRecouvrement.Web.Controllers
                     factureService.Commit();
                     GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j => j.recouvre)));
                     GeneratePDF(pathFacture, lotsNames, factureContent);
-                    */
+                    
+
                     return RedirectToAction("genererFacture", new { page = 1 });
 
                 }

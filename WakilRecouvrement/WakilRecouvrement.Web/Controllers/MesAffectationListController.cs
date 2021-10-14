@@ -16,7 +16,17 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class MesAffectationListController : Controller
     {
-        
+
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult MesAffectation(string numLot, string SearchString, string traite, string currentFilter, string currentFilterNumLot, string currentFilterTraite, string CurrentSort, string currentSoldeFilter, string sortOrder, string soldeFilter, int? page)
         {
 

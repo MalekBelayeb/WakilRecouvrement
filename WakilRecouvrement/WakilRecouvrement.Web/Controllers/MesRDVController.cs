@@ -14,6 +14,16 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class MesRDVController : Controller
     {
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            filterContext.ExceptionHandled = true;
+
+            log.Error(filterContext.Exception);
+        }
+
         public ActionResult SuiviRDV(string numLot, string RDVType, string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
