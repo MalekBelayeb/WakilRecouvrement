@@ -220,7 +220,6 @@ namespace WakilRecouvrement.Web.Controllers
                     ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
 
                     List<HomeViewModel> result = new List<HomeViewModel>();
-                    Debug.WriteLine("agent "+agent);
 
                     if(string.IsNullOrEmpty(agent)==false)
                     {
@@ -279,7 +278,7 @@ namespace WakilRecouvrement.Web.Controllers
                             foreach (string numlot in lotsLst)
                             {
 
-                                lots = LotService.GetAll().Where(l => l.NumLot.Equals(numlot)).ToList();
+                                lots = LotService.GetMany(l => l.NumLot.Equals(numlot)).ToList();
 
                                 traiteList = (from f in Formulaires
                                               join a in Affectations on f.AffectationId equals a.AffectationId
@@ -292,7 +291,8 @@ namespace WakilRecouvrement.Web.Controllers
                                                   Lot = l,
 
                                               }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-
+                                
+                              
                                 var agentLinq = (from a in Affectations
                                                  join l in lots on a.LotId equals l.LotId
                                                  select new ClientAffecteViewModel

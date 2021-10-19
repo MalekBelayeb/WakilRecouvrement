@@ -138,7 +138,6 @@ E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\WakilRec
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\WakilRecouvrement.Domain.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\WakilRecouvrement.Service.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\WebGrease.dll
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\BouncyCastle.Crypto.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\Service.Pattern.pdb
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\Service.Pattern.dll.config
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\WakilRecouvrement.Data.pdb
@@ -231,7 +230,6 @@ E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\System.W
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\Newtonsoft.Json.xml
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\Antlr3.Runtime.pdb
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\BouncyCastle.Crypto.xml
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Microsoft.AspNet.SignalR.Core.resources.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\fr\Microsoft.AspNet.SignalR.SystemWeb.resources.dll
 E:\GitHub\WakilRecouvrement\WakilRecouvrement\WakilRecouvrement.Web\bin\de\Microsoft.Data.SqlClient.resources.dll

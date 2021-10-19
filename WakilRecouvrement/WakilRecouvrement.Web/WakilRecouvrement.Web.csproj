@@ -376,7 +376,6 @@
     <Compile Include="Controllers\ContactBanqueController.cs" />
     <Compile Include="Controllers\DropdownListController.cs" />
     <Compile Include="Controllers\FactureController.cs" />
-    <Compile Include="Controllers\FormulaireController.cs" />
     <Compile Include="Controllers\HistoriqueClientController.cs" />
     <Compile Include="Controllers\HistoriqueDesTraitementsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -385,6 +384,7 @@
     <Compile Include="Controllers\MesRappelsListController.cs" />
     <Compile Include="Controllers\MesRDVController.cs" />
     <Compile Include="Controllers\MesTraitementsRejetesController.cs" />
+    <Compile Include="Controllers\NBMenuAgentController.cs" />
     <Compile Include="Controllers\StatistiqueController.cs" />
     <Compile Include="Controllers\SuiviMesTraitementController.cs" />
     <Compile Include="Controllers\TousClientsAffecteController.cs" />
@@ -819,21 +819,11 @@
     <Content Include="Views\Lot\ConsulterClients.cshtml" />
     <Content Include="Views\Affectation\AffecterAgent.cshtml" />
     <Content Include="Views\Affectation\ChoisirLot.cshtml" />
-    <Content Include="Views\Formulaire\SuiviClient.cshtml" />
     <Content Include="Views\Affectation\AffectationList.cshtml" />
-    <Content Include="Views\Formulaire\CreerFormulaire.cshtml" />
     <Content Include="Views\Affectation\ModifierAffectation.cshtml" />
-    <Content Include="Views\Formulaire\ValiderTraitement.cshtml" />
-    <Content Include="Views\Formulaire\HistoriqueTraitements.cshtml" />
-    <Content Include="Views\Formulaire\EnvoyerBanque.cshtml" />
-    <Content Include="Views\Formulaire\SuiviRDV.cshtml" />
-    <Content Include="Views\Formulaire\HistoriqueClient.cshtml" />
     <Content Include="Views\Statistique\Index.cshtml" />
     <Content Include="Views\Lot\updateLot.cshtml" />
     <Content Include="Views\Lot\addLot.cshtml" />
-    <Content Include="Views\Formulaire\MesRappels.cshtml" />
-    <Content Include="Views\Formulaire\TraitementRejetes.cshtml" />
-    <Content Include="Views\Formulaire\SuiviTraiement.cshtml" />
     <Content Include="Views\Facture\genererFacture.cshtml" />
     <Content Include="Views\Facture\Renseigner.cshtml" />
     <Content Include="Views\Affectation\ChoisirAgent.cshtml" />
@@ -854,6 +844,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\DropdownList\" />
+    <Folder Include="Views\NBMenuAgent\" />
     <Folder Include="Views\TraitementRejetes\" />
     <Folder Include="Views\ValiderTraitementVerifieFromExcel\" />
   </ItemGroup>
