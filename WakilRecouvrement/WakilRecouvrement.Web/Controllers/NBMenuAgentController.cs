@@ -41,34 +41,44 @@ namespace WakilRecouvrement.Web.Controllers
                     int nb = 0;
                     int rappelNB = 0;
                     int rejetes = 0;
+
                     List<Formulaire> formulaires = FormulaireService.GetAll().ToList();
-
-                    nb = (from f in formulaires
-                          where f.AgentUsername.Equals(Session["username"]) && f.EtatClient == Note.RDV && f.DateRDV.Date == DateTime.Now.Date
-                          orderby f.TraiteLe descending
-                          select new ClientAffecteViewModel
-                          {
-                              Formulaire = f,
-                          }).Where(j => verifMesRDV(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
-
-
-
-                    rappelNB = (from f in formulaires
-                                where f.AgentUsername.Equals(Session["username"]) && f.EtatClient == Note.RAPPEL && f.RappelLe.Date == DateTime.Now.Date
-                                select new ClientAffecteViewModel
-                                {
-                                    Formulaire = f
-
-                                }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+                    
+                    if(formulaires == null)
+                    {
+                         nb = 0;
+                         rappelNB = 0;
+                         rejetes = 0;
+                    }
+                    else
+                    {
+                        nb = (from f in formulaires
+                              where f.AgentUsername == Session["username"] + "" && f.EtatClient == Note.RDV && f.DateRDV.Date == DateTime.Now.Date
+                              orderby f.TraiteLe descending
+                              select new ClientAffecteViewModel
+                              {
+                                  Formulaire = f,
+                              }).Where(j => verifMesRDV(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
 
 
-                    rejetes = (from f in formulaires
-                               where f.AgentUsername.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
-                               select new ClientAffecteViewModel
-                               {
-                                   Formulaire = f
+                        rappelNB = (from f in formulaires
+                                    where f.AgentUsername.Equals(Session["username"]) && f.EtatClient == Note.RAPPEL && f.RappelLe.Date == DateTime.Now.Date
+                                    select new ClientAffecteViewModel
+                                    {
+                                        Formulaire = f
 
-                               }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+                                    }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+
+
+                        rejetes = (from f in formulaires
+                                   where f.AgentUsername.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
+                                   select new ClientAffecteViewModel
+                                   {
+                                       Formulaire = f
+
+                                   }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+
+                    }
 
 
                     return Json(new { nb = nb, rappelNB = rappelNB, rejetes = rejetes });
