@@ -68,45 +68,55 @@
 
                     }
                 </td>
-                <td>
-                    @ViewBag.lot.NumLot
-                </td>
 
-                <td>
-                    @ViewBag.lot.Compte
-                </td>
-                <td>
-                    @ViewBag.lot.NomClient
-                </td>
-                <td>
-                    @ViewBag.lot.Emploi
-                </td>
+                @if (ViewBag.lot != null)
+                {
+                   
+                    <td>
+
+                        @ViewBag.lot.NumLot
+
+                    </td>
+
+                    <td>
+                        @ViewBag.lot.Compte
+                    </td>
+                    <td>
+                        @ViewBag.lot.NomClient
+                    </td>
+                    <td>
+                        @ViewBag.lot.Emploi
+                    </td>
 
 
-                <td>
-                    @ViewBag.lot.TelPortable
-                </td>
+                    <td>
+                        @ViewBag.lot.TelPortable
+                    </td>
 
-          
-                <td>
-                    @ViewBag.lot.TelFixe
-                </td>
 
-                <td>
-                    @ViewBag.lot.SoldeDebiteur
-                </td>
-                <td>
-                    @ViewBag.lot.DescIndustry
-                </td>
-                <td>
-                    @ViewBag.lot.Adresse
-                </td>
-                <td>
-                    @ViewBag.lot.Type
-                </td>
-                <td>
-                    @ViewBag.lot.Numero
-                </td>
+                    <td>
+                        @ViewBag.lot.TelFixe
+                    </td>
+
+                    <td>
+                        @ViewBag.lot.SoldeDebiteur
+                    </td>
+                    <td>
+                        @ViewBag.lot.DescIndustry
+                    </td>
+                    <td>
+                        @ViewBag.lot.Adresse
+                    </td>
+                    <td>
+                        @ViewBag.lot.Type
+                    </td>
+                    <td>
+                        @ViewBag.lot.Numero
+                    </td>
+
+                }
+
+
 
             </tr>
 
