@@ -1,4 +1,5 @@
 ﻿using MyFinance.Data.Infrastructure;
+using System;
 using System.Web.Mvc;
 using WakilRecouvrement.Data;
 using WakilRecouvrement.Domain.Entities;
@@ -10,23 +11,12 @@ namespace WakilRecouvrement.Web.Controllers
     public class AuthentificationController : Controller
     {
 
-        //EmpService;
-        //RoleService RoleService;
-
 
         public int id = 0;
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
-
-
-
+       
         public AuthentificationController()
         {
         }
@@ -44,12 +34,28 @@ namespace WakilRecouvrement.Web.Controllers
                 {
 
 
-                    RoleService RoleService = new RoleService(UOW);
+                    try
+                    {
 
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+                        RoleService RoleService = new RoleService(UOW);
 
-                    return View("InscriptionCompte");
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                        RoleService.Dispose();
+
+                        return View("InscriptionCompte");
+
+                    }
+                    catch(Exception e)
+                    {
+
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
+
 
                 } 
             }
@@ -81,48 +87,62 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using(UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    EmployeService EmpService = new EmployeService(UOW);
 
-                    Employe emp = EmpService.GetEmployeByUername(compte.Username);
-
-                    if (emp == null)
+                    try
                     {
 
-                        ModelState.AddModelError("Username", "Nom d'utilisateur inexistant");
+                        EmployeService EmpService = new EmployeService(UOW);
+
+                        Employe emp = EmpService.GetEmployeByUername(compte.Username);
+
+                        if (emp == null)
+                        {
+
+                            ModelState.AddModelError("Username", "Nom d'utilisateur inexistant");
+
+                        }
+                        else if (emp != null)
+                        {
+
+                            if (emp.Password == compte.Password)
+                            {
+
+                                if (emp.IsVerified == false)
+                                {
+
+                                    ModelState.AddModelError("Connect", "Votre compte n'est pas encore validé par un administrateur");
+
+                                }
+                                else if (emp.IsVerified == true)
+                                {
+
+                                    Session["username"] = emp.Username;
+                                    Session["role"] = emp.Role.role;
+                                    return RedirectToAction("Index", "Home");
+
+                                }
+
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("Password", "Mot de passe incorrect");
+                            }
+                        }
+
+                        EmpService.Dispose();
+
+                        return View();
+
 
                     }
-                    else if (emp != null)
+                    catch(Exception e)
                     {
-
-                        if (emp.Password == compte.Password)
-                        {
-
-                            if (emp.IsVerified == false)
-                            {
-
-                                ModelState.AddModelError("Connect", "Votre compte n'est pas encore validé par un administrateur");
-
-                            }
-                            else if (emp.IsVerified == true)
-                            {
-
-                                Session["username"] = emp.Username;
-                                Session["role"] = emp.Role.role;
-                                return RedirectToAction("Index", "Home");
-
-                            }
-
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("Password", "Mot de passe incorrect");
-                        }
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
                     }
 
-                    return View();
                 }
             }
-
 
 
         }
@@ -135,27 +155,44 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    RoleService RoleService = new RoleService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
 
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
-
-                    if (EmpService.GetEmployeByUername(emp.Username) != null)
-                    {
-                        ModelState.AddModelError("Username", "Nom d'utilisateur existe deja !");
-                    }
-                    else
+                    try
                     {
 
-                        EmpService.Add(emp);
-                        EmpService.Commit();
-                        return RedirectToAction("Login");
+
+                        RoleService RoleService = new RoleService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
+
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                        if (EmpService.GetEmployeByUername(emp.Username) != null)
+                        {
+                            ModelState.AddModelError("Username", "Nom d'utilisateur existe deja !");
+                        }
+                        else
+                        {
+
+                            EmpService.Add(emp);
+                            EmpService.Commit();
+                            return RedirectToAction("Login");
+
+                        }
+
+                        RoleService.Dispose();
+                        EmpService.Dispose();
+
+                        //Response.Write("<script>alert('" + emp.RoleId + "')</script>");
+                        return View();
 
                     }
+                    catch(Exception e)
+                    {
 
-                    //Response.Write("<script>alert('" + emp.RoleId + "')</script>");
-                    return View();
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+                    }
+
 
                 }
             }
@@ -180,25 +217,42 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    RoleService RoleService = new RoleService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    Employe e = EmpService.GetEmployeByUername(Session["username"].ToString());
-
-                    if (e.Password == CompteCVM.Password)
+                    try
                     {
-                        e.Password = CompteCVM.NewPassword;
-                        e.ConfirmPassword = CompteCVM.NewPassword;
 
-                        EmpService.Update(e);
-                        EmpService.Commit();
+
+                        RoleService RoleService = new RoleService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
+
+                        Employe e = EmpService.GetEmployeByUername(Session["username"].ToString());
+
+                        if (e.Password == CompteCVM.Password)
+                        {
+                            e.Password = CompteCVM.NewPassword;
+                            e.ConfirmPassword = CompteCVM.NewPassword;
+
+                            EmpService.Update(e);
+                            EmpService.Commit();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("Password", "Votre mot de passe actuel est incorrect");
+                        }
+
+                        RoleService.Dispose();
+                        EmpService.Dispose();
+
+                        return View();
+
                     }
-                    else
+                    catch(Exception e)
                     {
-                        ModelState.AddModelError("Password", "Votre mot de passe actuel est incorrect");
+
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
                     }
 
-                    return View();
 
                 }
             }

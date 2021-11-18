@@ -19,7 +19,6 @@ namespace WakilRecouvrement.Web.Controllers
     public class AffectationController : Controller
     {
 
-
         public int id = 0;
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
@@ -45,6 +44,8 @@ namespace WakilRecouvrement.Web.Controllers
                         return RedirectToAction("Login", "Authentification");
 
                     List<Lot> Lots = LotService.GetAll().ToList();
+                    
+                    LotService.Dispose();
 
                     return View(Lots.DistinctBy(l => l.NumLot));
 
@@ -231,7 +232,10 @@ namespace WakilRecouvrement.Web.Controllers
 
                     int pageSize = 10;
                     int pageNumber = (page ?? 1);
+                   
 
+                    AffectationService.Dispose();
+                    FormulaireService.Dispose();
                     return View(JoinedList.ToPagedList(pageNumber, pageSize));
                 }
             }

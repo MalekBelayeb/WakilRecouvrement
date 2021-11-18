@@ -39,13 +39,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
-
+    
         public FactureController ()
         {
             
@@ -74,19 +68,35 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FactureService factureService = new FactureService(UOW);
-                    List<Facture> factureList = factureService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                    try
+                    {
 
-                    ViewBag.total = factureList.Count();
+                        LotService LotService = new LotService(UOW);
+                        FactureService factureService = new FactureService(UOW);
+                        List<Facture> factureList = factureService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
+                        ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
+                        ViewBag.total = factureList.Count();
 
-                    ViewBag.page = pageNumber;
+                        int pageSize = 10;
+                        int pageNumber = (page ?? 1);
 
-                    return View(factureList.ToPagedList(pageNumber, pageSize));
+                        ViewBag.page = pageNumber;
+
+
+                        LotService.Dispose();
+                        factureService.Dispose();
+
+                        return View(factureList.ToPagedList(pageNumber, pageSize));
+
+
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
 
                 }
             }
@@ -99,13 +109,28 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FactureService factureService = new FactureService(UOW);
 
-                    Facture facture = factureService.GetById(idFacture);
-                    factureService.Delete(facture);
-                    factureService.Commit();
-                    return RedirectToAction("genererFacture", new { page = currentPage });
+                    try
+                    {
+
+                        FactureService factureService = new FactureService(UOW);
+
+                        Facture facture = factureService.GetById(idFacture);
+                        factureService.Delete(facture);
+                        factureService.Commit();
+
+                        factureService.Dispose();
+                        return RedirectToAction("genererFacture", new { page = currentPage });
+
+
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
                 }
             }
         }
@@ -141,154 +166,177 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    LotService LotService = new LotService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    FactureService factureService = new FactureService(UOW);
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
-                    DateTime startDate = DateTime.Parse(debutDate);
-                    DateTime endDate = DateTime.Parse(finDate);
-                    
-                    double trancheTot = 0;
-                    double soldeTot = 0;
-                    double tot = 0;
-
-                    float revenuParOp = float.Parse(pourcentage.Replace(".", ","));
-                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-                    List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
-                    List<ClientAffecteViewModel> AnnexeJoinedList = new List<ClientAffecteViewModel>();
-
-                    if (numLot == "0")
+                    try
                     {
 
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where f.Status == Domain.Entities.Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
-                                      select new ClientAffecteViewModel
-                                      {
 
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        LotService LotService = new LotService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        FactureService factureService = new FactureService(UOW);
 
-                                      }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
+                        ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
 
-                    }
-                    else
-                    {
+                        DateTime startDate = DateTime.Parse(debutDate);
+                        DateTime endDate = DateTime.Parse(finDate);
 
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot) && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
-                                      
-                                      select new ClientAffecteViewModel
-                                      {
+                        double trancheTot = 0;
+                        double soldeTot = 0;
+                        double tot = 0;
 
-                                          Formulaire = f,
-                                          Affectation = a,
-                                          Lot = l,
+                        float revenuParOp = float.Parse(pourcentage.Replace(".", ","));
+                        List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
+                        List<ClientAffecteViewModel> TempJoinedList = new List<ClientAffecteViewModel>();
+                        List<ClientAffecteViewModel> AnnexeJoinedList = new List<ClientAffecteViewModel>();
 
-                                      }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
-                        
-                    }
-
-                    Debug.WriteLine("tot1 " +JoinedList.Count());
-
-                    foreach (ClientAffecteViewModel cvm in JoinedList)
-                    {
-
-                        if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
+                        if (numLot == "0")
                         {
 
-                            trancheTot += (cvm.Formulaire.MontantVerseDeclare * revenuParOp) / 100;
-                            cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-                            cvm.recouvre = cvm.Formulaire.MontantVerseDeclare;
-                            AnnexeJoinedList.Add(cvm);
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          where f.Status == Domain.Entities.Status.VERIFIE && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Affectation = a,
+                                              Lot = l,
+
+                                          }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
+
+                        }
+                        else
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+                                          where f.Status == Domain.Entities.Status.VERIFIE && l.NumLot.Equals(numLot) && (f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Affectation = a,
+                                              Lot = l,
+
+                                          }).Where(j => j.Formulaire.VerifieLe.Date >= startDate.Date && j.Formulaire.VerifieLe.Date <= endDate.Date).ToList();
 
                         }
 
-                        if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                        Debug.WriteLine("tot1 " + JoinedList.Count());
+
+                        foreach (ClientAffecteViewModel cvm in JoinedList)
                         {
-                            
-                            TempJoinedList = getTraitHist(cvm.Affectation.AffectationId,FormulaireService,AffectationService,LotService);
-                            if (TempJoinedList.Count() == 0)
+
+                            if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE_TRANCHE)
                             {
 
-                                soldeTot += (cvm.Formulaire.MontantDebInitial * revenuParOp) / 100;
-                                cvm.recouvre = cvm.Formulaire.MontantDebInitial;
+                                trancheTot += (cvm.Formulaire.MontantVerseDeclare * revenuParOp) / 100;
                                 cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-
-                                AnnexeJoinedList.Add(cvm);
-                            }
-                            else
-                            {
-
-                                soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * revenuParOp) / 100;
-                                cvm.vers = cvm.Formulaire.MontantVerseDeclare;
-                                cvm.recouvre = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
+                                cvm.recouvre = cvm.Formulaire.MontantVerseDeclare;
                                 AnnexeJoinedList.Add(cvm);
 
                             }
 
+                            if (cvm.Formulaire.EtatClient == Domain.Entities.Note.SOLDE)
+                            {
+
+                                TempJoinedList = getTraitHist(cvm.Affectation.AffectationId, FormulaireService, AffectationService, LotService);
+                                if (TempJoinedList.Count() == 0)
+                                {
+
+                                    soldeTot += (cvm.Formulaire.MontantDebInitial * revenuParOp) / 100;
+                                    cvm.recouvre = cvm.Formulaire.MontantDebInitial;
+                                    cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+
+                                    AnnexeJoinedList.Add(cvm);
+                                }
+                                else
+                                {
+
+                                    soldeTot += (TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ * revenuParOp) / 100;
+                                    cvm.vers = cvm.Formulaire.MontantVerseDeclare;
+                                    cvm.recouvre = TempJoinedList.FirstOrDefault().Formulaire.MontantDebMAJ;
+                                    AnnexeJoinedList.Add(cvm);
+
+                                }
+
+
+                            }
 
                         }
 
+                        Debug.WriteLine("tot2 " + AnnexeJoinedList.Count());
+
+                        string lotsNames = "";
+                        List<string> listNameLot = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).ToList();
+
+                        if (listNameLot.Count() == 1)
+                        {
+                            lotsNames = listNameLot.FirstOrDefault();
+                        }
+                        else if (listNameLot.Count() > 1)
+                        {
+                            string lastlots = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).LastOrDefault();
+                            listNameLot.RemoveAt(listNameLot.Count - 1);
+                            string lots = String.Join(", ", listNameLot);
+                            lotsNames = lots + " et " + lastlots;
+                        }
+
+
+                        tot = soldeTot + trancheTot;
+                        FactureContent factureContent = new FactureContent();
+                        factureContent.FacNum = factureNum;
+                        factureContent.Date = DateTime.Today;
+                        factureContent.Beneficiere = "Zitouna Bank";
+                        factureContent.PrixHT = tot;
+                        factureContent.PrixTVA = (tot * 19) / 100;
+                        factureContent.TimbreFiscal = 0.600;
+
+                        factureContent.PrixTTC = tot + factureContent.PrixTVA;
+
+                        string annexeFileName = "Annexe_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+                        string factureFileName = "Facture_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".pdf";
+                        string pathAnnexe = GetFolderName() + "/" + annexeFileName;
+                        string pathFacture = GetFolderName() + "/" + factureFileName;
+                        Facture facture = new Facture()
+                        {
+
+                            AnnexePathName = annexeFileName,
+                            FacturePathName = factureFileName,
+                            DateDeb = startDate,
+                            DateFin = endDate,
+                            DateExtrait = DateTime.Now
+
+                        };
+                        factureService.Add(facture);
+                        factureService.Commit();
+                        GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j => j.recouvre)));
+                        GeneratePDF(pathFacture, lotsNames, factureContent);
+
+
+
+                        FormulaireService.Dispose();
+                        LotService.Dispose();
+                        AffectationService.Dispose();
+                        factureService.Dispose();
+
+                        return RedirectToAction("genererFacture", new { page = 1 });
+
+
+
+
                     }
-
-                    Debug.WriteLine("tot2 " + AnnexeJoinedList.Count());
-
-                    string lotsNames = "";
-                    List<string> listNameLot = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).ToList();
-
-                    if (listNameLot.Count() == 1)
+                    catch (Exception e)
                     {
-                        lotsNames = listNameLot.FirstOrDefault();
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
                     }
-                    else if (listNameLot.Count() > 1)
-                    {
-                        string lastlots = JoinedList.DistinctBy(j => j.Lot.NumLot).Select(l => l.Lot.NumLot).LastOrDefault();
-                        listNameLot.RemoveAt(listNameLot.Count - 1);
-                        string lots = String.Join(", ", listNameLot);
-                        lotsNames = lots + " et " + lastlots;
-                    }
-
-                    
-                    tot = soldeTot + trancheTot;
-                    FactureContent factureContent = new FactureContent();
-                    factureContent.FacNum = factureNum;
-                    factureContent.Date = DateTime.Today;
-                    factureContent.Beneficiere = "Zitouna Bank";
-                    factureContent.PrixHT = tot;
-                    factureContent.PrixTVA = (tot * 19) / 100;
-                    factureContent.TimbreFiscal = 0.600;
-
-                    factureContent.PrixTTC = tot + factureContent.PrixTVA;
-
-                    string annexeFileName = "Annexe_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
-                    string factureFileName = "Facture_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".pdf";
-                    string pathAnnexe = GetFolderName() + "/" + annexeFileName;
-                    string pathFacture = GetFolderName() + "/" + factureFileName;
-                    Facture facture = new Facture()
-                    {
-
-                        AnnexePathName = annexeFileName,
-                        FacturePathName = factureFileName,
-                        DateDeb = startDate,
-                        DateFin = endDate,
-                        DateExtrait = DateTime.Now
-
-                    };
-                    factureService.Add(facture);
-                    factureService.Commit();
-                    GenerateExcel(GenerateDatatableFromJoinedList(AnnexeJoinedList), pathAnnexe, String.Format("{0:0.000}", AnnexeJoinedList.Sum(j => j.recouvre)));
-                    GeneratePDF(pathFacture, lotsNames, factureContent);
-                    
-
-                    return RedirectToAction("genererFacture", new { page = 1 });
 
                 }
             }
@@ -754,19 +802,38 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LettreService lettreService = new LettreService(UOW);
-                    LotService LotService = new LotService(UOW);
-                    EmployeService EmployeService = new EmployeService(UOW);
-                    List<Lettre> lettreList = lettreService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
+
+                    try
+                    {
+
+                        LettreService lettreService = new LettreService(UOW);
+                        LotService LotService = new LotService(UOW);
+                        EmployeService EmployeService = new EmployeService(UOW);
+                        List<Lettre> lettreList = lettreService.GetAll().OrderByDescending(f => f.DateExtrait).ToList();
+                        ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                        ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
 
 
-                    ViewBag.total = lettreList.Count();
+                        ViewBag.total = lettreList.Count();
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
-                    return View(lettreList.ToPagedList(pageNumber, pageSize));
+                        int pageSize = 10;
+                        int pageNumber = (page ?? 1);
+
+                        lettreService.Dispose();
+                        LotService.Dispose();
+                        EmployeService.Dispose();
+                        return View(lettreList.ToPagedList(pageNumber, pageSize));
+
+
+                    }
+                    catch (Exception e)
+                    {
+                       
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
 
                 }
             }
@@ -903,72 +970,45 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    LotService LotService = new LotService(UOW);
-                    LettreService lettreService = new LettreService(UOW);
-                    EmployeService EmployeService = new EmployeService(UOW);
 
-                    ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
-
-                    string lettreDir = GetFolderNameForLettre();
-                    DateTime startDate = DateTime.Parse(debutDate);
-                    DateTime endDate = DateTime.Parse(finDate);
-
-                    if (!Directory.Exists(lettreDir))
-                    {
-                        Directory.CreateDirectory(lettreDir);
-                    }
-
-                    string lettreDirList = Directory.GetDirectories(lettreDir).Length + 1 + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + "";
-
-                    string dirLettre = "";
-
-                    if (!Directory.Exists(lettreDir + "/" + lettreDirList))
-                    {
-                        Directory.CreateDirectory(lettreDir + "/" + lettreDirList);
-                        dirLettre = lettreDir + "/" + lettreDirList;
-                    }
-
-                    List<LettreContent> lettreJoinedList = new List<LettreContent>();
-                    
-                    if (numLot == "0")
+                    try
                     {
 
-                         lettreJoinedList = (from f in FormulaireService.GetAll()
-                                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                                join l in LotService.GetAll() on a.LotId equals l.LotId
-                                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId)
-                                                                select new LettreContent
-                                                                {
-                                                                    NumLot = l.NumLot,
-                                                                    Adresse = l.Adresse,
-                                                                    NomClient = l.NomClient,
-                                                                    Agence = l.DescIndustry,
-                                                                    Compte = l.Compte
 
-                                                                }).ToList();
 
-                        if (int.Parse(agent) != 0)
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        LotService LotService = new LotService(UOW);
+                        LettreService lettreService = new LettreService(UOW);
+                        EmployeService EmployeService = new EmployeService(UOW);
+
+                        ViewData["list"] = new SelectList(NumLotListForDropDown(LotService), "Value", "Text");
+                        ViewBag.AgentList = new SelectList(AgentListForDropDown(EmployeService), "Value", "Text");
+
+                        string lettreDir = GetFolderNameForLettre();
+                        DateTime startDate = DateTime.Parse(debutDate);
+                        DateTime endDate = DateTime.Parse(finDate);
+
+                        if (!Directory.Exists(lettreDir))
                         {
-                            lettreJoinedList = (from f in FormulaireService.GetAll()
-                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                join l in LotService.GetAll() on a.LotId equals l.LotId
-                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && a.EmployeId == int.Parse(agent)
-                                                select new LettreContent
-                                                {
-                                                    NumLot = l.NumLot,
-                                                    Adresse = l.Adresse,
-                                                    NomClient = l.NomClient,
-                                                    Agence = l.DescIndustry,
-                                                    Compte = l.Compte
-
-                                                }).ToList();
-
+                            Directory.CreateDirectory(lettreDir);
                         }
-                        else
+
+                        string lettreDirList = Directory.GetDirectories(lettreDir).Length + 1 + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + "";
+
+                        string dirLettre = "";
+
+                        if (!Directory.Exists(lettreDir + "/" + lettreDirList))
                         {
+                            Directory.CreateDirectory(lettreDir + "/" + lettreDirList);
+                            dirLettre = lettreDir + "/" + lettreDirList;
+                        }
+
+                        List<LettreContent> lettreJoinedList = new List<LettreContent>();
+
+                        if (numLot == "0")
+                        {
+
                             lettreJoinedList = (from f in FormulaireService.GetAll()
                                                 join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                                 join l in LotService.GetAll() on a.LotId equals l.LotId
@@ -983,90 +1023,141 @@ namespace WakilRecouvrement.Web.Controllers
 
                                                 }).ToList();
 
-                        }
+                            if (int.Parse(agent) != 0)
+                            {
+                                lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                    join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                    where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && a.EmployeId == int.Parse(agent)
+                                                    select new LettreContent
+                                                    {
+                                                        NumLot = l.NumLot,
+                                                        Adresse = l.Adresse,
+                                                        NomClient = l.NomClient,
+                                                        Agence = l.DescIndustry,
+                                                        Compte = l.Compte
 
-                    }
-                    else
-                    {
+                                                    }).ToList();
 
-                        if (int.Parse(agent) != 0)
-                        {
+                            }
+                            else
+                            {
+                                lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                    join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                    where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId)
+                                                    select new LettreContent
+                                                    {
+                                                        NumLot = l.NumLot,
+                                                        Adresse = l.Adresse,
+                                                        NomClient = l.NomClient,
+                                                        Agence = l.DescIndustry,
+                                                        Compte = l.Compte
 
-                            lettreJoinedList = (from f in FormulaireService.GetAll()
-                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                join l in LotService.GetAll() on a.LotId equals l.LotId
-                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot)) && a.EmployeId == int.Parse(agent)
-                                                select new LettreContent
-                                                {
+                                                    }).ToList();
 
-                                                    NumLot = l.NumLot,
-                                                    Adresse = l.Adresse,
-                                                    NomClient = l.NomClient,
-                                                    Agence = l.DescIndustry,
-                                                    Compte = l.Compte,
-                                                    IdAgent = a.EmployeId + ""
-
-                                                }).ToList();
+                            }
 
                         }
                         else
                         {
 
-                            lettreJoinedList = (from f in FormulaireService.GetAll()
-                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                join l in LotService.GetAll() on a.LotId equals l.LotId
-                                                where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot))
-                                                select new LettreContent
-                                                {
+                            if (int.Parse(agent) != 0)
+                            {
 
-                                                    NumLot = l.NumLot,
-                                                    Adresse = l.Adresse,
-                                                    NomClient = l.NomClient,
-                                                    Agence = l.DescIndustry,
-                                                    Compte = l.Compte,
-                                                    IdAgent = a.EmployeId + ""
+                                lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                    join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                    where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot)) && a.EmployeId == int.Parse(agent)
+                                                    select new LettreContent
+                                                    {
 
-                                                }).ToList();
+                                                        NumLot = l.NumLot,
+                                                        Adresse = l.Adresse,
+                                                        NomClient = l.NomClient,
+                                                        Agence = l.DescIndustry,
+                                                        Compte = l.Compte,
+                                                        IdAgent = a.EmployeId + ""
+
+                                                    }).ToList();
+
+                            }
+                            else
+                            {
+
+                                lettreJoinedList = (from f in FormulaireService.GetAll()
+                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                    join l in LotService.GetAll() on a.LotId equals l.LotId
+                                                    where (f.TraiteLe.Date >= startDate.Date && f.TraiteLe.Date <= endDate.Date) && (f.EtatClient == Note.FAUX_NUM || f.EtatClient == Note.NRP || f.EtatClient == Note.INJOIGNABLE) && lettreIsTrue(FormulaireService, a.AffectationId) && (l.NumLot.Equals(numLot))
+                                                    select new LettreContent
+                                                    {
+
+                                                        NumLot = l.NumLot,
+                                                        Adresse = l.Adresse,
+                                                        NomClient = l.NomClient,
+                                                        Agence = l.DescIndustry,
+                                                        Compte = l.Compte,
+                                                        IdAgent = a.EmployeId + ""
+
+                                                    }).ToList();
+                            }
+
                         }
-                      
-                    }
 
-                  
 
-                    int x = 0;
-                    ViewBag.total = lettreJoinedList.Count();
-                    foreach (LettreContent lc in lettreJoinedList)
-                    {
 
-                        string path = dirLettre + "/" + x + "_" + "lettre" + "_" + lc.Compte + ".docx";
-
-                        if (Directory.Exists(dirLettre))
+                        int x = 0;
+                        ViewBag.total = lettreJoinedList.Count();
+                        foreach (LettreContent lc in lettreJoinedList)
                         {
-                            GenerateWordForLettre(path, lc);
+
+                            string path = dirLettre + "/" + x + "_" + "lettre" + "_" + lc.Compte + ".docx";
+
+                            if (Directory.Exists(dirLettre))
+                            {
+                                GenerateWordForLettre(path, lc);
+                            }
+                            ViewData["currClient"] = x;
+                            x++;
                         }
-                        ViewData["currClient"] = x;
-                        x++;
+
+                        string zipPath = zipFolderResult(dirLettre);
+
+                        string adressExcelPath = Server.MapPath("~/Uploads/Lettre/0_Result/") + DateTime.Now.ToString("dd.MM.yyyy") + "_" + Path.GetFileName(dirLettre) + ".xlsx";
+
+                        GenerateExcelForLettre(GenerateDatatableFromJoinedListForLettre(lettreJoinedList), adressExcelPath);
+                        Lettre lettre = new Lettre
+                        {
+                            DateDeb = startDate.Date,
+                            DateFin = endDate.Date,
+                            DateExtrait = DateTime.Now,
+                            LettrePathName = zipPath,
+                            LettreAdressPathName = Path.GetFileName(adressExcelPath)
+                        };
+
+                        lettreService.Add(lettre);
+                        lettreService.Commit();
+
+
+
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+                        LotService.Dispose();
+                        lettreService.Dispose();
+                        EmployeService.Dispose();
+
+                        return RedirectToAction("Renseigner", new { page = 1 });
+
+
                     }
-
-                    string zipPath = zipFolderResult(dirLettre);
-
-                    string adressExcelPath = Server.MapPath("~/Uploads/Lettre/0_Result/")+ DateTime.Now.ToString("dd.MM.yyyy") + "_" + Path.GetFileName(dirLettre)+ ".xlsx";
-
-                    GenerateExcelForLettre(GenerateDatatableFromJoinedListForLettre(lettreJoinedList), adressExcelPath);
-                    Lettre lettre = new Lettre
+                    catch (Exception e)
                     {
-                        DateDeb = startDate.Date,
-                        DateFin = endDate.Date,
-                        DateExtrait = DateTime.Now,
-                        LettrePathName = zipPath,
-                        LettreAdressPathName = Path.GetFileName(adressExcelPath)
-                    };
 
-                    lettreService.Add(lettre);
-                    lettreService.Commit();
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
 
-                    return RedirectToAction("Renseigner", new { page = 1 });
-                }
+                    }
+}
             }
         }
 

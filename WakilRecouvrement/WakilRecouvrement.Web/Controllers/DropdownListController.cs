@@ -43,6 +43,7 @@ namespace WakilRecouvrement.Web.Controllers
 
             return listItems;
         }
+
         public static IEnumerable<SelectListItem> RDVForDropDown()
         {
 

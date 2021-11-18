@@ -23,13 +23,7 @@ namespace WakilRecouvrement.Web.Controllers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
-
+        
         public ActionResult GenererResultat(string traite, string currentTraite, string numLot, string currentNumLot, string type, string currentType, string debutDate, string currentDebutDate,string currentFinDate,string currentJourDate, string finDate, string jourdate, string export, string currentPage, int? page)
         {
 
@@ -38,265 +32,290 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-
-                    ViewData["list"] = new SelectList(DropdownListController.NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(DropdownListController.EnvoyerTraiteListForDropDown(), "Value", "Text");
-                    ViewBag.typeTrait = new SelectList(DropdownListController.TraiteTypeForValiderListForDropDown(), "Value", "Text");
-
-                    List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
-
-                    if (page == null)
-                    {
-                        if (currentPage != null)
-                            page = int.Parse(currentPage);
-                    }
-
-                    ViewBag.page = page;
-
-
-
-                    if (numLot != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        numLot = currentNumLot;
-                    }
-
-                    ViewBag.currentNumLot = numLot;
-
-                    if (type != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        type = currentType;
-                    }
-
-                    ViewBag.currentType = type;
-
-                    if (traite != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        traite = currentTraite;
-                    }
-
-                    ViewBag.currentTraite = traite;
-
-                    if (jourdate != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        jourdate = currentJourDate;
-                    }
-
-                    ViewBag.jourdate = jourdate;
-
-                    if (debutDate != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        debutDate = currentDebutDate;
-                    }
-
-                    ViewBag.debutdate = debutDate;
-
-                    if (finDate != null)
-                    {
-                        //page = 1;
-                    }
-                    else
-                    {
-                        finDate = currentFinDate;
-                    }
-
-                    ViewBag.findate = finDate;
-
-                    string name = "";
-
-                    if (traite == "RDV")
+                    try
                     {
 
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
 
-                                      select new ClientAffecteViewModel
-                                      {
+                        ViewData["list"] = new SelectList(DropdownListController.NumLotListForDropDown(LotService), "Value", "Text");
+                        ViewBag.TraiteList = new SelectList(DropdownListController.EnvoyerTraiteListForDropDown(), "Value", "Text");
+                        ViewBag.typeTrait = new SelectList(DropdownListController.TraiteTypeForValiderListForDropDown(), "Value", "Text");
 
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a
+                        List<ClientAffecteViewModel> JoinedList = new List<ClientAffecteViewModel>();
 
-                                      }).Where(j => j.Formulaire.Status == Status.VERIFIE && j.Formulaire.EtatClient == Note.RDV).ToList();
-                        
-                        name = "RDV";
+                        if (page == null)
+                        {
+                            if (currentPage != null)
+                                page = int.Parse(currentPage);
+                        }
 
-                    }
-                    else if (traite == "SOLDE")
-                    {
+                        ViewBag.page = page;
 
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
 
-                                      select new ClientAffecteViewModel
-                                      {
 
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a
+                        if (numLot != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            numLot = currentNumLot;
+                        }
 
-                                      }).Where(j => j.Formulaire.Status == Status.VERIFIE && (j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE)).ToList();
+                        ViewBag.currentNumLot = numLot;
 
-                        name = "SOLDE";
+                        if (type != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            type = currentType;
+                        }
 
-                    }
-                    else if (traite == "A_VERIFIE")
-                    {
+                        ViewBag.currentType = type;
 
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                        if (traite != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            traite = currentTraite;
+                        }
 
-                                      select new ClientAffecteViewModel
-                                      {
+                        ViewBag.currentTraite = traite;
 
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a
+                        if (jourdate != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            jourdate = currentJourDate;
+                        }
 
-                                      }).Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE && j.Formulaire.Status == Status.EN_COURS).ToList();
+                        ViewBag.jourdate = jourdate;
 
-                        name = "A_VERIFIE";
+                        if (debutDate != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            debutDate = currentDebutDate;
+                        }
 
-                    }
-                    else if (traite == "Autre")
-                    {
-                        
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
+                        ViewBag.debutdate = debutDate;
 
-                                      select new ClientAffecteViewModel
-                                      {
+                        if (finDate != null)
+                        {
+                            //page = 1;
+                        }
+                        else
+                        {
+                            finDate = currentFinDate;
+                        }
 
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a
+                        ViewBag.findate = finDate;
 
-                                      }).Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient == Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
+                        string name = "";
 
-                        name = "AUTRE";
-
-                    }
-                    else
-                    {
-                        JoinedList = (from f in FormulaireService.GetAll()
-                                      join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                      join l in LotService.GetAll() on a.LotId equals l.LotId
-
-                                      select new ClientAffecteViewModel
-                                      {
-
-                                          Formulaire = f,
-                                          Lot = l,
-                                          Affectation = a
-
-                                      }).Where(j => j.Formulaire.Status == Status.VERIFIE && (j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE)).ToList();
-
-                    }
-
-                    if (numLot != "0")
-                    {
-                        JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
-                    }
-
-                    if (type == "P_INTERVAL")
-                    {
-
-                        if (String.IsNullOrEmpty(debutDate) == false && String.IsNullOrEmpty(finDate) == false)
+                        if (traite == "RDV")
                         {
 
-                            if (traite == "SOLDE")
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a
+
+                                          }).Where(j => j.Formulaire.Status == Status.VERIFIE && j.Formulaire.EtatClient == Note.RDV).ToList();
+
+                            name = "RDV";
+
+                        }
+                        else if (traite == "SOLDE")
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a
+
+                                          }).Where(j => j.Formulaire.Status == Status.VERIFIE && (j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE)).ToList();
+
+                            name = "SOLDE";
+
+                        }
+                        else if (traite == "A_VERIFIE")
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a
+
+                                          }).Where(j => j.Formulaire.EtatClient == Note.A_VERIFIE && j.Formulaire.Status == Status.EN_COURS).ToList();
+
+
+
+
+
+
+                            name = "A_VERIFIE";
+
+                        }
+                        else if (traite == "Autre")
+                        {
+
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a
+
+                                          }).Where(j => j.Formulaire.EtatClient == Note.FAUX_NUM || j.Formulaire.EtatClient == Note.NRP || j.Formulaire.EtatClient == Note.RACCROCHE || j.Formulaire.EtatClient == Note.INJOIGNABLE || j.Formulaire.EtatClient == Note.RAPPEL || j.Formulaire.EtatClient == Note.REFUS_PAIEMENT).ToList();
+
+                            name = "AUTRE";
+
+                        }
+                        else
+                        {
+                            JoinedList = (from f in FormulaireService.GetAll()
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
+
+                                          select new ClientAffecteViewModel
+                                          {
+
+                                              Formulaire = f,
+                                              Lot = l,
+                                              Affectation = a
+
+                                          }).Where(j => j.Formulaire.Status == Status.VERIFIE && (j.Formulaire.EtatClient == Note.SOLDE || j.Formulaire.EtatClient == Note.SOLDE_TRANCHE)).ToList();
+
+                        }
+
+                        if (numLot != "0")
+                        {
+                            JoinedList = JoinedList.Where(j => j.Lot.NumLot.Equals(numLot)).ToList();
+                        }
+
+                        if (type == "P_INTERVAL")
+                        {
+
+                            if (String.IsNullOrEmpty(debutDate) == false && String.IsNullOrEmpty(finDate) == false)
                             {
 
-                                JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.VerifieLe.Date <= DateTime.Parse(finDate).Date).ToList();
-                            }
-                            else
-                            {
-                                JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.TraiteLe.Date <= DateTime.Parse(finDate).Date).ToList();
+                                if (traite == "SOLDE")
+                                {
+
+                                    JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.VerifieLe.Date <= DateTime.Parse(finDate).Date).ToList();
+                                }
+                                else
+                                {
+                                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date >= DateTime.Parse(debutDate).Date && j.Formulaire.TraiteLe.Date <= DateTime.Parse(finDate).Date).ToList();
+
+                                }
 
                             }
 
                         }
-                       
-                    }
-                    else if (type == "P_DATE")
-                    {
-
-                        if ( String.IsNullOrEmpty(jourdate) == false)
+                        else if (type == "P_DATE")
                         {
-                            if (traite =="SOLDE")
-                            {
 
-                                JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date == DateTime.Parse(jourdate).Date).ToList();
-
-                            }
-                            else
+                            if (String.IsNullOrEmpty(jourdate) == false)
                             {
-                                JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == DateTime.Parse(jourdate).Date).ToList();
+                                if (traite == "SOLDE")
+                                {
+
+                                    JoinedList = JoinedList.Where(j => j.Formulaire.VerifieLe.Date == DateTime.Parse(jourdate).Date).ToList();
+
+                                }
+                                else
+                                {
+                                    JoinedList = JoinedList.Where(j => j.Formulaire.TraiteLe.Date == DateTime.Parse(jourdate).Date).ToList();
+                                }
+
                             }
 
                         }
 
-                    }
-
-                    if(string.IsNullOrEmpty(export)==false)
-                    {
-                        if (export == "2")
+                        if (string.IsNullOrEmpty(export) == false)
                         {
-                            string filename = name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
-                            string path = GetFolderName() + "/" + filename;
+                            if (export == "2")
+                            {
+                                string filename = name + "_MAJ_" + DateTime.Now.ToString("dd.MM.yyyy") + "_" + ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds() + ".xlsx";
+                                string path = GetFolderName() + "/" + filename;
 
-                            GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
-                            
-                            return downloadFile(path, filename);
+                                GenerateExcel(GenerateDatatableFromJoinedList(JoinedList, traite), path);
+
+                                return downloadFile(path, filename);
+                            }
                         }
+
+
+                        var modifiedData = JoinedList.Select(j =>
+                             new ContactBanqueViewModel
+                             {
+
+                                 NumLot = j.Lot.NumLot,
+                                 Compte = j.Lot.Compte,
+                                 IDClient = j.Lot.IDClient,
+                                 NomClient = j.Lot.NomClient,
+                                 Etat = j.Formulaire.EtatClient.ToString(),
+
+                             });
+
+                        ViewBag.total = JoinedList.Count();
+
+                        int pageSize = 10;
+                        int pageNumber = (page ?? 1);
+
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+                        EmpService.Dispose();
+
+                        return View(modifiedData.ToPagedList(pageNumber, pageSize));
+
                     }
-                
-                  
-                    var modifiedData = JoinedList.Select(j =>
-                         new ContactBanqueViewModel
-                         {
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
 
-                             NumLot = j.Lot.NumLot,
-                             Compte = j.Lot.Compte,
-                             IDClient = j.Lot.IDClient,
-                             NomClient = j.Lot.NomClient,
-                             Etat = j.Formulaire.EtatClient.ToString(),
+                    }
 
-                         });
 
-                    ViewBag.total = JoinedList.Count();
 
-                    int pageSize = 10;
-                    int pageNumber = (page ?? 1);
 
-                    return View(modifiedData.ToPagedList(pageNumber, pageSize));
                 }
             }
 
@@ -318,63 +337,75 @@ namespace WakilRecouvrement.Web.Controllers
         {
 
 
-            dataTable.TableName = "Table1";
-
-            DataSet dataSet = new DataSet();
-            dataSet.Tables.Add(dataTable);
-            // create a excel app along side with workbook and worksheet and give a name to it
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
-
-            Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
-            foreach (DataTable table in dataSet.Tables)
+            try
             {
-                //Add a new worksheet to workbook with the Datatable name
-                // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
-                Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
 
-                excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
+                dataTable.TableName = "Table1";
 
-                excelWorkSheet.Name = table.TableName;
+                DataSet dataSet = new DataSet();
+                dataSet.Tables.Add(dataTable);
+                // create a excel app along side with workbook and worksheet and give a name to it
+                Excel.Application excelApp = new Excel.Application();
+                Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
 
-                // add all the columns
-                for (int i = 1; i < table.Columns.Count + 1; i++)
+                Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
+                Excel.Range xlRange = xlWorksheet.UsedRange;
+                foreach (DataTable table in dataSet.Tables)
                 {
-                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
-                    excelWorkSheet.Cells[1, i].Font.Bold = true;
-                    excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                    excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                    excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
-                    excelWorkSheet.Cells[1, i].Borders.Weight = 2;
-                    excelWorkSheet.Cells[1, i].Font.Size = 14;
-                    excelWorkSheet.Cells[1, i].ColumnWidth = 22;
+                    //Add a new worksheet to workbook with the Datatable name
+                    // Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+                    Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
 
-                }
-                // add all the rows
-                for (int j = 0; j < table.Rows.Count; j++)
-                {
-                    for (int k = 0; k < table.Columns.Count; k++)
+                    excelWorkSheet.Cells.EntireColumn.NumberFormat = "@";
+
+                    excelWorkSheet.Name = table.TableName;
+
+                    // add all the columns
+                    for (int i = 1; i < table.Columns.Count + 1; i++)
                     {
+                        excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+                        excelWorkSheet.Cells[1, i].Font.Bold = true;
+                        excelWorkSheet.Cells[1, i].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        excelWorkSheet.Cells[1, i].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        excelWorkSheet.Cells[1, i].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                        excelWorkSheet.Cells[1, i].Borders.Weight = 2;
+                        excelWorkSheet.Cells[1, i].Font.Size = 14;
+                        excelWorkSheet.Cells[1, i].ColumnWidth = 22;
 
-                        excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
-                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
-                        excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
-                        excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
-                        excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
+                    }
+                    // add all the rows
+                    for (int j = 0; j < table.Rows.Count; j++)
+                    {
+                        for (int k = 0; k < table.Columns.Count; k++)
+                        {
+
+                            excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+                            excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                            excelWorkSheet.Cells[j + 2, k + 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                            excelWorkSheet.Cells[j + 2, k + 1].Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                            excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                            excelWorkSheet.Cells[j + 2, k + 1].Borders.Weight = 2;
+                            excelWorkSheet.Cells[j + 2, k + 1].Font.Size = 12;
+                            excelWorkSheet.Cells[j + 2, k + 1].ColumnWidth = 22;
+                        }
                     }
                 }
+                // excelWorkBook.Save(); -> this will save to its default location
+
+                excelWorkBook.SaveAs(path); // -> this will do the custom
+
+                excelWorkBook.Close();
+                excelApp.Quit();
+
             }
-            // excelWorkBook.Save(); -> this will save to its default location
+            catch(Exception e)
+            {
+                log.Error(e);
+            }
 
-            excelWorkBook.SaveAs(path); // -> this will do the custom
 
-            excelWorkBook.Close();
-            excelApp.Quit();
-        
+
+
         }
 
 

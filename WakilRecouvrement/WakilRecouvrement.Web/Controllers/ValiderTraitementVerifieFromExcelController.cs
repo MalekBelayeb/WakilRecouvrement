@@ -18,16 +18,8 @@ namespace WakilRecouvrement.Web.Controllers
     public class ValiderTraitementVerifieFromExcelController : Controller
     {
 
-
-
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
 
         [HttpPost]
         public ActionResult UploadVerifier(HttpPostedFileBase PostedFile)
@@ -38,138 +30,170 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
 
-                    if (Session["username"] == null || Session["username"].ToString().Length < 1)
-                        return RedirectToAction("Login", "Authentification");
-
-                    ViewData["list"] = new SelectList(DropdownListController.NumLotListForDropDown(LotService), "Value", "Text");
-                    ViewBag.TraiteList = new SelectList(DropdownListController.TraiteValidationListForDropDown(), "Value", "Text");
-                    ViewBag.AgentList = new SelectList(DropdownListController.AgentListForDropDown(EmpService), "Value", "Text");
-
-                    //Nthabtou li fichier mahouch feragh makenesh nabaathou erreur lel client
-                    if (PostedFile != null)
+                    try
                     {
-                        //nsobou l fichier aana fel serveur
-                        string filePath = string.Empty;
-                        string path = Server.MapPath("~/Uploads/");
-                        if (!Directory.Exists(path))
+
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
+
+                        if (Session["username"] == null || Session["username"].ToString().Length < 1)
+                            return RedirectToAction("Login", "Authentification");
+
+                        ViewData["list"] = new SelectList(DropdownListController.NumLotListForDropDown(LotService), "Value", "Text");
+                        ViewBag.TraiteList = new SelectList(DropdownListController.TraiteValidationListForDropDown(), "Value", "Text");
+                        ViewBag.AgentList = new SelectList(DropdownListController.AgentListForDropDown(EmpService), "Value", "Text");
+
+                        //Nthabtou li fichier mahouch feragh makenesh nabaathou erreur lel client
+                        if (PostedFile != null)
                         {
-                            Directory.CreateDirectory(path);
-                        }
-
-                        filePath = path + Path.GetFileName(PostedFile.FileName);
-                        string extension = Path.GetExtension(PostedFile.FileName);
-                        string conString = string.Empty;
-
-                        if (PostedFile.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                        {
-                            PostedFile.SaveAs(filePath);
-
-                            //besh nakhtarou connectionString selon l version mtaa excel (xls = 2003 o xlsx mel 2013 o ahna tal3in)
-                            //L connectionString predefini fel web.config mteena
-                            switch (extension)
+                            //nsobou l fichier aana fel serveur
+                            string filePath = string.Empty;
+                            string path = Server.MapPath("~/Uploads/");
+                            if (!Directory.Exists(path))
                             {
-                                case ".xls":
-                                    conString = ConfigurationManager.ConnectionStrings["Excel03ConString"].ConnectionString;
-                                    break;
-
-                                case ".xlsx":
-                                    conString = ConfigurationManager.ConnectionStrings["Excel07ConString"].ConnectionString;
-                                    break;
-
+                                Directory.CreateDirectory(path);
                             }
 
-                            //Taoua besh nebdew nakraw l fichier Excel bel library OleDd
-                            DataTable dt = new DataTable();
-                            conString = string.Format(conString, filePath);
-                            string status = "";
+                            filePath = path + Path.GetFileName(PostedFile.FileName);
+                            string extension = Path.GetExtension(PostedFile.FileName);
+                            string conString = string.Empty;
 
-                            using (OleDbConnection connExcel = new OleDbConnection(conString))
+                            if (PostedFile.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                             {
-                                using (OleDbCommand cmdExcel = new OleDbCommand())
+                                PostedFile.SaveAs(filePath);
+
+                                //besh nakhtarou connectionString selon l version mtaa excel (xls = 2003 o xlsx mel 2013 o ahna tal3in)
+                                //L connectionString predefini fel web.config mteena
+                                switch (extension)
                                 {
-                                    using (OleDbDataAdapter odaExcel = new OleDbDataAdapter())
-                                    {
-                                        // Houni nebdew naakraw awel sheet name mtaa l document excel mteena (eli ken jina fi table SQL rahou le nom de la table) 
-                                        cmdExcel.Connection = connExcel;
-                                        connExcel.Open();
-                                        DataTable dtExcelSchema;
-                                        dtExcelSchema = connExcel.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                                        string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
-                                        connExcel.Close();
+                                    case ".xls":
+                                        conString = ConfigurationManager.ConnectionStrings["Excel03ConString"].ConnectionString;
+                                        break;
 
-                                        //Houni recuperation mtaa les données 
-                                        connExcel.Open();
-                                        cmdExcel.CommandText = "SELECT * FROM [Table1$]";
-                                        odaExcel.SelectCommand = cmdExcel;
-                                        odaExcel.Fill(dt);
-                                        connExcel.Close();
+                                    case ".xlsx":
+                                        conString = ConfigurationManager.ConnectionStrings["Excel07ConString"].ConnectionString;
+                                        break;
 
-                                        string argIDClient = "IDClient";
-                                        string argCompte = "Compte";
-                                        string argNomClient = "NomClient";
-                                        string argMontant = "Montant";
-                                        int rejete = 0;
-                                        int verifier = 0;
-                                        foreach (DataRow row in dt.Rows)
-                                        {
-                                            string IDClient = "";
-                                            string Compte = "";
-                                            string NomClient = "";
-                                            string Montant = "";
-
-
-                                            IDClient = row[argIDClient].ToString();
-                                            Compte = row[argCompte].ToString();
-                                            NomClient = row[argNomClient].ToString();
-                                            Montant = row[argMontant].ToString();
-
-                                           int result = VerifyClient(IDClient, Montant, FormulaireService, AffectationService, LotService);
-                                        
-                                            if(result == 1 )
-                                            {
-                                                verifier++;
-
-                                            }else if (result == 2)
-                                            {
-                                                rejete++;
-                                            }
-                                            else
-                                            {
-
-                                            }
-
-                                        }
-
-                                        FormulaireService.Commit();
-                                        status = "Opération terminée avec " + verifier + " client(s) vérifiés et " + rejete + " client(s) rejetés";
-
-                                    }
                                 }
 
+                                //Taoua besh nebdew nakraw l fichier Excel bel library OleDd
+                                DataTable dt = new DataTable();
+                                conString = string.Format(conString, filePath);
+                                string status = "";
 
-                                return RedirectToAction("Valider", "ValiderTraitement", new { messageFromExcelVerifier = status });
+                                using (OleDbConnection connExcel = new OleDbConnection(conString))
+                                {
+                                    using (OleDbCommand cmdExcel = new OleDbCommand())
+                                    {
+                                        using (OleDbDataAdapter odaExcel = new OleDbDataAdapter())
+                                        {
+                                            // Houni nebdew naakraw awel sheet name mtaa l document excel mteena (eli ken jina fi table SQL rahou le nom de la table) 
+                                            cmdExcel.Connection = connExcel;
+                                            connExcel.Open();
+                                            DataTable dtExcelSchema;
+                                            dtExcelSchema = connExcel.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                                            string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
+                                            connExcel.Close();
+
+                                            //Houni recuperation mtaa les données 
+                                            connExcel.Open();
+                                            cmdExcel.CommandText = "SELECT * FROM [Table1$]";
+                                            odaExcel.SelectCommand = cmdExcel;
+                                            odaExcel.Fill(dt);
+                                            connExcel.Close();
+
+                                            string argIDClient = "IDClient";
+                                            string argCompte = "Compte";
+                                            string argNomClient = "NomClient";
+                                            string argMontant = "Montant";
+                                            int rejete = 0;
+                                            int verifier = 0;
+                                            foreach (DataRow row in dt.Rows)
+                                            {
+                                                string IDClient = "";
+                                                string Compte = "";
+                                                string NomClient = "";
+                                                string Montant = "";
+
+
+                                                IDClient = row[argIDClient].ToString();
+                                                Compte = row[argCompte].ToString();
+                                                NomClient = row[argNomClient].ToString();
+                                                Montant = row[argMontant].ToString();
+
+                                                int result = VerifyClient(IDClient, Montant, FormulaireService, AffectationService, LotService);
+
+                                                if (result == 1)
+                                                {
+                                                    verifier++;
+
+                                                }
+                                                else if (result == 2)
+                                                {
+                                                    rejete++;
+                                                }
+                                                else
+                                                {
+
+                                                }
+
+                                            }
+
+                                            FormulaireService.Commit();
+                                            status = "Opération terminée avec " + verifier + " client(s) vérifiés et " + rejete + " client(s) rejetés";
+
+                                        }
+                                    }
+
+
+
+
+
+                                    LotService.Dispose();
+                                    FormulaireService.Dispose();
+                                    AffectationService.Dispose();
+                                    EmpService.Dispose();
+
+                                    return RedirectToAction("Valider", "ValiderTraitement", new { messageFromExcelVerifier = status });
+
+                                }
+
+                            }
+                            else
+                            {
+                                LotService.Dispose();
+                                FormulaireService.Dispose();
+                                AffectationService.Dispose();
+                                EmpService.Dispose();
+
+                                return RedirectToAction("Valider", "ValiderTraitement", new { messageFromExcelVerifier = "Le fichier selectionné n'est pas un fichier Excel" });
 
                             }
 
                         }
                         else
                         {
+                            LotService.Dispose();
+                            FormulaireService.Dispose();
+                            AffectationService.Dispose();
+                            EmpService.Dispose();
 
-                            return RedirectToAction("Valider", "ValiderTraitement",new { messageFromExcelVerifier = "Le fichier selectionné n'est pas un fichier Excel" });
-
+                            return RedirectToAction("Valider", "ValiderTraitement", new { messageFromExcelVerifier = "Vous devez sélectionner un fichier" });
                         }
 
                     }
-                    else
+                    catch(Exception e)
                     {
-                       
-                        return RedirectToAction("Valider", "ValiderTraitement", new { messageFromExcelVerifier = "Vous devez sélectionner un fichier" });
+                        log.Error(e);
+
+                        return View("~/Views/Shared/Error.cshtml", null);
+
                     }
+
+                    
 
                 }
             }

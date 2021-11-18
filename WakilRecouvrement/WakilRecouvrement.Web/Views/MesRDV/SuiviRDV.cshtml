@@ -37,7 +37,7 @@
 
                 <div id="rdvDate" class="col-xs-3 col-md-3">
                     <label for="RdvDate">Date:</label>
-                    <input class="form-control" name="RdvDate" type="datetime-local" id="rappelDate">
+                    <input class="form-control" name="RdvDate" type="datetime-local" value="@ViewBag.CurrentRDVDate" id="rappelDate">
                 </div>
 
 
@@ -250,5 +250,5 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("SuiviRDV",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterRDVType = ViewBag.currentFilterRDVType }))
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilterNumLot = ViewBag.currentFilterNumLot, currentFilterRDVType = ViewBag.currentFilterRDVType, CurrentRDVDate = ViewBag.CurrentRDVDate }))
 
