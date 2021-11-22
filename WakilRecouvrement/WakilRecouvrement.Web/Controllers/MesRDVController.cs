@@ -17,7 +17,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-
         public ActionResult SuiviRDV(string numLot, string RDVType, string RdvDate, string sortOrder, string currentFilterNumLot, string currentFilterRDVType, string CurrentSort, string CurrentRDVDate, int? page)
         {
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
