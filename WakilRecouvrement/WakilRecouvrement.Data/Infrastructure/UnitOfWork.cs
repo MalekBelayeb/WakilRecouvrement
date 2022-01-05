@@ -15,6 +15,7 @@ namespace MyFinance.Data.Infrastructure
         //IDatabaseFactory dbFactory;
         public UnitOfWork(WakilRecouvContext WakilCtx)
         {
+
             //this.dbFactory = dbFactory;
             dataContext = WakilCtx;
         }

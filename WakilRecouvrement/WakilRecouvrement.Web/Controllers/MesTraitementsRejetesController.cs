@@ -57,7 +57,7 @@ namespace WakilRecouvrement.Web.Controllers
                         JoinedList = (from f in FormulaireService.GetAll()
                                       join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
                                       join l in LotService.GetAll() on a.LotId equals l.LotId
-                                      where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE
+                                      where a.Employe.Username.Equals(Session["username"]) && f.Status == Status.NON_VERIFIE orderby f.TraiteLe descending
 
                                       select new ClientAffecteViewModel
                                       {
@@ -65,7 +65,7 @@ namespace WakilRecouvrement.Web.Controllers
                                           Affectation = a,
                                           Formulaire = f
 
-                                      }).Where(j => verifMesRappels(j.Affectation.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                      }).ToList();
 
                         if (!String.IsNullOrEmpty(SearchString))
                         {
@@ -107,22 +107,6 @@ namespace WakilRecouvrement.Web.Controllers
 }
             }
         }
-        public bool verifMesRappels(int affId, DateTime formTraiteLe, FormulaireService FormulaireService)
-        {
-
-
-            int res = FormulaireService.GetMany(f => f.AffectationId == affId && f.TraiteLe > formTraiteLe && (f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.RDV || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).Count();
-            if (res == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-
-            }
-
-        }
-
+       
     }
 }

@@ -16,6 +16,7 @@ namespace WakilRecouvrement.Service
         public EmployeService(UnitOfWork UOW) :base(UOW)
         {
             //UOW = new UnitOfWork(wakilRecouvContext);
+            
         }
 
         public IEnumerable<Employe> GetEmployeByRole(string role)

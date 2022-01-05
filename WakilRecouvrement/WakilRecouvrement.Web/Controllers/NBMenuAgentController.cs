@@ -13,11 +13,7 @@ namespace WakilRecouvrement.Web.Controllers
 {
     public class NBMenuAgentController : Controller
     {
-
-
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
-
-     
 
         [HttpPost]
         public ActionResult SuiviRDVNB()
@@ -56,7 +52,7 @@ namespace WakilRecouvrement.Web.Controllers
                                   select new ClientAffecteViewModel
                                   {
                                       Formulaire = f,
-                                  }).Where(j => verifMesRDV(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+                                  }).Count();
 
 
                             rappelNB = (from f in formulaires
@@ -65,7 +61,7 @@ namespace WakilRecouvrement.Web.Controllers
                                         {
                                             Formulaire = f
 
-                                        }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+                                        }).Count();
 
 
                             rejetes = (from f in formulaires
@@ -74,7 +70,7 @@ namespace WakilRecouvrement.Web.Controllers
                                        {
                                            Formulaire = f
 
-                                       }).Where(j => verifMesRappels(j.Formulaire.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).Count();
+                                       }).Count();
 
 
 
@@ -101,40 +97,6 @@ namespace WakilRecouvrement.Web.Controllers
             }
         }
 
-        public bool verifMesRappels(int affId, DateTime formTraiteLe, FormulaireService FormulaireService)
-        {
-
-
-            int res = FormulaireService.GetMany(f => f.AffectationId == affId && f.TraiteLe > formTraiteLe && (f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.RDV || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE)).Count();
-            if (res == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-
-            }
-
-        }
-
-        public bool verifMesRDV(int affId, DateTime formTraiteLe, FormulaireService FormulaireService)
-        {
-
-
-
-            int res = FormulaireService.GetMany(f => f.AffectationId == affId && f.TraiteLe > formTraiteLe && (f.EtatClient == Note.A_VERIFIE || f.EtatClient == Note.SOLDE || f.EtatClient == Note.SOLDE_TRANCHE || f.EtatClient == Note.RAPPEL)).Count();
-
-            if (res == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
 
 
     }

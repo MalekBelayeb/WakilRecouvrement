@@ -27,15 +27,15 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
+                    LotService LotService = new LotService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+                    AffectationService AffectationService = new AffectationService(UOW);
+                    EmployeService EmpService = new EmployeService(UOW);
 
                     try
                     {
 
-                        LotService LotService = new LotService(UOW);
-                        FormulaireService FormulaireService = new FormulaireService(UOW);
-                        AffectationService AffectationService = new AffectationService(UOW);
-                        EmployeService EmpService = new EmployeService(UOW);
-
+                      
                         if (Session["username"] == null || Session["username"].ToString().Length < 1)
                             return RedirectToAction("Login", "Authentification");
 
@@ -54,7 +54,7 @@ namespace WakilRecouvrement.Web.Controllers
                                               AffectationId = a.AffectationId,
                                               Formulaire = f
 
-                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                          }).OrderByDescending(o => o.Formulaire.TraiteLe).ToList();
 
                         }
                         else
@@ -75,7 +75,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                   AffectationId = a.AffectationId,
                                                   Formulaire = f
 
-                                              }).OrderByDescending(o => o.Formulaire.TraiteLe).Where(j => verifMesRappels(j.AffectationId, j.Formulaire.TraiteLe, FormulaireService)).ToList();
+                                              }).OrderByDescending(o => o.Formulaire.TraiteLe).ToList();
                             }
 
                         }
@@ -188,10 +188,7 @@ namespace WakilRecouvrement.Web.Controllers
                         int pageNumber = (page ?? 1);
 
 
-                        LotService.Dispose();
-                        FormulaireService.Dispose();
-                        AffectationService.Dispose();
-                        EmpService.Dispose();
+                       
                         return View(JoinedList.ToPagedList(pageNumber, pageSize));
 
 
@@ -200,6 +197,15 @@ namespace WakilRecouvrement.Web.Controllers
                     {
                         log.Error(e);
                         return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+                    finally
+                    {
+                        
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+                        EmpService.Dispose();
 
                     }
 
