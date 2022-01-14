@@ -17,12 +17,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
 
         public ActionResult Historique(int id)
         {
@@ -32,30 +26,53 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
+                    try
+                    {
 
-                    List<ClientAffecteViewModel> clientAffecteViewModels = (from f in FormulaireService.GetAll()
-                                                                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                                            join l in LotService.GetAll() on a.LotId equals l.LotId
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
 
-                                                                            where a.AffectationId == id
-                                                                            select new ClientAffecteViewModel
-                                                                            {
-                                                                                Formulaire = f,
-                                                                                Affectation = a,
-                                                                                Lot = l,
-                                                                                Agent = f.AgentUsername
+                        List<ClientAffecteViewModel> clientAffecteViewModels = (from f in FormulaireService.GetAll()
+                                                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                                                join l in LotService.GetAll() on a.LotId equals l.LotId
 
-                                                                            }).ToList();
+                                                                                where a.AffectationId == id
+                                                                                select new ClientAffecteViewModel
+                                                                                {
+                                                                                    Formulaire = f,
+                                                                                    Affectation = a,
+                                                                                    Lot = l,
+                                                                                    Agent = f.AgentUsername
 
-                    ViewBag.username = clientAffecteViewModels.Select(c => c.Agent).FirstOrDefault();
-                    ViewBag.lot = clientAffecteViewModels.Select(c => c.Lot).FirstOrDefault();
-                    ViewBag.id = id + "";
+                                                                                }).ToList();
 
-                    return View(clientAffecteViewModels);
+                        ViewBag.username = clientAffecteViewModels.Select(c => c.Agent).FirstOrDefault();
+                        ViewBag.lot = clientAffecteViewModels.Select(c => c.Lot).FirstOrDefault();
+                        ViewBag.id = id + "";
+
+
+
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+                        EmpService.Dispose();
+
+
+                        return View(clientAffecteViewModels);
+
+
+                    }
+                    catch(Exception e)
+                    {
+                        
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
+                
 
                 }
             }

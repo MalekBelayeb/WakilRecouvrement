@@ -442,6 +442,9 @@ namespace WakilRecouvrement.Web.Controllers
                         ModelState.AddModelError("Importer", "Vous devez sélectionner un fichier");
                     }
 
+
+
+                    LotService.Dispose();
                     return View("ImportLot");
 
 
@@ -780,6 +783,8 @@ namespace WakilRecouvrement.Web.Controllers
                     ViewBag.total = JoinedList.Count();
                     int pageSize = 10;
                     int pageNumber = (page ?? 1);
+
+                    LotService.Dispose();
                     return View(JoinedList.ToPagedList(pageNumber, pageSize));
 
                 }
@@ -860,7 +865,11 @@ namespace WakilRecouvrement.Web.Controllers
                         Lot lot = LotService.GetById(id);
                         cavm.Lot = lot;
                     }
+                    
 
+                    LotService.Dispose();
+                    AffectationService.Dispose();
+                    EmpService.Dispose();
                     return View(cavm);
                 }
             }
@@ -928,7 +937,8 @@ namespace WakilRecouvrement.Web.Controllers
 
                     }
 
-
+                    AffectationService.Dispose();
+                    LotService.Dispose();
                     return RedirectToAction("ConsulterClients", new { numLot = 0, sortOrder = 0 });
 
 
@@ -975,6 +985,8 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService.Add(affectation);
                     AffectationService.Commit();
 
+                    LotService.Dispose();
+                    AffectationService.Dispose();
                     return RedirectToAction("ConsulterClients", new { numLot = 0, sortOrder = 0 });
                 }
             }
@@ -997,7 +1009,7 @@ namespace WakilRecouvrement.Web.Controllers
                     agents.ForEach(l => {
                         listItems.Add(new SelectListItem { Text = l.Username, Value = l.EmployeId + "" });
                     });
-
+                   
                     return listItems;
 
                 }
@@ -1021,11 +1033,13 @@ namespace WakilRecouvrement.Web.Controllers
                     Lots.DistinctBy(l => l.NumLot).ForEach(l => {
                         listItems.Add(new SelectListItem { Text = "Lot " + l.NumLot, Value = l.NumLot });
                     });
-
+                    
                     return listItems;
                 }
             }
             
+
+
         }
     }
 

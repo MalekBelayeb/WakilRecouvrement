@@ -286,7 +286,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     <a href="@Url.Action("TraitementRejetesList","MesTraitementsRejetes",new {RappelDate=DateTime.Now.Date +"", numLot="0",sortOrder="0" })" class="nav-link">
 
-                                        <p>Traitements rejetés (<span id="rejetesNB">0</span>) </p>
+                                        <p>Traitements rejetés </p>
 
                                     </a>
 
@@ -460,7 +460,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("SuiviRDVNB", "Formulaire")',
+                url: '@Url.Action("SuiviRDVNB", "NBMenuAgent")',
                 dataType: 'json',
                 data: {  },
                 success: function (data) {

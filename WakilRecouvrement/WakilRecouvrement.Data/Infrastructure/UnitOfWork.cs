@@ -15,11 +15,11 @@ namespace MyFinance.Data.Infrastructure
         //IDatabaseFactory dbFactory;
         public UnitOfWork(WakilRecouvContext WakilCtx)
         {
+
             //this.dbFactory = dbFactory;
             dataContext = WakilCtx;
         }
         
-
         public void Commit()
         {
             dataContext.SaveChanges();
@@ -29,6 +29,7 @@ namespace MyFinance.Data.Infrastructure
         {
             dataContext.Dispose();
         }
+
         public IRepositoryBase<T> getRepository<T>() where T : class
         {
             IRepositoryBase<T> repo = new RepositoryBase<T>(dataContext);

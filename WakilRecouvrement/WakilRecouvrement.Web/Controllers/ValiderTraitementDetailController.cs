@@ -22,12 +22,6 @@ namespace WakilRecouvrement.Web.Controllers
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception);
-        }
 
         public string GetEtat(Formulaire formulaire)
         {
@@ -51,72 +45,92 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    EmployeService EmpService = new EmployeService(UOW);
-                    RecuImageService RecuImageService = new RecuImageService(UOW);
-
-                    ValiderTraitementViewModel validerTraitementViewModel = new ValiderTraitementViewModel();
-                    List<string> recuImages = new List<string>();
-                    
-                    List<TraiterDetailViewModel> traiterDetailViewModelList = (from f in FormulaireService.GetAll()
-                                                                                join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                                               join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
-
-                                                                               where a.AffectationId == idaffectation
-                                                                               select new TraiterDetailViewModel
-                                                                           {
-                                                                               Formulaire = f,
-                                                                               Affectation = a,
-                                                                               Lot = l
-                                                                           }).ToList();
-
-
-                    ValiderTraitementViewModel ValiderTraitementViewModel = (from t in traiterDetailViewModelList
-                                                                             where t.Formulaire.FormulaireId == idformulaire
-                                                                             select new ValiderTraitementViewModel
-                                                                             {
-                                                                                 Lot = t.Lot,
-                                                                                 Username = t.Formulaire.AgentUsername,
-                                                                                 VerifieLe = t.Formulaire.VerifieLe.ToString(),
-                                                                                 DateAff = "",
-                                                                                 TraiteLe = t.Formulaire.TraiteLe.ToString("dd/MM/yyyy HH:mm:ss"),
-                                                                                 Etat = GetEtat(t.Formulaire).ToString(),
-                                                                                 FormulaireId = t.Formulaire.FormulaireId,
-                                                                                 ContactBanque = t.Formulaire.ContacteBanque,
-                                                                                 MontantVerseDeclare = t.Formulaire.MontantVerseDeclare,
-                                                                                 descAutre = t.Formulaire.DescriptionAutre,
-                                                                                 AffectationId = t.Formulaire.AffectationId
-                                                                             }).FirstOrDefault();
-
-                    ViewBag.ValiderTraitementViewModel = ValiderTraitementViewModel;
-
-                    recuImages = getRecuImagesPath(idformulaire, RecuImageService);
-
-                    int nbRecuImage = recuImages.Count();
-                    
-                    if (nbRecuImage > 0)
+                    try
                     {
-                        try
+
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        EmployeService EmpService = new EmployeService(UOW);
+                        RecuImageService RecuImageService = new RecuImageService(UOW);
+
+                        ValiderTraitementViewModel validerTraitementViewModel = new ValiderTraitementViewModel();
+                        List<string> recuImages = new List<string>();
+
+
+
+                        List<TraiterDetailViewModel> traiterDetailViewModelList = (from f in FormulaireService.GetAll()
+                                                                                   join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                                                                   join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+
+                                                                                   where a.AffectationId == idaffectation
+                                                                                   select new TraiterDetailViewModel
+                                                                                   {
+                                                                                       Formulaire = f,
+                                                                                       Affectation = a,
+                                                                                       Lot = l
+                                                                                   }).ToList();
+
+
+                        ValiderTraitementViewModel ValiderTraitementViewModel = (from t in traiterDetailViewModelList
+                                                                                 where t.Formulaire.FormulaireId == idformulaire
+                                                                                 select new ValiderTraitementViewModel
+                                                                                 {
+                                                                                     Lot = t.Lot,
+                                                                                     Username = t.Formulaire.AgentUsername,
+                                                                                     VerifieLe = t.Formulaire.VerifieLe.ToString(),
+                                                                                     DateAff = "",
+                                                                                     TraiteLe = t.Formulaire.TraiteLe.ToString("dd/MM/yyyy HH:mm:ss"),
+                                                                                     Etat = GetEtat(t.Formulaire).ToString(),
+                                                                                     FormulaireId = t.Formulaire.FormulaireId,
+                                                                                     ContactBanque = t.Formulaire.ContacteBanque,
+                                                                                     MontantVerseDeclare = t.Formulaire.MontantVerseDeclare,
+                                                                                     descAutre = t.Formulaire.DescriptionAutre,
+                                                                                     AffectationId = t.Formulaire.AffectationId
+                                                                                 }).FirstOrDefault();
+
+                        ViewBag.ValiderTraitementViewModel = ValiderTraitementViewModel;
+
+                        recuImages = getRecuImagesPath(idformulaire, RecuImageService);
+
+                        int nbRecuImage = recuImages.Count();
+
+                        if (nbRecuImage > 0)
                         {
-                            ViewBag.recuImages = JsonConvert.SerializeObject(recuImages);
+                            try
+                            {
+                                ViewBag.recuImages = JsonConvert.SerializeObject(recuImages);
+                            }
+                            catch (Exception e)
+                            {
+                                ViewBag.recuImages = null;
+                            }
                         }
-                        catch (Exception e)
+                        else
                         {
                             ViewBag.recuImages = null;
                         }
+                        ViewBag.nbRecuImage = nbRecuImage;
+
+
+
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+                        EmpService.Dispose();
+                        RecuImageService.Dispose();
+
+                        return View(traiterDetailViewModelList);
+
+
                     }
-                    else
+                    catch(Exception e)
                     {
-                        ViewBag.recuImages = null;
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
                     }
-                    ViewBag.nbRecuImage = nbRecuImage;
 
-                    
-
-
-                    return View(traiterDetailViewModelList);
+               
 
                 }
             }
@@ -153,145 +167,163 @@ namespace WakilRecouvrement.Web.Controllers
              {
                  using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                  {
-                    
 
-                    //Debug.WriteLine(ViewBag.ValiderTraitementViewModel);
 
-                    LotService LotService = new LotService(UOW);
-                     FormulaireService FormulaireService = new FormulaireService(UOW);
-                     AffectationService AffectationService = new AffectationService(UOW);
-
-                    var JoinedLot = from f in FormulaireService.GetAll()
-                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                    join l in LotService.GetAll() on a.LotId equals l.LotId
-                                    where f.FormulaireId == int.Parse(id)
-                                     select new ClientAffecteViewModel { Lot = l, Formulaire = f };
-
-                     Lot Lot = JoinedLot.Select(j => j.Lot).FirstOrDefault();
-
-                     Formulaire Formulaire = JoinedLot.Select(j => j.Formulaire).FirstOrDefault();
-
-                    if (Formulaire != null)
+                    try
                     {
-                        
-                        double DebMaJ = (from f in FormulaireService.GetAll()
-                                         join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                         where a.AffectationId == Formulaire.AffectationId
-                                         orderby f.MontantDebMAJ ascending
-                                         select f.MontantDebMAJ
-                                 ).FirstOrDefault();
-                        
-                        
-                        if (int.Parse(valid) == 0)
+
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+
+                        var JoinedLot = from f in FormulaireService.GetAll()
+                                        join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                        join l in LotService.GetAll() on a.LotId equals l.LotId
+                                        where f.FormulaireId == int.Parse(id)
+                                        select new ClientAffecteViewModel { Lot = l, Formulaire = f };
+
+                        Lot Lot = JoinedLot.Select(j => j.Lot).FirstOrDefault();
+
+                        Formulaire Formulaire = JoinedLot.Select(j => j.Formulaire).FirstOrDefault();
+
+                        if (Formulaire != null)
                         {
 
+                            double DebMaJ = (from f in FormulaireService.GetAll()
+                                             join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                             where a.AffectationId == Formulaire.AffectationId
+                                             orderby f.MontantDebMAJ ascending
+                                             select f.MontantDebMAJ
+                                     ).FirstOrDefault();
 
-                            if(Formulaire.Status == Status.EN_COURS)
+
+                            if (int.Parse(valid) == 0)
                             {
 
-                                Formulaire.Status = Status.NON_VERIFIE;
-                                FormulaireService.Update(Formulaire);
-                                //FormulaireService.Delete(Formulaire);
-                                FormulaireService.Commit();
 
+                                if (Formulaire.Status == Status.EN_COURS)
+                                {
+
+                                    Formulaire.Status = Status.NON_VERIFIE;
+                                    FormulaireService.Update(Formulaire);
+                                    //FormulaireService.Delete(Formulaire);
+                                    FormulaireService.Commit();
+
+                                }
+
+                                return RedirectToAction("TraiterDetail", new { idaffectation = JoinedLot.Select(j => j.Formulaire.AffectationId).FirstOrDefault(), idformulaire = JoinedLot.Select(j => j.Formulaire.FormulaireId).FirstOrDefault() });
                             }
 
-                            return RedirectToAction("TraiterDetail", new { idaffectation = JoinedLot.Select(j => j.Formulaire.AffectationId).FirstOrDefault(), idformulaire = JoinedLot.Select(j => j.Formulaire.FormulaireId).FirstOrDefault() });
+                            double.TryParse(Lot.SoldeDebiteur.Replace('.', ','), out double SoldeDebiteur);
+                            Debug.WriteLine(SoldeDebiteur);
+                            Decimal NewSolde = 0;
+
+                            switch (Formulaire.EtatClient)
+                            {
+                                case Note.SOLDE:
+
+                                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+
+                                    if (NewSolde <= 0)
+                                    {
+
+                                        Formulaire.MontantDebMAJ = 0;
+                                        Formulaire.Status = Status.VERIFIE;
+                                        Formulaire.VerifieLe = DateTime.Now;
+
+                                    }
+                                    break;
+
+                                case Note.SOLDE_TRANCHE:
+
+                                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+
+                                    if (NewSolde > 0)
+                                    {
+
+                                        Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
+
+                                        Formulaire.Status = Status.VERIFIE;
+
+                                        Formulaire.VerifieLe = DateTime.Now;
+
+                                    }
+                                    else if (NewSolde <= 0)
+                                    {
+
+                                        Formulaire.MontantDebMAJ = 0;
+
+                                        Formulaire.Status = Status.VERIFIE;
+                                        Formulaire.VerifieLe = DateTime.Now;
+                                        Formulaire.EtatClient = Note.SOLDE;
+
+                                    }
+
+                                    break;
+
+                                case Note.A_VERIFIE:
+
+                                    if (montantInput.IsNullOrWhiteSpace() == false)
+                                    {
+                                        double.TryParse(montantInput.Replace('.', ','), out double montant);
+                                        Formulaire.MontantVerseDeclare = montant;
+                                    }
+                                    else
+                                    {
+                                        Formulaire.MontantVerseDeclare = 0;
+                                    }
+
+                                    NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
+
+                                    if (NewSolde <= 0)
+                                    {
+
+                                        Formulaire.MontantDebMAJ = 0;
+
+                                        Formulaire.Status = Status.VERIFIE;
+                                        Formulaire.VerifieLe = DateTime.Now;
+                                        Formulaire.EtatClient = Note.SOLDE;
+
+                                    }
+                                    else if (NewSolde > 0)
+                                    {
+                                        Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
+
+                                        Formulaire.Status = Status.VERIFIE;
+                                        Formulaire.VerifieLe = DateTime.Now;
+                                        Formulaire.EtatClient = Note.SOLDE_TRANCHE;
+
+                                    }
+
+
+                                    break;
+                            }
+
+
+                            FormulaireService.Update(Formulaire);
+                            FormulaireService.Commit();
+
                         }
 
-                        double.TryParse(Lot.SoldeDebiteur.Replace('.', ','), out double SoldeDebiteur);
-                        Debug.WriteLine(SoldeDebiteur);
-                        Decimal NewSolde = 0;
-
-                        switch (Formulaire.EtatClient)
-                        {
-                            case Note.SOLDE:
-
-                                NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
-
-                                if (NewSolde <= 0)
-                                {
-
-                                    Formulaire.MontantDebMAJ = 0;
-                                    Formulaire.Status = Status.VERIFIE;
-                                    Formulaire.VerifieLe = DateTime.Now;
-
-                                }
-                                break;
-
-                            case Note.SOLDE_TRANCHE:
-
-                                NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
-
-                                if (NewSolde > 0)
-                                {
-
-                                    Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
-
-                                    Formulaire.Status = Status.VERIFIE;
-
-                                    Formulaire.VerifieLe = DateTime.Now;
-
-                                }
-                                else if (NewSolde <= 0)
-                                {
-
-                                    Formulaire.MontantDebMAJ = 0;
-
-                                    Formulaire.Status = Status.VERIFIE;
-                                    Formulaire.VerifieLe = DateTime.Now;
-                                    Formulaire.EtatClient = Note.SOLDE;
-
-                                }
-
-                                break;
-
-                            case Note.A_VERIFIE:
-
-                                if (montantInput.IsNullOrWhiteSpace() == false)
-                                {
-                                    double.TryParse(montantInput.Replace('.', ','), out double montant);
-                                    Formulaire.MontantVerseDeclare = montant;
-                                }
-                                else
-                                {
-                                    Formulaire.MontantVerseDeclare = 0;
-                                }
-
-                                NewSolde = Decimal.Subtract(decimal.Parse(DebMaJ.ToString()), decimal.Parse(Formulaire.MontantVerseDeclare.ToString()));
-
-                                if (NewSolde <= 0)
-                                {
-
-                                    Formulaire.MontantDebMAJ = 0;
-
-                                    Formulaire.Status = Status.VERIFIE;
-                                    Formulaire.VerifieLe = DateTime.Now;
-                                    Formulaire.EtatClient = Note.SOLDE;
-
-                                }
-                                else if (NewSolde > 0)
-                                {
-                                    Formulaire.MontantDebMAJ = double.Parse(NewSolde.ToString());
-
-                                    Formulaire.Status = Status.VERIFIE;
-                                    Formulaire.VerifieLe = DateTime.Now;
-                                    Formulaire.EtatClient = Note.SOLDE_TRANCHE;
-
-                                }
 
 
-                                break;
-                        }
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+                        AffectationService.Dispose();
+
+                        return RedirectToAction("TraiterDetail", new { idaffectation = JoinedLot.Select(j => j.Formulaire.AffectationId).FirstOrDefault(), idformulaire = JoinedLot.Select(j => j.Formulaire.FormulaireId).FirstOrDefault() });
 
 
-                        FormulaireService.Update(Formulaire);
-                        FormulaireService.Commit();
+
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
 
                     }
 
-                    return RedirectToAction("TraiterDetail", new {  idaffectation=  JoinedLot.Select(j=>j.Formulaire.AffectationId).FirstOrDefault(),  idformulaire= JoinedLot.Select(j => j.Formulaire.FormulaireId).FirstOrDefault() });
-
+                    
                 }
             }
         }

@@ -18,14 +18,6 @@ namespace WakilRecouvrement.Web.Controllers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger("Logger");
 
-
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            filterContext.ExceptionHandled = true;
-
-            log.Error(filterContext.Exception); 
-        }
-
         public HomeController()
         {
 
@@ -81,15 +73,32 @@ namespace WakilRecouvrement.Web.Controllers
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
-                    EmployeService EmpService = new EmployeService(UOW);
 
-                    RoleService RoleService = new RoleService(UOW);
+                    try
+                    {
+
+                        EmployeService EmpService = new EmployeService(UOW);
+
+                        RoleService RoleService = new RoleService(UOW);
+
+
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+
+                        EmpService.Dispose();
+                        RoleService.Dispose();
+
+                        return View(EmpService.GetAll());
+
+                    }
+                    catch(Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
 
                    
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
-
-                    return View(EmpService.GetAll());
 
                 }
             }
@@ -110,29 +119,48 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    EmployeService EmpService = new EmployeService(UOW);
-                    RoleService RoleService = new RoleService(UOW);
+
+                    try
+                    {
+
+                        EmployeService EmpService = new EmployeService(UOW);
+                        RoleService RoleService = new RoleService(UOW);
 
 
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
 
-                    if (type == "0")
-                    {
-                        return View(EmpService.GetAll());
+
+                        EmpService.Dispose();
+                        RoleService.Dispose();
+
+                        if (type == "0")
+                        {
+                            return View(EmpService.GetAll());
+                        }
+                        else if (type == "1")
+                        {
+                            return View(EmpService.GetEmployeByVerified(true));
+                        }
+                        else if (type == "2")
+                        {
+                            return View(EmpService.GetEmployeByVerified(false));
+                        }
+                        else
+                        {
+                            return View(EmpService.GetAll());
+                        }
+
+
                     }
-                    else if (type == "1")
+                    catch(Exception e)
                     {
-                        return View(EmpService.GetEmployeByVerified(true));
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
                     }
-                    else if (type == "2")
-                    {
-                        return View(EmpService.GetEmployeByVerified(false));
-                    }
-                    else
-                    {
-                        return View(EmpService.GetAll());
-                    }
+
+                   
 
 
                 }
@@ -148,13 +176,28 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    EmployeService EmpService = new EmployeService(UOW);
-                    RoleService RoleService = new RoleService(UOW);
-                
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+                    try
+                    {
 
-                    return View(EmpService.GetById(id));
+
+                        EmployeService EmpService = new EmployeService(UOW);
+                        RoleService RoleService = new RoleService(UOW);
+
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+                        EmpService.Dispose();
+                        RoleService.Dispose();
+                        return View(EmpService.GetById(id));
+
+
+                    }
+                    catch(Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
                 }
             }
 
@@ -169,22 +212,34 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    EmployeService EmpService = new EmployeService(UOW);
-                    RoleService RoleService = new RoleService(UOW);
-                 
-                    var Roles = RoleService.GetAll();
-                    ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
+                    try
+                    {
 
-                    Employe emp = EmpService.GetById(id);
-                    emp.RoleId = e.RoleId;
-                    emp.IsVerified = e.IsVerified;
-                    emp.ConfirmPassword = emp.Password;
+                        EmployeService EmpService = new EmployeService(UOW);
+                        RoleService RoleService = new RoleService(UOW);
 
-                    EmpService.Update(emp);
-                    EmpService.Commit();
+                        var Roles = RoleService.GetAll();
+                        ViewBag.RoleList = new SelectList(Roles, "RoleId", "role");
 
-                    return View("AccountList", EmpService.GetAll());
+                        Employe emp = EmpService.GetById(id);
+                        emp.RoleId = e.RoleId;
+                        emp.IsVerified = e.IsVerified;
+                        emp.ConfirmPassword = emp.Password;
 
+                        EmpService.Update(emp);
+                        EmpService.Commit();
+
+                        EmpService.Dispose();
+                        RoleService.Dispose();
+                        return View("AccountList", EmpService.GetAll());
+
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
 
 
                 }
@@ -210,124 +265,148 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                    EmployeService EmpService = new EmployeService(UOW);
-                    RoleService RoleService = new RoleService(UOW);
-                    AffectationService AffectationService = new AffectationService(UOW);
-                    LotService LotService = new LotService(UOW);
-                    FormulaireService FormulaireService = new FormulaireService(UOW);
 
-                    List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
-                    ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
-
-                    List<HomeViewModel> result = new List<HomeViewModel>();
-
-                    if(string.IsNullOrEmpty(agent)==false)
+                    try
                     {
-                        if (agent != "-1")
+
+
+                        EmployeService EmpService = new EmployeService(UOW);
+                        RoleService RoleService = new RoleService(UOW);
+                        AffectationService AffectationService = new AffectationService(UOW);
+                        LotService LotService = new LotService(UOW);
+                        FormulaireService FormulaireService = new FormulaireService(UOW);
+
+                        List<ClientAffecteViewModel> traiteList = new List<ClientAffecteViewModel>();
+                        ViewBag.AgentList = new SelectList(AgentListForDropDown(EmpService), "Value", "Text");
+
+                        List<HomeViewModel> result = new List<HomeViewModel>();
+
+                        if (string.IsNullOrEmpty(agent) == false)
                         {
-
-                            List<Lot> lots = new List<Lot>();
-
-                            string[] lotsLst = { };
-
-                            lots = LotService.GetAll().ToList();
-
-                            List<Affectation> Affectations = new List<Affectation>();
-                            List<Formulaire> Formulaires = new List<Formulaire>();
-                            string[] agents = { };
-
-
-                            Employe emp = EmpService.GetEmployeByUername(agent + "");
-
-                            if (emp == null)
-                            {
-                                emp = EmpService.GetEmployeByUername(Session["Username"] + "");
-                            }
-
-                            if (agent != "0")
+                            if (agent != "-1")
                             {
 
-                                if (emp.RoleId == 1)
+                                List<Lot> lots = new List<Lot>();
+
+                                string[] lotsLst = { };
+
+                                lots = LotService.GetAll().ToList();
+
+                                List<Affectation> Affectations = new List<Affectation>();
+                                List<Formulaire> Formulaires = new List<Formulaire>();
+                                string[] agents = { };
+
+
+                                Employe emp = EmpService.GetEmployeByUername(agent + "");
+
+                                if (emp == null)
                                 {
-                                    Affectations = AffectationService.GetMany(a => a.EmployeId == emp.EmployeId).ToList();
+                                    emp = EmpService.GetEmployeByUername(Session["Username"] + "");
                                 }
-                                else if (emp.RoleId == 2)
+
+                                if (agent != "0")
                                 {
+
+                                    if (emp.RoleId == 1)
+                                    {
+                                        Affectations = AffectationService.GetMany(a => a.EmployeId == emp.EmployeId).ToList();
+                                    }
+                                    else if (emp.RoleId == 2)
+                                    {
+                                        Affectations = AffectationService.GetAll().ToList();
+                                    }
+
+                                }
+                                else
+                                {
+
                                     Affectations = AffectationService.GetAll().ToList();
+
                                 }
 
-                            }
-                            else
-                            {
+                                Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
 
-                                Affectations = AffectationService.GetAll().ToList();
+                                lotsLst = (from a in Affectations
+                                           join l in lots on a.LotId equals l.LotId
+                                           select new ClientAffecteViewModel
+                                           {
 
-                            }
+                                               Lot = l
 
-                            Formulaires = FormulaireService.GetAll().OrderByDescending(o => o.TraiteLe).ToList();
+                                           }).Select(j => j.Lot).DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
 
-                            lotsLst = (from a in Affectations
-                                       join l in lots on a.LotId equals l.LotId
-                                       select new ClientAffecteViewModel
-                                       {
-
-                                           Lot = l
-
-                                       }).Select(j => j.Lot).DistinctBy(l => l.NumLot).Select(l => l.NumLot).ToArray();
-
-                            foreach (string numlot in lotsLst)
-                            {
-
-                                lots = LotService.GetMany(l => l.NumLot.Equals(numlot)).ToList();
-
-                                traiteList = (from f in Formulaires
-                                              join a in Affectations on f.AffectationId equals a.AffectationId
-                                              join l in lots on a.LotId equals l.LotId
-                                              select new ClientAffecteViewModel
-                                              {
-
-                                                  Formulaire = f,
-                                                  Affectation = a,
-                                                  Lot = l,
-
-                                              }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
-                                
-                              
-                                var agentLinq = (from a in Affectations
-                                                 join l in lots on a.LotId equals l.LotId
-                                                 select new ClientAffecteViewModel
-                                                 {
-
-                                                     Affectation = a
-
-                                                 });
-
-
-                                agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
-
-                                string agentsStr = string.Join(", ", agents);
-
-                                float nbAffTotal = agentLinq.Count();
-                                float nbTraite = traiteList.Count();
-                                string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
-
-                                HomeViewModel homeViewModel = new HomeViewModel
+                                foreach (string numlot in lotsLst)
                                 {
-                                    agents = agentsStr,
-                                    nbAffTotal = nbAffTotal + "",
-                                    nbTraite = nbTraite + "",
-                                    numLot = numlot,
-                                    avancement = avgLot.Replace(",", ".")
-                                };
 
-                                result.Add(homeViewModel);
+                                    lots = LotService.GetMany(l => l.NumLot.Equals(numlot)).ToList();
 
+                                    traiteList = (from f in Formulaires
+                                                  join a in Affectations on f.AffectationId equals a.AffectationId
+                                                  join l in lots on a.LotId equals l.LotId
+                                                  select new ClientAffecteViewModel
+                                                  {
+
+                                                      Formulaire = f,
+                                                      Affectation = a,
+                                                      Lot = l,
+
+                                                  }).DistinctBy(d => d.Formulaire.AffectationId).ToList();
+
+
+                                    var agentLinq = (from a in Affectations
+                                                     join l in lots on a.LotId equals l.LotId
+                                                     select new ClientAffecteViewModel
+                                                     {
+
+                                                         Affectation = a
+
+                                                     });
+
+
+                                    agents = agentLinq.DistinctBy(a => a.Affectation.Employe.Username).Select(a => a.Affectation.Employe.Username).ToArray();
+
+                                    string agentsStr = string.Join(", ", agents);
+
+                                    float nbAffTotal = agentLinq.Count();
+                                    float nbTraite = traiteList.Count();
+                                    string avgLot = String.Format("{0:0.00}", (nbTraite / nbAffTotal) * 100);
+
+                                    HomeViewModel homeViewModel = new HomeViewModel
+                                    {
+                                        agents = agentsStr,
+                                        nbAffTotal = nbAffTotal + "",
+                                        nbTraite = nbTraite + "",
+                                        numLot = numlot,
+                                        avancement = avgLot.Replace(",", ".")
+                                    };
+
+                                    result.Add(homeViewModel);
+
+                                }
                             }
+
                         }
-                        
+                        ViewBag.total = result.Count();
+
+
+
+                        EmpService.Dispose();
+                        RoleService.Dispose();
+                        AffectationService.Dispose();
+                        LotService.Dispose();
+                        FormulaireService.Dispose();
+
+                        return View(result.OrderBy(j => double.Parse(j.avancement.Replace(".", ","))));
+
+
                     }
-                    ViewBag.total = result.Count();
-                    return View(result.OrderBy(j=>double.Parse(j.avancement.Replace(".", ","))));
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                        return View("~/Views/Shared/Error.cshtml", null);
+
+                    }
+
 
                 }
             }
