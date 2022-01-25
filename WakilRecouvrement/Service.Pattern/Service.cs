@@ -14,7 +14,6 @@ namespace Service.Pattern
     {
 
         UnitOfWork utwk;
-     
         protected Service(UnitOfWork utwk)
         {
             this.utwk = utwk;
@@ -23,8 +22,6 @@ namespace Service.Pattern
         public Service()
         {
         }
-
-       
 
         public virtual void Add(TEntity entity)
         {
@@ -41,13 +38,13 @@ namespace Service.Pattern
 
         public virtual void Delete(TEntity entity)
         {
-            //   _repository.Delete(entity);
+            //_repository.Delete(entity);
             utwk.getRepository<TEntity>().Delete(entity);
         }
 
         public virtual void Delete(Expression<Func<TEntity, bool>> where)
         {
-            // _repository.Delete(where);
+            //_repository.Delete(where);
             utwk.getRepository<TEntity>().Delete(where);
         }
 
@@ -76,16 +73,10 @@ namespace Service.Pattern
             return utwk.getRepository<TEntity>().Get(where);
         }
 
-
-
         public void Commit()
         {
-            
-                utwk.Commit();
-           
-            
+            utwk.Commit();  
         }
-
 
         public void Dispose()
         {

@@ -19,9 +19,6 @@ namespace Service.Pattern
         IEnumerable<T> GetMany(Expression<Func<T, bool>> where = null, Expression<Func<T, bool>> orderBy = null);
         T Get(Expression<Func<T, bool>> where);
         IEnumerable<T> GetAll();
-
         void Commit();
-
-
     }
 }

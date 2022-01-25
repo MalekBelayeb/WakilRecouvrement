@@ -15,8 +15,8 @@ namespace WakilRecouvrement.Console
     {
         static void Main(string[] args)
         {
+
             WakilRecouvContext wrc = new WakilRecouvContext();
-            
             Role r1 = new Role
             {
                 role = "admin",
@@ -29,25 +29,7 @@ namespace WakilRecouvrement.Console
                 ConfirmPassword = "admin2",
                 RoleId = 1
             };
-
-           // wrc.Roles.Add(r1);
-            // wrc.Employes.Add(emp);
-         //   wrc.SaveChanges();
-
-            // IEmployeService IEmpService = new EmployeService();
-            //IRoleService IRoleService = new RoleService();
-            //IRoleService.Add(r1);
-            //IRoleService.Commit();
-            ////IEmpService.Add(emp2);
-            //IEmpService.Commit();
-            //foreach(var emp in IEmpService.GetEmployeByRole("agent"))
-            //{
-            //    System.Console.WriteLine(emp.Username);
-            //}
-
-            //System.Console.WriteLine("Fin");
-
-
+            
         }
     }
 }

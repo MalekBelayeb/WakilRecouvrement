@@ -13,7 +13,6 @@ namespace WakilRecouvrement.Domain.Entities
 
         public int AffectationId { get; set; }
 
-
         [DataType(DataType.DateTime)]
         public DateTime DateAffectation { get; set; }
 

@@ -58,10 +58,9 @@ namespace WakilRecouvrement.Web.Controllers
                         List<string> recuImages = new List<string>();
 
 
-
                         List<TraiterDetailViewModel> traiterDetailViewModelList = (from f in FormulaireService.GetAll()
                                                                                    join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
-                                                                                   join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+                                                                                   join l in LotService.GetAll() on a.LotId equals l.LotId
 
                                                                                    where a.AffectationId == idaffectation
                                                                                    select new TraiterDetailViewModel
@@ -70,6 +69,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                        Affectation = a,
                                                                                        Lot = l
                                                                                    }).ToList();
+                       
 
 
                         ValiderTraitementViewModel ValiderTraitementViewModel = (from t in traiterDetailViewModelList
@@ -88,6 +88,7 @@ namespace WakilRecouvrement.Web.Controllers
                                                                                      descAutre = t.Formulaire.DescriptionAutre,
                                                                                      AffectationId = t.Formulaire.AffectationId
                                                                                  }).FirstOrDefault();
+
 
                         ViewBag.ValiderTraitementViewModel = ValiderTraitementViewModel;
 

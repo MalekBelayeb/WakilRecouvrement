@@ -9,7 +9,6 @@ namespace WakilRecouvrement.Domain.Entities
 {
     public class Lettre
     {
-
         public int LettreId { get; set; }
 
         [DataType(DataType.DateTime)]

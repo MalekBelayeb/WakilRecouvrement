@@ -50,8 +50,7 @@ namespace WakilRecouvrement.Web.Controllers
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
 
-                   
-
+                  
                     LotService LotService = new LotService(UOW);
                     FormulaireService FormulaireService = new FormulaireService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
@@ -208,12 +207,13 @@ namespace WakilRecouvrement.Web.Controllers
                             if (traite.Equals("ALL"))
                             {
                                 JoinedList = (from f in FormulaireService.GetAll()
-                                              join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+                                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                              join l in LotService.GetAll() on a.LotId equals l.LotId
                                               select new ClientAffecteViewModel
                                               {
                                                   Formulaire = f,
                                                   Lot = l,
-                                                  AffectationId = f.AffectationId,
+                                                  AffectationId = a.AffectationId,
                                                   Agent = f.AgentUsername
 
                                               }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
@@ -222,13 +222,14 @@ namespace WakilRecouvrement.Web.Controllers
                             else
                             {
                                 JoinedList = (from f in FormulaireService.GetAll()
-                                              join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+                                              join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                              join l in LotService.GetAll() on a.LotId equals l.LotId
 
                                               select new ClientAffecteViewModel
                                               {
                                                   Formulaire = f,
                                                   Lot = l,
-                                                  AffectationId = f.AffectationId,
+                                                  AffectationId = a.AffectationId,
                                                   Agent = f.AgentUsername
 
                                               }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), traite)).ToList();
@@ -239,12 +240,13 @@ namespace WakilRecouvrement.Web.Controllers
                         else
                         {
                             JoinedList = (from f in FormulaireService.GetAll()
-                                          join l in LotService.GetAll() on f.FormulaireId equals l.FormulaireId
+                                          join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                                          join l in LotService.GetAll() on a.LotId equals l.LotId
                                           select new ClientAffecteViewModel
                                           {
                                               Formulaire = f,
                                               Lot = l,
-                                              AffectationId = f.AffectationId,
+                                              AffectationId = a.AffectationId,
                                               Agent = f.AgentUsername
 
                                           }).OrderByDescending(j => j.Formulaire.TraiteLe).Where(j => j.Formulaire.Status == Status.EN_COURS).Where(j => j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "SOLDE_TRANCHE") || j.Formulaire.EtatClient == (Note)Enum.Parse(typeof(Note), "A_VERIFIE")).ToList();
@@ -302,7 +304,7 @@ namespace WakilRecouvrement.Web.Controllers
                                     descAutre = j.Formulaire.DescriptionAutre,
                                     AffectationId = j.Formulaire.AffectationId
                                 });
-
+                        
                         ViewBag.total = JoinedList.Count();
 
                         if (messageFromExcelVerifier.IsNullOrWhiteSpace() == false)
