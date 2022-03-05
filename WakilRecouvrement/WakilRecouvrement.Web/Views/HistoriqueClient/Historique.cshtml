@@ -4,9 +4,6 @@
     ViewBag.Title = "";
 }
 
-
-
-
 <br />
 <div class="card">
     <div class="card-header" id="headingTwo">
@@ -154,7 +151,7 @@
                 </th>
 
                 <th>
-                    @Html.DisplayNameFor(model => model.Formulaire.MontantDebMAJ)
+                    @Html.DisplayNameFor(model => model.Lot.SoldeDebiteur)
                 </th>
 
                 <th>
@@ -269,6 +266,44 @@
             }
 
         </table>
+
+
+    </div>
+    
+    <div class="card-footer">
+
+
+        @using (Html.BeginForm("ActualiserClient", "HistoriqueClient", FormMethod.Post))
+        {
+
+            <div class="form-group">
+
+                <div class="row">
+
+                    <div class="col-xs-3 ">
+
+                        <input value="@ViewBag.affectationId" hidden name="id" />
+
+                        <div class="col-md-offset-2 col-md-10">
+
+                            <input id="submitBtn" type="submit" value="Actualiser" class="btn btn-primary" />
+
+                            <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                <span class="sr-only">Loading...</span>
+                            </button>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        }
+
+
 
 
     </div>

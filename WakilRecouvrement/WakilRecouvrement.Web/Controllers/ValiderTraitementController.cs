@@ -76,8 +76,6 @@ namespace WakilRecouvrement.Web.Controllers
                                  ).FirstOrDefault();
 
 
-                       
-
                         double.TryParse(Lot.SoldeDebiteur.Replace('.', ','), out double SoldeDebiteur);
                         Debug.WriteLine(SoldeDebiteur);
                         Decimal NewSolde = 0;
@@ -99,8 +97,6 @@ namespace WakilRecouvrement.Web.Controllers
 
                             Formulaire.MontantDebMAJ = 0;
 
-                            //Formulaire.Status = Status.VERIFIE;
-                            //Formulaire.VerifieLe = DateTime.Now;
                             Formulaire.EtatClient = Note.SOLDE;
 
                         }
@@ -113,7 +109,6 @@ namespace WakilRecouvrement.Web.Controllers
                             Formulaire.EtatClient = Note.SOLDE_TRANCHE;
 
                         }
-
 
                         FormulaireService.Update(Formulaire);
                         FormulaireService.Commit();

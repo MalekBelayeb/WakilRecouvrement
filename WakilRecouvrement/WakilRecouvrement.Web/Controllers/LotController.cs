@@ -32,9 +32,10 @@ namespace WakilRecouvrement.Web.Controllers
 
         protected override void OnException(ExceptionContext filterContext)
         {
+            
             filterContext.ExceptionHandled = true;
-
             log.Error(filterContext.Exception);
+
         }
 
         public LotController()
@@ -42,10 +43,12 @@ namespace WakilRecouvrement.Web.Controllers
          
         
         }
+        
+        //13363
 
         public ActionResult ImportLot()
         {
-   
+            
             return View();
 
         }
@@ -833,54 +836,177 @@ namespace WakilRecouvrement.Web.Controllers
             return listItems;
         }
 
-        public ActionResult updateLot(int id)
+        public double castSolde(string solde)
+        {
+            double soldeDeb = 0;
+            if(double.TryParse(solde, out soldeDeb))
+            {
+                return soldeDeb;
+            }
+            
+            return soldeDeb;
+        }
+
+        public void updateFormulaireStatusIfNeeded(int affectationId,double newSoldeDeb, AffectationService AffectationService,FormulaireService FormulaireService)
+        {
+
+            var JoinedLot = from f in FormulaireService.GetAll()
+                            join a in AffectationService.GetAll() on f.AffectationId equals a.AffectationId
+                            where a.AffectationId == affectationId
+                            select new ClientAffecteViewModel {  Formulaire = f };
+
+            List<Formulaire> formulaireList = new List<Formulaire>();
+            JoinedLot.ForEach(j =>
+            {
+                
+                if (newSoldeDeb> j.Formulaire.MontantDebInitial)
+                {
+
+                    Formulaire formulaireTemp = j.Formulaire;
+                    formulaireTemp.MontantDebInitial = newSoldeDeb;
+                    
+                    if(formulaireList.Count == 0)
+                    {
+
+                        Decimal newMontantDebMaj = Convert.ToDecimal(newSoldeDeb) - Convert.ToDecimal(formulaireTemp.MontantVerseDeclare);
+
+                        if ((formulaireTemp.EtatClient == Note.SOLDE || formulaireTemp.EtatClient == Note.SOLDE_TRANCHE))
+                        {
+
+                            if (newMontantDebMaj > 0)
+                            {
+                                formulaireTemp.EtatClient = Note.SOLDE_TRANCHE;
+                                formulaireTemp.MontantDebMAJ = Math.Abs((double)newMontantDebMaj);
+
+                            }
+                            else
+                            {
+                                formulaireTemp.EtatClient = Note.SOLDE;
+                                formulaireTemp.MontantDebMAJ = 0;
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        double minSoldeDebMAj = newSoldeDeb;
+
+                        try
+                        {
+                            minSoldeDebMAj = formulaireList.Where(minJ => minJ.Status == Status.VERIFIE).Min(minJ => minJ.MontantDebMAJ);
+                        }
+                        catch(Exception e)
+                        {
+                            minSoldeDebMAj = newSoldeDeb;
+                        }
+
+                        Decimal newMontantDebMaj = Convert.ToDecimal(minSoldeDebMAj) - Convert.ToDecimal(formulaireTemp.MontantVerseDeclare);
+                        
+                        if ((formulaireTemp.EtatClient == Note.SOLDE || formulaireTemp.EtatClient == Note.SOLDE_TRANCHE))
+                        {
+                            
+                            if(newMontantDebMaj > 0)
+                            {
+                                formulaireTemp.EtatClient = Note.SOLDE_TRANCHE;
+                                formulaireTemp.MontantDebMAJ = Math.Abs((double)newMontantDebMaj);
+
+                            }
+                            else
+                            {
+                                formulaireTemp.EtatClient = Note.SOLDE;
+                                formulaireTemp.MontantDebMAJ = 0;
+                            }
+                        }
+
+                    }
+
+                    FormulaireService.Update(formulaireTemp);
+                    FormulaireService.Commit();
+
+                }
+                //167097
+                formulaireList.Add(j.Formulaire);
+
+            });
+
+        }
+
+        public ActionResult updateLot(int id,string errorSolde)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
             {
                 using (UnitOfWork UOW = new UnitOfWork(WakilContext))
                 {
+
                     LotService LotService = new LotService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
                     EmployeService EmpService = new EmployeService(UOW);
 
-
                     ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
                     ViewData["agent"] = new SelectList(AgentListForDropDown(), "Value", "Text");
+                    ViewBag.errorSolde = errorSolde;
 
-                    //Lot lot = LotService.GetById(id);
-                    ClientAffecteViewModel cavm = new ClientAffecteViewModel();
-                    cavm = (from a in AffectationService.GetAll()
+                    UpdateLotViewModel lotToUpdate = new UpdateLotViewModel();
+                    
+                    lotToUpdate = (from a in AffectationService.GetAll()
                             join l in LotService.GetAll() on a.LotId equals l.LotId
                             where l.LotId == id
-                            select new ClientAffecteViewModel
+                            select new UpdateLotViewModel
                             {
-                                Affectation = a,
-                                Lot = l
+                                
+                                LotId = l.LotId,
+                                AffectationId = a.AffectationId,
+                                EmployeId = a.EmployeId,
+                                NumLot = l.NumLot,
+                                NomClient = l.NomClient,
+                                IDClient = l.IDClient,
+                                Adresse = l.Adresse,
+                                Compte = l.Compte,
+                                DescIndustry = l.DescIndustry,
+                                Numero =  l.Numero,
+                                SoldeDebiteur = castSolde(l.SoldeDebiteur),
+                                TelFixe = l.TelFixe,
+                                TelPortable = l.TelPortable,
+                                Emploi = l.Emploi,
+                                PostCode = l.PostCode,
+
                             }).FirstOrDefault();
 
-                    if (cavm == null)
+                    if (lotToUpdate == null)
                     {
-                        cavm = new ClientAffecteViewModel();
+
+                        lotToUpdate = new UpdateLotViewModel();
                         Lot lot = LotService.GetById(id);
-                        cavm.Lot = lot;
+                        lotToUpdate.LotId = lot.LotId;
+                        lotToUpdate.TelFixe = lot.TelFixe;
+                        lotToUpdate.NumLot = lot.NumLot;
+                        lotToUpdate.Numero = lot.Numero;
+                        lotToUpdate.SoldeDebiteur = castSolde(lot.SoldeDebiteur);
+                        lotToUpdate.TelPortable = lot.TelPortable;
+                        lotToUpdate.Adresse = lot.Adresse;
+                        lotToUpdate.IDClient = lot.IDClient;
+                        lotToUpdate.PostCode = lot.PostCode;
+                        lotToUpdate.Emploi = lot.Emploi;
+                        lotToUpdate.DescIndustry = lot.DescIndustry;
+                        lotToUpdate.Adresse = lot.Adresse;
+                        lotToUpdate.NomClient = lot.NomClient;
+                        
                     }
-                    
 
                     LotService.Dispose();
                     AffectationService.Dispose();
                     EmpService.Dispose();
-                    return View(cavm);
+                    return View(lotToUpdate);
+                
                 }
             }
 
-
-
         }
 
-
         [HttpPost]
-        public ActionResult updateLot(ClientAffecteViewModel cavm)
+        public ActionResult updateLot(UpdateLotViewModel updateLotvm)
         {
 
             using (WakilRecouvContext WakilContext = new WakilRecouvContext())
@@ -889,34 +1015,81 @@ namespace WakilRecouvrement.Web.Controllers
                 {
                     LotService LotService = new LotService(UOW);
                     AffectationService AffectationService = new AffectationService(UOW);
+                    FormulaireService FormulaireService = new FormulaireService(UOW);
+
+                    double newSolde = 0;
+                    double oldSolde = 0;
+                    Lot newlot = LotService.GetById(updateLotvm.LotId);
+
+                    newlot.Adresse = updateLotvm.Adresse;
+                    newlot.Compte = updateLotvm.Compte;
+                    newlot.DescIndustry = updateLotvm.DescIndustry;
+                    newlot.Emploi = updateLotvm.Emploi;
+                    newlot.IDClient = updateLotvm.IDClient;
+                    newlot.NomClient = updateLotvm.NomClient;
+                    newlot.NumLot = updateLotvm.NumLot;
+                    newlot.PostCode = updateLotvm.PostCode;
+
+                    if (Double.TryParse(newlot.SoldeDebiteur, out oldSolde))
+                    {
+                        if (Double.TryParse(updateLotvm.SoldeDebiteur+"", out newSolde) )
+                        {
+
+                            if(newSolde == 0)
+                            {
+
+                                ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                                ViewData["agent"] = new SelectList(AgentListForDropDown(), "Value", "Text");
+                                ModelState.AddModelError("SoldeDebiteur", "Nouveau solde n'est pas valide");
+                                return View(updateLotvm);
+
+                            }
+                            else
+                            {
+
+                                if (newSolde >= oldSolde)
+                                {
+
+                                    newlot.SoldeDebiteur = updateLotvm.SoldeDebiteur + "";
+                                    
+                                    if(newSolde !=oldSolde)
+                                    {
+                                        updateFormulaireStatusIfNeeded(updateLotvm.AffectationId, updateLotvm.SoldeDebiteur, AffectationService, FormulaireService);
+                                    }
+
+                                }
+                                else
+                                {
+                                    ViewData["list"] = new SelectList(NumLotListForDropDown(), "Value", "Text");
+                                    ViewData["agent"] = new SelectList(AgentListForDropDown(), "Value", "Text");
+                                    ModelState.AddModelError("SoldeDebiteur", "Nouveau solde doit etre superieur à l'ancien");
+                                    return View(updateLotvm);
+                                }
+                            }
+
+                        }
+                       
+
+                    }
                  
-                    Lot newlot = LotService.GetById(cavm.Lot.LotId);
-                    newlot.Adresse = cavm.Lot.Adresse;
-                    newlot.Compte = cavm.Lot.Compte;
-                    newlot.DescIndustry = cavm.Lot.DescIndustry;
-                    newlot.Emploi = cavm.Lot.Emploi;
-                    newlot.IDClient = cavm.Lot.IDClient;
-                    newlot.NomClient = cavm.Lot.NomClient;
-                    newlot.NumLot = cavm.Lot.NumLot;
-                    newlot.PostCode = cavm.Lot.PostCode;
-                    newlot.SoldeDebiteur = cavm.Lot.SoldeDebiteur;
-                    newlot.TelFixe = cavm.Lot.TelFixe;
-                    newlot.TelPortable = cavm.Lot.TelPortable;
-                    newlot.Type = cavm.Lot.Type;
-                    newlot.Emploi = cavm.Lot.Emploi;
+                    newlot.TelFixe = updateLotvm.TelFixe;
+                    newlot.TelPortable = updateLotvm.TelPortable;
+                    //newlot.Type = updateLotvm.Type;
+                    newlot.Emploi = updateLotvm.Emploi;
+
+                    
                     LotService.Update(newlot);
-                    LotService.Commit();
+                    //LotService.Commit();
 
-
-                    Affectation affectation = AffectationService.GetById(cavm.Affectation.AffectationId);
-                    Debug.WriteLine(cavm.Affectation.EmployeId);
+                    Affectation affectation = AffectationService.GetById(updateLotvm.AffectationId);
 
                     if (affectation == null)
                     {
                         Affectation aff = new Affectation
                         {
-                            EmployeId = cavm.Affectation.EmployeId,
-                            LotId = cavm.Lot.LotId,
+
+                            EmployeId = updateLotvm.EmployeId,
+                            LotId = updateLotvm.LotId,
                             DateAffectation = DateTime.Now
 
                         };
@@ -924,13 +1097,12 @@ namespace WakilRecouvrement.Web.Controllers
                         AffectationService.Add(aff);
                         AffectationService.Commit();
 
-
                     }
                     else
                     {
 
-                        affectation.EmployeId = cavm.Affectation.EmployeId;
-                        affectation.LotId = cavm.Lot.LotId;
+                        affectation.EmployeId = updateLotvm.EmployeId;
+                        affectation.LotId = updateLotvm.LotId;
                         affectation.DateAffectation = DateTime.Now;
                         AffectationService.Update(affectation);
                         AffectationService.Commit();
@@ -940,7 +1112,6 @@ namespace WakilRecouvrement.Web.Controllers
                     AffectationService.Dispose();
                     LotService.Dispose();
                     return RedirectToAction("ConsulterClients", new { numLot = 0, sortOrder = 0 });
-
 
                 }
             }

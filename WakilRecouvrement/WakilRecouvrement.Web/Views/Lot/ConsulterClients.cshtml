@@ -173,7 +173,7 @@
 
                                 <td>
                                     
-                                    @Html.ActionLink("Modifier", "updateLot", "Lot", new { id = item.LotId }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Modifier", "updateLot", "Lot", new { id = item.LotId, errorSolde = "" }, new { @class = "btn btn-primary" })
                                     <br />
                                     @Html.ActionLink("Supp.", "deleteLot", "Lot", new { id = item.LotId, currentFilter = ViewBag.currentFilter, currentNumLot = ViewBag.currentNumLot, currentPage = ViewBag.page }, new { @class = "btn btn-danger", onclick = "return confirm('voulez vous vraiment supprimer ?');" })
                                     

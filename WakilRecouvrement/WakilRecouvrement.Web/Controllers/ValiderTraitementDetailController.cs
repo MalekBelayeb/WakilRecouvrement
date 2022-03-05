@@ -157,7 +157,7 @@ namespace WakilRecouvrement.Web.Controllers
                 }
 
             }
-            Debug.WriteLine(urlImages.Count());
+            Debug.WriteLine(urlImages.Count());                        
 
             return urlImages;
         }

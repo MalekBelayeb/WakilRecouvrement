@@ -394,6 +394,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Hubs\UserHub.cs" />
     <Compile Include="Models\EmailConstants.cs" />
     <Compile Include="Models\FormulaireExportable.cs" />
@@ -414,6 +415,7 @@
     <Compile Include="Models\LotViewModel.cs" />
     <Compile Include="Models\ValidationModelsAttribute\NotEqualAttribute.cs" />
     <Compile Include="Models\ViewModel\TraiterDetailViewModel.cs" />
+    <Compile Include="Models\ViewModel\UpdateLotViewModel.cs" />
     <Compile Include="Models\ViewModel\ValiderTraitementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -822,7 +824,6 @@
     <Content Include="Views\Affectation\AffectationList.cshtml" />
     <Content Include="Views\Affectation\ModifierAffectation.cshtml" />
     <Content Include="Views\Statistique\Index.cshtml" />
-    <Content Include="Views\Lot\updateLot.cshtml" />
     <Content Include="Views\Lot\addLot.cshtml" />
     <Content Include="Views\Facture\genererFacture.cshtml" />
     <Content Include="Views\Facture\Renseigner.cshtml" />
@@ -840,6 +841,7 @@
     <Content Include="Views\MesRappelsList\MesRappels.cshtml" />
     <Content Include="Views\MesRDV\SuiviRDV.cshtml" />
     <Content Include="Views\MesTraitementsRejetes\TraitementRejetesList.cshtml" />
+    <Content Include="Views\Lot\updateLot.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
