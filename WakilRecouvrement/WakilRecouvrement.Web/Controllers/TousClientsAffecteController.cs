@@ -53,9 +53,9 @@ namespace WakilRecouvrement.Web.Controllers
                         ViewBag.TraiteList = new SelectList(DropdownListController.TraiteListForDropDown(), "Value", "Text");
                         ViewData["sortOrder"] = new SelectList(DropdownListController.SortOrderSuiviTousClientForDropDown(), "Value", "Text");
 
-                        var notifContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+                        //var notifContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
 
-                        notifContext.Clients.All.addNewNotification("ssss");
+                        //notifContext.Clients.All.addNewNotification("ssss");
 
                         if (sortOrder != null)
                         {

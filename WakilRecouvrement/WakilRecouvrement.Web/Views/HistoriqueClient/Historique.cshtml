@@ -273,7 +273,7 @@
     <div class="card-footer">
 
 
-        @using (Html.BeginForm("ActualiserClient", "HistoriqueClient", FormMethod.Post))
+        @using (Html.BeginForm("ActualiserClient", "HistoriqueClient", FormMethod.Post, new { onsubmit = "showLoading()" }))
         {
 
             <div class="form-group">
@@ -284,19 +284,17 @@
 
                         <input value="@ViewBag.affectationId" hidden name="id" />
 
-                        <div class="col-md-offset-2 col-md-10">
+                        <div class=" col-md-12">
 
-                            <input id="submitBtn" type="submit" value="Actualiser" class="btn btn-primary" />
-
-                            <button style="display:none" id="submitLoading" class="btn btn-primary" type="button" disabled>
+                            <input id="submitBtn" type="submit" value="Recalculer" class="btn btn-outline-secondary" />
+                            <button style="display:none" id="submitLoading" class="btn btn-outline-secondary" type="button" disabled>
                                 <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                 <span class="sr-only">Loading...</span>
                             </button>
-
-
+                            <span style="font-size:12px">( si le calcul des montants n'est pas correct )</span>
                         </div>
                     </div>
-
+                    
                 </div>
 
             </div>
@@ -308,3 +306,13 @@
 
     </div>
 </div>
+
+<script>
+
+    function showLoading() {
+
+        document.getElementById("submitLoading").style.display = "block";
+        document.getElementById("submitBtn").style.display = "none";
+
+    }
+</script>
